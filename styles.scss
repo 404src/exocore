@@ -2,7 +2,7 @@
 ---
 
 //This stylesheet normalizes formatting across browsers:
-{@import "../_sass/normalize";
+@import "../_sass/normalize";
 @import "../_sass/code";
 
 
@@ -53,4 +53,3 @@ body {
     background-image: $bg-image;
 }
 
-}
