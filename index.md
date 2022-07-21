@@ -5,11 +5,11 @@ title: Home
 
 
 
-# The Exocore Package
+# Introduction
 
 ![](/images/exocore.png)
 
-## Executive Summary
+## About
 
 The exocore is a preconfigured package to roll out your own no-code, no-cost personal website as a public exocortex from documents written in simple Markdown syntax, including interlinking, generated backlinks and a nodal graph-rendering. Site's are rendered in fast, responsive, standards-compliant static HTML. 
 
