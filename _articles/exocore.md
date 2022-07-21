@@ -57,7 +57,7 @@ This system provides a powerful and highly customizable dashboard for comprehens
 - Footnotes and sidenotes
 - Suite of Jekyll templates for automatically publishing websites off the collection of notes
 
-### Usr experience:
+### User experience:
 
 A user downloads the package in the form of a Github repository template, which lives on their local machine as a directory that can be manually or automatically synced via [git](https://git-scm.com) to a web domain, which represents the documents in the directory after they are processed into an eaily-navigable and feature-rich website. Their exocore can be published to the web at no-cost using Netlify's free hosting and subdomain service.
 
