@@ -11,18 +11,17 @@ title: Home
 
 ## About
 
-Hi, I'm Ali, a recent electronic system engineer graduate with a minor in cybersecurity. I've created this wiki to help keep track and document my journey into IT/InfoSec/CS/Cloud, and intend to structure it as a learning resource for any others that may also be interested in similar subjects. 
+Hi, I'm Ali1, a recent electronic system engineer graduate with a minor in cybersecurity. I've created this wiki to help keep track and document my journey into IT/InfoSec/CS/Cloud, and intend to structure it for others who may be interested in the learning resources I utilized. 
 
 ## Wiki Environment
 
-
+The wiki is sectioned into 
 
 This wiki utilizes a [Jamstack](https://jamstack.org/) workflow and extension of [Foam](https://github.com/foambubble/foam) to act as a complete system of accessible and standardized autopublishing knowledgebase. For more information on how you can create your own knowledgebase, visit the [[installation-instructions|installation instruction]] page.
 
 
 The exocore is a preconfigured package to roll out your own no-code, no-cost personal website as a public exocortex from documents written in simple Markdown syntax, including interlinking, generated backlinks and a nodal graph-rendering. Site's are rendered in fast, responsive, standards-compliant static HTML. 
 
-The exocore is developed by [Remilia Corporation](https://remilia.org) as a [Jamstack](https://jamstack.org/) worfklow and extension of [Foam](https://github.com/foambubble/foam) to complete the system of an accessible and standardized autopublishing knowledgebase network, as a proof-of-concept for [Remilia's New Internet](https://mirror.xyz/charlemagnefang.eth/831rVsd2Z7cjxnBAw118gW8MylKibfC2AeJ6YUHiAvA).
 
 ## How to Begin
 Follow the 15 minutes [[installation-instructions|no code instructions]] to install your exocore and set up automatic publishing with Netlify.
