@@ -11,11 +11,9 @@ title: Home
 
 ## About
 
-Hi, I'm Ali1, a recent electronic system engineer graduate with a minor in cybersecurity. I've created this wiki to help keep track and document my journey into IT/InfoSec/CS/Cloud, and intend to structure it for others who may be interested in the learning resources I utilized. 
+Hi, I'm Ali, a recent electronic system engineer graduate with a minor in cybersecurity. I've created this wiki to help keep track and document my journey into IT/InfoSec/CS/Cloud, and intend to structure it for others who may be interested in the learning resources I utilized. 
 
 ## Wiki Environment
-
-The wiki is sectioned into 
 
 This wiki utilizes a [Jamstack](https://jamstack.org/) workflow and extension of [Foam](https://github.com/foambubble/foam) to act as a complete system of accessible and standardized autopublishing knowledgebase. For more information on how you can create your own knowledgebase, visit the [[installation-instructions|installation instruction]] page.
 
