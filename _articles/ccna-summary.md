@@ -8,28 +8,33 @@ tags: CCNA Networking Study
 
 # CCNA
 
+## Preface
+This is by no means an exhaustive study guide for the topics on the CCNA, but rather a review tool that briefly touches on each topic outlined in the CCNA 200-301 Exam Description.
 
 
 ## 1.0 Network Fundamentals
-
+A computer network is a digital telecommunications network which allows nodes to share resources. In computer networks, computing devices exchange data with each other using connections (data links) between nodes. These data links are established over cable media such as wires or optic cables, or wireless media such as Wi-Fi.
 ## 1.1 Explain the role and function of network components
 
 ###     1.1.a Routers
-
+Routers provided connectivity between LANs (Local Area Networks), and are therefore used to send data over the Internet.  
 ###     1.1.b Layer and Layer 3 switches
-
+Switches provide connectivity to hosts within the same LAN. Switches typically have many more network interfaces/ports for end hosts to connect to (usually 24+).
+Layer 3 switches 
 ###     1.1.c Next-generation firewalls and IPS
-
+Firewalls monitor and control network traffic based on configured rules. They are known as "Next-Generation Firewalls" when they include more modern and advanced filtering capabilities.
+Network firewalls are hardware devices that filter traffic between networks. 
+Host-based firewalls are software applications that filter traffic entering and exiting a host machine, like a PC.
 ###     1.1.d Access points
 
 ### 1.1.e Controllers (Cisco DNA Center and WLC)
 
-### 1.1.f Endpoints
-
+### 1.1.f Endpoints/End hosts
+An endpoint is a remote computing device that communicates back and forth with a network, examples include computers, laptops, mobile phones, tablets, and servers.
 ### 1.1.g Servers
-
+A server is a device that provides functions or services for clients/endpoints on a network.
 ### 1.1.h PoE
-
+Power over Ethernet
 
 
 ## 1.2 Describe characteristics of network topology architectures
@@ -48,18 +53,36 @@ tags: CCNA Networking Study
 
 
 ## 1.3 Compare physical interface and cabling types
+RJ-45 (RJ = Registered Jack) - Standard connector for copper UTP cables that has 8 pin connections.
 
+UTP cables - Unshielded twister pair copper wire, contains 4 pairs of wires twisted together, with 8 wires in total.
+
+Straight-through cable - 
+
+Crossover cable - 
+
+Using Auto MDI-X, devices are able to automatically detect which pins their neighbor is using to transmit data and automatically adjust their pins to receive and transmit on the correct pins.
 ### 1.3.a Single-mode fiber, multimode fiber, copper
-
-### 1.3.b Connections (Ethernet sharaed media and point-to-point)
+SFP Transceiver (SFP = Small Form-Factor Pluggable) - connector used for fiber-optic ports on a switch, connects to Fiber-Optic cabling.
+Single-mode fiber is narrower than multimode fiber, light enters at a single angle (mode) from a laser-based transmitter. Allows for longer cables than both UTP and multimode fiber, but also more expensive.
+Multimode fiber is wider than single-mode fiber, allows multiple angles (modes) of light waves to enter the fiberglass core. Allows longer cables than UTP, but shorter than single-mode fiber.
+### 1.3.b Connections (Ethernet shared media and point-to-point)
 
 
 ## 1.4 Identify interface and cable issues (collisions, errors, mismatch duplex, and/or speed)
-
+Day 9 video
 ## 1.5 Compare TCP to UDP
 
 ## 1.6 Configure and verify IPv4 addressing and subnetting
+pictures
+CIDR (Classless Inter-Domain Routing) removed the previous requirements of:
+    Class A = /8
+    Class B = /16
+    Class C = /24
+This allows larger networks to be split into smaller networks, allowing greater efficiency.
+These smaller networks are called "subnetworks" or "subnets".
 
+Using VLSM (Variable-Length Subnet Masks) will allow the creation of subnets of different sizes, to make use of network addresses even more efficient.
 ## 1.7 Describe the need for private IPv4 addressing
 
 ## 1.8 Configure and verify IPv6 addressing and prefix
@@ -93,37 +116,47 @@ tags: CCNA Networking Study
 
 
 ## 1.13 Describe switching concepts
-
+MAC Address is a 6-byte (48-bit) globally unique physical address assigned to the device when it is made. Written as 12 hexadecimal characters. (00:00:00:00:00:00)
 ### 1.13.a MAC learning and aging
+When a switch receives a frame, it associates the MAC address of source with the corresponding port which the frame was received. The switch dynamically constructrs an address table using the MAC source addresses of received frames.
+These dynamically learned MAC addresses are deleted from the table after the MAC address age value has expired. This frees unused addresses from the MAC address table for other active subscribers. The default value is 300 seconds.
+
+
+Static MAC addresses can be assigned to the table, which are retained during a switch resest.
 
 ### 1.13.b Frame switching
 
 ### 1.13.c Frame flooding
-
+When the switch receives a frame for a destination MAC address that is not in its address table, it floods the frame out of all LAN ports of the same VLAN except for the port that the frame received.
+When the destination station responds, the switch adds its relevant MAC source address and port ID to the address table.
 ### 1.13.d MAC address table
-
+To exchange frames between LAN ports efficiently, the switch maintains a MAC address table. The switch learns and builds it's adress table through the processes described above, and is able to forward the subsequent frames to a single port without flooding all the LAN ports.
 
 
 ## 2.0 Network Access
 
 ## 2.1 Configure and verify VLANs (normal range) spanning multiple switches
+VLANs are configured on switches on a per-interface basis, and logically seperate end hosts at Layer 2. Switches do not forward traffic directly between hosts in different VLANs, it must forward the traffic to a router to perform inter-VLAN routing.
 
+show vlan brief
 ### 2.1.a Access ports (data and voice)
+An access port is a switchport which belongs to a single VLAN, and usually connects to end hosts like PCs
 
 ### 2.1.b Default VLAN
-
+VLAN 1 is the default VLAN.
+VLANs 1002-1005 exist by default and cannot be deleted.
 ### 2.1.c Connectivity
 
 
 ## 2.2 Configure and verify interswitch connectivity
 
 ### 2.2.a Trunk ports
-
+Trunk ports are switchports which carry multiple VLANs. 
 ### 2.2.b 802.1q
 
 ### 2.2.c Native VLAN
 
-## 2.3 Configure and verify Layer 2 discovery protocols (cisco Discovery Protocol and LLDP)
+## 2.3 Configure and verify Layer 2 discovery protocols (Cisco Discovery Protocol and LLDP)
 
 ## 2.4 Configure and verify (Layer 2/Layer 3) EtherChannel (LACP)
 
@@ -157,11 +190,19 @@ tags: CCNA Networking Study
 
 ## 3.2 Determine how a router makes a forwarding decision by default
 
+Routers drop packets with unknown destinations.
+
 ### 3.2.a Longest prefix match
+When a router looks up a destination address in its routing table, it looks for the most specific matching route. Most specific = longest prefix length ( /32 > /24 > /16 > /8 > /0)
 ### 3.2.b Administrative distance
 ### 3.2.c Routing protocol metric
 
 ## 3.3 Configure and verify IPv4 and IPv6 static routing
+to configure: 
+ip route (destination ip address) (mask) (next-hop ip address)
+ip route (destination-address) (mask) (exit-interface)
+to verify: 
+show ip route
 
 ### 3.3.a Default route
 ### 3.3.b Network route
