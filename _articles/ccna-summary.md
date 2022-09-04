@@ -18,9 +18,14 @@ A computer network is a digital telecommunications network which allows nodes to
 
 ###     1.1.a Routers
 Routers provided connectivity between LANs (Local Area Networks), and are therefore used to send data over the Internet.  
-###     1.1.b Layer and Layer 3 switches
+###     1.1.b Layer 2 and Layer 3 switches
 Switches provide connectivity to hosts within the same LAN. Switches typically have many more network interfaces/ports for end hosts to connect to (usually 24+).
-Layer 3 switches 
+Layer 3 switches, also known as Multilayer switches, are capable of both switching AND routing.
+Layer 3 switches can have IP addresses assigned to its interfaces, like a router. 
+You can also create virtual interfaces, or SVIs (switch virtual interfaces), for each VLAN, and assign IP addresses to those interfaces.
+These SVIs are used as the gateway address for each PC, instead of a router.
+To send traffic to different subnets/VLANs, the PCs will send traffic to the switch, and the switch will route the traffic. 
+Routes can be configured on Layer 3 switches, and it can be used for inter-VLAN routing.
 ###     1.1.c Next-generation firewalls and IPS
 Firewalls monitor and control network traffic based on configured rules. They are known as "Next-Generation Firewalls" when they include more modern and advanced filtering capabilities.
 Network firewalls are hardware devices that filter traffic between networks. 
@@ -149,24 +154,111 @@ VLANs 1002-1005 exist by default and cannot be deleted.
 
 
 ## 2.2 Configure and verify interswitch connectivity
+Trunk ports = "tagged" ports
+Access ports = "untagged" ports
 
+DTP (Dynamic Trunking Protocol)
+    -Cisco proprietary protocol that allows Cisco switches to dyniamically determine their interface status (access or trunk) without manual configuration. For security purposes, manual configuration is reconmmended and DTP should be disabled on all switchports.
+VTP (VLAN Trunking Protocol)
+    -allows you to configure VLANs on a central VTP server switch, and other switches (VTP clients) will synchronize their VLAN database to the server. It is designed for large networks with many VLANs, but is rarely used and not recommended.
 ### 2.2.a Trunk ports
-Trunk ports are switchports which carry multiple VLANs. 
+Trunk ports can be used to carry from multiple VLANs over a single interface. Switches will "tag" all frames that they send over a trunk link. This allows the reciving switch to know which VLAN the frame belongs to.
+
+show interfaces trunk
 ### 2.2.b 802.1q
+802.1q is an industry standard trunking protocol.
 
+The 802.1q tag is inserted between the Source and Type/Length fields of the Ethernet frame.
+The tag is 4 bytes (32 bits) in length and consists of two main fields: TPID (Tag Protocol Identifier) and TCI (Tag Control Information).
+The TPID is 2 bytes in length and is always set to a value of 0x8100, indicating the frame is 802.1q tagged
+The TCI consists of 3 smaller fields:
+    -PCP (Priority Code Point), 3 bits
+        -used for CoS (Class of Service), which prioritizes important traffic in congested networks.
+    -DEI (Drop Eligiblle Indicator), 1 bit
+        -used to indicated frames that can be dropped if the network is congested 
+    -VID (VLAD ID), 12 bits
+        -identifies the VLAN the frame belongs to. 
 ### 2.2.c Native VLAN
+802.1q has a feature called the native VLAN.
+The native VLAN is VLAN 1 by default on all trunk ports, but can be manually configured on each trunk port.
+The switch does not add an 802.1q tag to frames in the native VLAN.
+When a switch receives an untagged frame on a trunk port, it assumed the frame belongs to the native VLAN. For this reason, it's very important that the native VLAN matches for both switches.
 
+R1(config-subif)#encapsulation dot1q (vlan-id) native
 ## 2.3 Configure and verify Layer 2 discovery protocols (Cisco Discovery Protocol and LLDP)
 
 ## 2.4 Configure and verify (Layer 2/Layer 3) EtherChannel (LACP)
+When the bandwidth of the interfaces connected to end hosts is greater than the bandwidth of the connection to the distribution switch(es), this is called oversubscription, which can cause congestion.
+EtherChannel groups multiple interfaces together to act as a single interface. STP will treat this group as a single interface.
+EtherChannel is also known as Port Channel, or LAG (Link Aggregation Group)
+EtherChannel load balances based on "flows". A flow is a communication between two nodes in the network. Frames in the same flow will be forwarded using the same physical interface.
+The inputs used in the interface selection calculation can be configured
+    -inputs that can be used:
+        1. Source MAC
+        2. Destination MAC
+        3. Source AND Destination MAC
+        4. Source IP
+        5. Destination IP
+        6. Source and Destination IP
 
+((----------picutre--------))
+
+
+There are three methods of EtherChannel configuration on Cisco switches:
+    1. LACP (Link Aggregation Control Protocol), 802.3ad 
+        - Dynamically negoties the creation/maintenance of the the EtherChannel (similary to DTP for trunks)
+    2. PAgP (Port Aggregation Protocol)
+        - Cisco propretary protocol
+        - Dynamically negotiates the creation/maintenance of the EtherChannel.
+    3. Static EtherChannel
+        - A protocol isn't used to determine if an EtherChannel should be formed. 
+        - Interfaces are statically configured to form an EtherChannel.
+Up to 8 interfaces can be formed into a single EtherChannel (LACP allows up to 16, but only 8 will be active, the other 8 will be in standby mode, waiting for an active interface to fail.)
+
+
+show etherchannel summary
 ## 2.5 Interpret basic operations of Rapid PVST+ Spanning Tree Protocol
+STP (Spanning Tree Protocol) prevents Layer 2 loops by placing redundant ports in a blocking state, essentially disabling the interface.
+These interfaces act as backups that can enter a forwarding state if an active (=currently forwarding) interface fails.
+Interfaces in a blocking state only send or receive STP messages (called BPDUs = Bridge Protocol Data Units)
+Cisco switches use a version of STP called PVST+ (Per-VLAN Spanning Tree), which runs a seperate STP 'instance' in each VLAN, so in each VLAN different interfaces can be forwarding/blocking. This allows for load balancing by blocking different ports in each VLAN.
+Rapid PVST+ allows for much faster converging/adapting to network changes, similar to 802.1w (Rapid Spanning Tree Protocol).
+show spanning-tree
 
 ### 2.5.a Root port, root bridge (primary/secondary), and other port names
+Switches use one field in the STP BPDU, the Bridge ID field, to elect a root bridge for the network.
+The switch with the lowest Bridge ID becomes the root bridge. the default bridge priority is 32768 on all switches, so by default the MAC address is used as the tie-breaker (lowest MAC address becomes the root bridge). All ports on the root bridge are designated ports. Ports across from the root port are always designated ports. 
+Each remaining switch will select ONE of its interfaces to be its root port. 
+    Root port selection:
+    1. Lowest root constructrs
+    2. Lowest neighbor bridge ID
+    3. Lowest neighbor port ID.
+
+Each remaining collisions Domain will select ONE interface to be a designated port (forwarding state). The other port in the collision domain will be non-desingated (blocking).
+    Designated port selection:
+    1. Interface on switch with the lowest root cost
+    2. Interface on switch with the lowest bridge ID
+In RSTP, the non-designated port is split into two seperate roles:
+    -the alternate port role (blocking)
+    -the backup port role (two interfaces on same collision domain, via a hub)
+
+
+spanning-tree vlan 10 root primary/secondary
+    root primary = STP priority 24576
+    root secondary = STP priority 28672
 
 ### 2.5.b Port states (forwarding/blocking)
-
+Root/Designated ports remain stable in a Forwarding state.
+Non-designated ports remain stable in a Blocking state. Interfaces in a Blocking state are effectively disabled to prevent loops.
+Listening and Learning are transitional states which are passed through when an interface is activated, or when a Blocking port must transition to a Forwarding state due to a change in the network topology.
 ### 2.5.c PortFast
+Spanning tree timer picture
+
+Portfast allows a port to move immediately to the Forwarding state, bypassing Listening and Learning. If used, it must be enabled only on ports connected to end hosts. If enabled on a port connected to another switch it could cause a Layer 2 loop.
+
+BPDU guard is another optional STP feature
+    -can be used to prevent an access port from participating in the spanning tree.
+SW1(config-if)#spanning-tree portfast (default)
 
 ## 2.6 Describe Cisco Wireless Architectures and AP modes
 
@@ -177,6 +269,17 @@ Trunk ports are switchports which carry multiple VLANs.
 ## 2.9 Interpret the wireless LAN GUI configuration for client connectivity, such as WLAN creation, security settings, QoS profiles, and advanced settings
 
 ## 3.0 IP Connectivity
+Routers can use dynamic routing protocols to advertise information about the routes they know to other routers.
+They form 'adjacencies' / 'neighbor relationships' / 'neighborships' with adjacent routers to exchange this information.
+If multiple routes to a destination are learned, the router determines which route is superior and adds it to the routing table. It uses the 'metric' of the route to decide which is superior (lower metric = superior).
+Dynamic routing protocols can be divided into two main categories:
+    IGP (Interior Gateway Protocol)
+        - used to share routes wihin a single autonomous system (AS), which is a single organization (ie. a company)
+        - ex. RIP (Routing Information Protocol), EIGRP (Enhanced Interior Gateway Routing Protocol) using a Distance Vector algo
+        - ex. OSPF (Open Shortest Path First) and IS-IS (Intermediate System to Intermediate System) (IS-IS) using a Link State algo 
+    EGP (Exterior Gateway Protocol)
+        - used to share routes between different autonomous systems
+        - ex. BGP (Border Gateway Protocol) using a Path Vector algo
 
 ## 3.1 Interpret the components of routing table
 
@@ -185,7 +288,21 @@ Trunk ports are switchports which carry multiple VLANs.
 ### 3.1.c Network mask
 ### 3.1.d Next Hop
 ### 3.1.e Administrative distance
+In most cases a company will only use a single IGP, usually OSPF or EIGRP.
+However, in some rare cases they might use two. For example, if two companies connect their networks to share information, two different routing protocols might be in use. 
+Metric is used to compare routes learned via the same routing protocol. Different routing protocls use different metrics, so they cannot be compared. Instead, the AD (Administrative Distance) is used to determine which routing protocol is preferred.
+A lower AD is preferred, and indicates that the routing protocol is considered more trustworthy (more likely to select good routes).
+
+picture --------------
 ### 3.1.f Metric
+A router's route table contains the best route to each destination network it knows about.
+If a router using a dynamic routing protocol learns two different routes to the same destination, how does it determine which is 'best'?
+It uses the metric value of the routes to dtermine which is best. A lower metric = better.
+Each routing protocol uses a different metric to determine which route is best.
+If a router learns two (or more) routes via the same routing protocol to the same destination (same network address, same subnet mask) with the same metric, both will be added to the routing table. Traffic will be load-balanced over both routes.
+ECMP (Equal Cost Multi-Path)
+
+picture --------------
 ### 3.1.g Gateway of last resort
 
 ## 3.2 Determine how a router makes a forwarding decision by default
@@ -206,11 +323,23 @@ show ip route
 
 ### 3.3.a Default route
 ### 3.3.b Network route
+A route to a network/subnet (mask length < /32)
 ### 3.3.c Host route
+A route to a specific host (/32 mask)
 ### 3.3.d Floating static
+By changing the AD of a static route, you can make it less preferred than routes learned by a dynamic routing protocl to the same destination (make sure the AD is higher than the routing protocol's AD!) This is known as a "floating static route".
+The route will be inactive (not in the routing table) unless the route learned by the dynamic routing protocol is removed.
+
 
 ## 3.4 Configure and verify single area OSPFv2
+OSPF uses shortest path first algorithm, aka Dijkstra's algorithm
+Routers store information about the network in LSAs (Link State Advertisements), which are organized in a structure called the LSDB (Link State Database)
+Routers will flood LSAs until all routers in the OSPF area develop the same map of the network (LSDB).
 ### 3.4.a Neighbor adjacencies
+In OSPF, there are three main steps in the process of sharing LSAs and determining the best route to each destination in the network.
+    1. Become neighbors with other routers connected to the same segment
+    2. Exchange LSAs with neighbor routers
+    3. Calculate the best routes to each destination, and insert them into the routing table
 ### 3.4.b Point-to-point
 ### 3.4.c Broadcast (DR/BDR selection)
 ### 3.4.d Router ID
