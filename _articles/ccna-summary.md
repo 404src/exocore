@@ -70,16 +70,16 @@ In large LAN networks with many Distribution Layer switches (for example in sepa
 To help scale large LAN networks, you can add a Core Layer. Cisco recommends adding a Core Layer if there are more than three Distribution Layers in a single location.
 
 The three-tier LAN design consists of three hierarchical layers:
-    - Access Layer
-    - Distribution Layer
-    - Core Layer
+- Access Layer
+- Distribution Layer
+- Core Layer
 
 Core Layer:
-    - Connects Distribution Layers together in large LAN networks
-    - The focus is speed ('fast transport')
-    - CPU-intensive operations such as security, QoS marking/classification, etc. should be avoided at this Layer
-    - Connections are all Layer 3. No spanning-tree!
-    - Should maintain connectivity throughout the LAN even if devices fail
+- Connects Distribution Layers together in large LAN networks
+- The focus is speed ('fast transport')
+- CPU-intensive operations such as security, QoS marking/classification, etc. should be avoided at this Layer
+- Connections are all Layer 3. No spanning-tree!
+- Should maintain connectivity throughout the LAN even if devices fail
 ### 1.2.c Spine-leaf
 Data centers are dedicated spaces/buildings used to store computer systems such as servers and network devices.
 Traditional data center designs used a three-tier architecture (Access-Distribution-Core) shown previously.
@@ -126,7 +126,9 @@ TCP (Transmission Control Protocol)
     - Sequence numbers in the TCP header allow destination hosts to put segments in the correct order even if they arrive out of order.
 - TCP provides flow control
     - The destination host can tell the source host to increase/decrease the rate that data is sent.
-UDP (User Datagram Protocol)
+
+UDP (User Datagram Protocol.)
+
 - UDP is not connection-oriented
   - The sending host does not establish a aconnection with the destination host before seinding data. The data is simply sent.
 - UDP does not provide reliable communication
