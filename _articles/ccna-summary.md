@@ -47,12 +47,48 @@ PoE has a process to determine if a connected devices needs power, and how much 
 
 ## 1.2 Describe characteristics of network topology architectures
 
-### 1.2.a Two-tier
+### 1.2.a 2-tier
+The two-tier LAN design consists of two hierarchical layers:
+    - Access Layer
+    - Distribution Layer
 
-### 1.2.b Three-tier
+Also called a 'Collapsed Core' design because it omits a layer that is found in the 3-Tier design: the Core Layer.
+Access Layer:
+    - the layer that end hosts connect to (PCs, printers cameras, etc.)
+    - typically Access Layer Switches have lots of ports for end hosts to connect to
+    - QoS marking is typically done here
+    - Security sevices like port security, DAI, etc are typically performed here
+    - switchports might be PoE-enabled for wireless APs, IP phones, etc.
+Distribution Layer (sometimes called Aggregation Layer):
+    - aggregates connections from the Access Layer Switches
+    - typically is the border between Layer 2 and Layer 3
+    - connects to services such as Internet, WAN, etc.
 
+
+### 1.2.b 3-tier
+In large LAN networks with many Distribution Layer switches (for example in separate buildings), the number of connections required between Distribution Layer switches grows rapidly. 
+To help scale large LAN networks, you can add a Core Layer. Cisco recommends adding a Core Layer if there are more than three Distribution Layers in a single location.
+
+The three-tier LAN design consists of three hierarchical layers:
+    - Access Layer
+    - Distribution Layer
+    - Core Layer
+
+Core Layer:
+    - Connects Distribution Layers together in large LAN networks
+    - The focus is speed ('fast transport')
+    - CPU-intensive operations such as security, QoS marking/classification, etc. should be avoided at this Layer
+    - Connections are all Layer 3. No spanning-tree!
+    - Should maintain connectivity throughout the LAN even if devices fail
 ### 1.2.c Spine-leaf
+Data centers are dedicated spaces/buildings used to store computer systems such as servers and network devices.
+Traditional data center designs used a three-tier architecture (Access-Distribution-Core) shown previously.
+This worked well when most traffic in the data center was North-South.
+With the precedence of virtual servers, applications are often deployed in a distributed manner (across multiple physical servers), which increases the amount of East-West traffic in the data center.
+The traditional three-tier architecture led to bottlenecks in bandwidth as well as variablility in the server-to-server latency depending on the path the traffic takes.
+To solves this, Spine-Lead architecture (also called Clos architecture) has become prominent in data centers.
 
+There are some rules about Spine-Leaf architecture:
 ### 1.2.d WAN
 
 ### 1.2.e Small office/home office (SOHO)
@@ -81,15 +117,15 @@ Multimode fiber is wider than single-mode fiber, allows multiple angles (modes) 
 Day 9 video
 ## 1.5 Compare TCP to UDP
 TCP (Transmission Control Protocol)
-    - TCP is connection-oriented
+- TCP is connection-oriented
       - Before actually sending data to the destination host, the two hosts commmunicate to establish a connection.
-    -TCP provides reliable communication.
-        - The destination hsot must acknowledge that it received each TCP segment.
-        - If a segment isn't acknowledged, it is sent again.
-    - TCP provides sequencing
-        - Sequence numbers in the TCP header allow destination hosts to put segments in the correct order even if they arrive out of order.
-    - TCP provides flow control
-        - The destination host can tell the source host to increase/decrease the rate that data is sent.
+- TCP provides reliable communication.
+    - The destination hsot must acknowledge that it received each TCP segment.
+    - If a segment isn't acknowledged, it is sent again.
+- TCP provides sequencing
+    - Sequence numbers in the TCP header allow destination hosts to put segments in the correct order even if they arrive out of order.
+- TCP provides flow control
+    - The destination host can tell the source host to increase/decrease the rate that data is sent.
 UDP (User Datagram Protocol)
 - UDP is not connection-oriented
   - The sending host does not establish a aconnection with the destination host before seinding data. The data is simply sent.
