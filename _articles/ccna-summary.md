@@ -277,6 +277,7 @@ Comparing TCP & UDP
   - For applications like real-time voice and video, UDP is preferred.
   - There are some applications that use UDP, but provide reliability etc within the application itself.
   - Some applications use both TCP & UDP, depending on the situation.
+
 ## 1.6 Configure and verify IPv4 addressing and subnetting
 pictures
 CIDR (Classless Inter-Domain Routing) removed the previous requirements of:
@@ -297,7 +298,9 @@ Private IPv5 address ranges:
 - 10.0.0.0/8 (10.0.0.0 to 10.255.255.255) (Class A)
 - 172.16.0.0/12 (172.16.0.0 to 172.31.255.255) (Class B)
 - 192.168.0.0/16 (192.168.0.0 to 192.168.255.255) (Class C)
+
 These addresses are free to be used in networks. They don't have to be globally unique. Because private IPv4 addresses can't be used over the Internet, so the PCs can't access the Internet without NAT.
+
 ## 1.8 Configure and verify IPv6 addressing and prefix
 config pic
 
@@ -320,6 +323,7 @@ Link-local IPv6 addresses are automatically generated on IPv6-enabled interfaces
     - routing protocl peerings (OSPFv3 uses link-local addresses for neighbor adjacencies)
     - next-hop addresses for static routes
     - Neighbor Discovery Protocol (NDP, IPv6's replacement for ARP) uses link-local addresses to function
+
 ### 1.9.b Anycast
 Anycast is a new feature of IPv6.
 Anycast is "one-to-one-of-many"
@@ -347,6 +351,7 @@ IPv6 multicast scopes:
 - Site-local (FF05): The packet can be forwarded by routers. Should be limited to a single physical location (not forwarded over a WAN)
 - Organization-local (FF08): Wider in scope than site-local (an entire company/organization).
 - Global (FF0E): No boundaries. Possible to be routed over the Internet.
+
 ### 1.9.d Modified EUI 64
 EUI stands for Extended Unique Identifier
 Modfied EUI-64 is a method of converting a MAC address (48 bits) into a 64-bit interface Identifier
@@ -355,6 +360,7 @@ To convert the MAC address:
 1. Split the MAC address into two halves
 2. Insert FFFE in the middle
 3. Invert the 7th bit
+
 ## 1.10 Verify IP parameters for Client OS (Windows, Mac OS, Linux)
 >ipconfig /all
 
@@ -551,8 +557,10 @@ Benefits of Virtualization:
     - Provision or migrate any virtual machine to any physical server
 
 VMs are connected to each other and the external network via a virtual switch running on the hypervisor. Just like a regular physical switch, the vSwitch's interfaces can operate as access or trunk ports and use VLANs to separate the VMs at Layer 2. Interfaces on the vSwitch connect to the physical NIC (or NICs) of the server to communicate with the external network.
+
 ## 1.13 Describe switching concepts
 MAC Address is a 6-byte (48-bit) globally unique physical address assigned to the device when it is made. Written as 12 hexadecimal characters. (00:00:00:00:00:00)
+
 ### 1.13.a MAC learning and aging
 When a switch receives a frame, it associates the MAC address of source with the corresponding port which the frame was received. The switch dynamically constructrs an address table using the MAC source addresses of received frames.
 These dynamically learned MAC addresses are deleted from the table after the MAC address age value has expired. This frees unused addresses from the MAC address table for other active subscribers. The default value is 300 seconds.
@@ -575,6 +583,7 @@ To exchange frames between LAN ports efficiently, the switch maintains a MAC add
 VLANs are configured on switches on a per-interface basis, and logically seperate end hosts at Layer 2. Switches do not forward traffic directly between hosts in different VLANs, it must forward the traffic to a router to perform inter-VLAN routing.
 
 show vlan brief
+
 ### 2.1.a Access ports (data and voice)
 An access port is a switchport which belongs to a single VLAN, and usually connects to end hosts like PCs.
 IP phones have an internal 3-port switch
@@ -588,8 +597,10 @@ It is recommended to seperate 'voice' traffic (from the IP phone) and 'data' tra
   
 
 ### 2.1.b Default VLAN
+
 VLAN 1 is the default VLAN.
 VLANs 1002-1005 exist by default and cannot be deleted.
+
 ### 2.1.c Connectivity
 
 
@@ -601,10 +612,12 @@ DTP (Dynamic Trunking Protocol)
 - Cisco proprietary protocol that allows Cisco switches to dyniamically determine their interface status (access or trunk) without manual configuration. For security purposes, manual configuration is reconmmended and DTP should be disabled on all switchports.
 VTP (VLAN Trunking Protocol)
 - allows you to configure VLANs on a central VTP server switch, and other switches (VTP clients) will synchronize their VLAN database to the server. It is designed for large networks with many VLANs, but is rarely used and not recommended.
+
 ### 2.2.a Trunk ports
 Trunk ports can be used to carry from multiple VLANs over a single interface. Switches will "tag" all frames that they send over a trunk link. This allows the reciving switch to know which VLAN the frame belongs to.
 
 show interfaces trunk
+
 ### 2.2.b 802.1q
 802.1q is an industry standard trunking protocol.
 
@@ -618,6 +631,7 @@ The TCI consists of 3 smaller fields:
     - used to indicated frames that can be dropped if the network is congested 
 - VID (VLAD ID), 12 bits
     - identifies the VLAN the frame belongs to. 
+
 ### 2.2.c Native VLAN
 802.1q has a feature called the native VLAN.
 The native VLAN is VLAN 1 by default on all trunk ports, but can be manually configured on each trunk port.
@@ -713,6 +727,7 @@ spanning-tree vlan 10 root primary/secondary
 Root/Designated ports remain stable in a Forwarding state.
 Non-designated ports remain stable in a Blocking state. Interfaces in a Blocking state are effectively disabled to prevent loops.
 Listening and Learning are transitional states which are passed through when an interface is activated, or when a Blocking port must transition to a Forwarding state due to a change in the network topology.
+
 ### 2.5.c PortFast
 Spanning tree timer picture
 
@@ -772,6 +787,7 @@ Metric is used to compare routes learned via the same routing protocol. Differen
 A lower AD is preferred, and indicates that the routing protocol is considered more trustworthy (more likely to select good routes).
 
 picture --------------
+
 ### 3.1.f Metric
 A router's route table contains the best route to each destination network it knows about.
 If a router using a dynamic routing protocol learns two different routes to the same destination, how does it determine which is 'best'?
@@ -781,6 +797,7 @@ If a router learns two (or more) routes via the same routing protocol to the sam
 ECMP (Equal Cost Multi-Path)
 
 picture --------------
+
 ### 3.1.g Gateway of last resort
 
 ## 3.2 Determine how a router makes a forwarding decision by default
@@ -788,7 +805,9 @@ picture --------------
 Routers drop packets with unknown destinations.
 
 ### 3.2.a Longest prefix match
+
 When a router looks up a destination address in its routing table, it looks for the most specific matching route. Most specific = longest prefix length ( /32 > /24 > /16 > /8 > /0)
+
 ### 3.2.b Administrative distance
 ### 3.2.c Routing protocol metric
 
@@ -809,8 +828,10 @@ show ip route
 
 ### 3.3.a Default route
 A route that a router uses to forward an incoming packet when no other route is available for that packet in the routing table.
+
 ### 3.3.b Network route
 A route to a network/subnet (mask length < /32)
+
 ### 3.3.c Host route
 A route to a specific host (/32 mask)
 
@@ -818,10 +839,12 @@ A route to a specific host (/32 mask)
 ### 3.3.d Floating static
 By changing the AD of a static route, you can make it less preferred than routes learned by a dynamic routing protocl to the same destination (make sure the AD is higher than the routing protocol's AD!) This is known as a "floating static route".
 The route will be inactive (not in the routing table) unless the route learned by the dynamic routing protocol is removed.
+
 ## 3.4 Configure and verify single area OSPFv2
 OSPF uses shortest path first algorithm, aka Dijkstra's algorithm
 Routers store information about the network in LSAs (Link State Advertisements), which are organized in a structure called the LSDB (Link State Database)
 Routers will flood LSAs until all routers in the OSPF area develop the same map of the network (LSDB).
+
 ### 3.4.a Neighbor adjacencies
 In OSPF, there are three main steps in the process of sharing LSAs and determining the best route to each destination in the network.
 1. Become neighbors with other routers connected to the same segment
@@ -837,10 +860,12 @@ OSPF Neighbor requirements
 6. Authentication settings must match
 7. IP MTU settings must match (can become neighbors, but OSPF doesn't operate properly)
 8. OSPF network type must match (can become neighbors, but OSPF doesn't operate properly)
+
 ### 3.4.b Point-to-point
 Point-to-point network type is enable on serial interfaces using the PPP or HDLC encapsulations by default.
 Routers dynamically discover neighbors by sending/listening for OSPF Hello messages using multicast address 224.0.0.5.
 A DR and BDR are not elected. The two routers will form a Full adjacency with eachother.
+
 ### 3.4.c Broadcast (DR/BDR selection)
 Broadcast network type is enabled on Ethernet and FDDI interfaces by default.
 Routers dynamically discover neighbors by sending/listening for OSPF Hello messages using multicast address 224.0.0.5. To send routing information to a DR or BDR the multicast address of 224.0.0.6 is used.
@@ -854,6 +879,7 @@ The DR/BDR election order of Priority:
 "First place" becomes the DR for the subnet, "second place" becomes the BDR
 The default OSPF interface priority is 1 on all interfaces.
 In the broadcast network type, routers will only form a full OSPF adjacency with the DR and BDR of the segment. Therefore, routers only exchange LSAs with the DR and BDR. DROthers will not exchange LSAs with each other. All routers will still have the same LSDB, but this reduces the amount of LSAs flooding the network.
+
 ### 3.4.d Router ID
 OSPF uses the largest IP address configured on the interfaces as its router ID. If a loopback interface is configured with an IP address, the Cisco IOS software will use this IP address as its router ID.
 
@@ -895,6 +921,7 @@ If there arent enough inside global IP address available (=all are currently bei
 - If a packet from another inside host arrives and needs NAT but there are no available addresses, the router will drop the packet.
 - The host will be unable to access outside networks until one of the inside global IP addresses becomes available.
 - Dynamic NAT entries will time out automatically if not used, or you can clear them manually. 
+
 ## 4.2 Configure and verify NTP operating in a client and server mode
 NTP (Network Time Protocol) allows automatic syncing of time over a network. 
 - NTP clients request the time from NTP servers.
@@ -943,14 +970,17 @@ There are three main operations used in SNMP.
 1. Managed devices can notify the NMS of events
 2. The NMS can ask the managed devices for information about their current status.
 3. The NMS can tell the managed devices to change aspects of their configuration.
+
 ## 4.5 Describe the use of syslog features including facilities and levels
 Syslog is an industry standard protocol for message logging.
 On network devices, Syslog can be used to log events such as changes in interface status (up<->down), changes in OSPF neighbor status, system restarsts, etc.
 The messages can be displayed in the CLI, saved in the device's RAM, or sent to an external Syslog server.
 Logs are essential when troubleshooting issues, examining the cause of incidents, etc.
 Syslog and SNMP are both used for monitoring and troubleshooting of devices. They are complementary, but their functionalities are different.
+
 ## 4.6 Configure and verify DHCP client and relay
 -pictures-
+
 ## 4.7 Explain the forwarding per-hop behavior (PHB) for QoS, such as classification, marking, queuing, congestion, policing, and shaping 
 QoS is used to manage the following characteristics of network traffic:
 1. Bandwidth
@@ -980,6 +1010,7 @@ SSH (Secure Shell) allows for remote access while providing security features su
 The SSH server (the device being connected to) listens for SSH traffic on TCP port 22.
 To enable and use SSH, you must generate an RSA public and private key pair. The keys are used for data encryption/decryption, authentication, etc.
 -picture-
+
 ## 4.9 Describe the capabilities and function of TFTP/FTP in the network
 FTP (File Transfer Protocol) and TFTP (Trivial File Transfer Protocol) are industry standard protocols used to transfer files over a network.
 They both use a client-server model.
@@ -1013,6 +1044,7 @@ Integrity
 - Data should be correct and authentic.
 Availability
 - The network/system should be operational and accessible to authorized users.
+
 ## 5.1 Define key security concepts (threats, vulnerabilities, exploits, and mitigation techniques)
 A vulnerability is any potential weakness that can compromise the CIA of a system/info.
 - a potential weakness isn't a problem on its own
@@ -1022,6 +1054,7 @@ A threat is the potential of a vulnerability to be exploited.
 - A hacker exploiting a vulnerability in your system is a threat.
 A mitigation technique is something that can protect against threats.
 - Should be implemented everywhere a vulnerability can be exploited: client devices. servers, switches, routers, firewalls, etc.
+
 ## 5.2 Describe security program elements (user awareness, training, and physical access control)
 User awareness programs are designed to make employees aware of potential security threats and risks.
 - For example, a company might send out false phishing emails to make employees click a link and sign in with their login credentials.
@@ -1032,6 +1065,7 @@ Physical access control protects equipment and data from potential attackers by 
 - Multifactor locks can protect access to restricted areas.
 - ie. a door that requires users to swipe a badge and scan their fingerprint to enter.
 - Permissions of the badge can easily be changed, for example permissions can be removde when an employee leaves the company.
+
 ## 5.3 Configure and verify device access control using local passwords
 
 ## 5.4 Describe security password policies elements, such as management,complexity, and password alternatives (multifactor authentication, certificates, and biometrics)
@@ -1047,6 +1081,7 @@ Requiring multiple factors of authentication greatly increases the security.
 
 Digital certificates are another form of authentication used to prove the identity of the holder of the certificate. They are used for websites to verify that the website being accessed is legitimate.
 Entities that want a certificate to prove their identity send a CSR (Certificate Signing Request) to a CA (Certificate Authority), which will generate and sign the certificate.
+
 ## 5.5 Describe IPsec remote access and site-to-site VPNs
 To provide secure communications over the Internet, VPNs (Virtual Private Networks) are used. We will cover two kinds of Internet VPNs:
 1. Site-to-Site VPNs using IPsec
@@ -1172,12 +1207,14 @@ WPA3 was released in 2018 and includes the following protocols:
 
 ## 5.10 Configure and verify WLAN within the GUI using WPA2 PSK
 
+
 ## 6.0 Automation and Programmability
 There are various tools/methods that can be used to automate tasks in the network:
 - SDN (Software-Defined Networking)
 - Ansible
 - Puppet
 - Python scripts, etc
+
 ## 6.1 Explain how automation impacts network management
 Network automation provides many key benefits:
 - Human error (typos etc.) is reduced.
@@ -1200,6 +1237,7 @@ SDN tools can provide the benefits of automation without the requirement of thir
 - However, APIs allow third-party applications to interact with the controller, which can be very powerful.
 
 Although SDN and automation aren't the same thing, the SDN architecture greatly facilitates the automation of various tasks in the network via the SDN controller and APIs.
+
 ## 6.3 Describe controller-based, software defined architecture (overlay, underlay, and fabric)
 SDN (Software-Defined Networking) is an approach to networking that centralizes the control plane into an application called a controller.
 SDN is also called the Software-Defined Architecture (SDA) or Controller-Based Networking.
@@ -1326,6 +1364,7 @@ DNA Center-based network management:
 - Configurations and policies are centrally manaaged.
 - Software versions are also centrally managed. DNA Center can monitor cloud servers for new versions and then update the manged devices.
 - New network deployments are much quicker. New devices can automatically receive the configurations from DNA Center without manual configuration.
+
 ## 6.5 Describe characteristics of REST-based APIs (CRUD, HTTP verbs, and data encoding)
 An API (Application Programming Interface) is a software interface that allows two applications to communicate with each other.
 APIs are essential not just for network automation, but for all kinds of applications.
