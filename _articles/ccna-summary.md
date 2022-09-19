@@ -26,10 +26,12 @@ You can also create virtual interfaces, or SVIs (switch virtual interfaces), for
 These SVIs are used as the gateway address for each PC, instead of a router.
 To send traffic to different subnets/VLANs, the PCs will send traffic to the switch, and the switch will route the traffic. 
 Routes can be configured on Layer 3 switches, and it can be used for inter-VLAN routing.
+
 ###     1.1.c Next-generation firewalls and IPS
 Firewalls monitor and control network traffic based on configured rules. They are known as "Next-Generation Firewalls" when they include more modern and advanced filtering capabilities.
 Network firewalls are hardware devices that filter traffic between networks. 
 Host-based firewalls are software applications that filter traffic entering and exiting a host machine, like a PC.
+
 ###     1.1.d Access points
 
 
@@ -37,8 +39,10 @@ Host-based firewalls are software applications that filter traffic entering and 
 
 ### 1.1.f Endpoints/End hosts
 An endpoint is a remote computing device that communicates back and forth with a network, examples include computers, laptops, mobile phones, tablets, and servers.
+
 ### 1.1.g Servers
 A server is a device that provides functions or services for clients/endpoints on a network.
+
 ### 1.1.h PoE
 PoE (Power over Ethernet) allows Power Sourcing Equipment (PSE) to provide power to Powered Devices (PD) over an Ethernet cable. 
 Typically the PSE is a switch and the PDs are IP phones, IP cameras, wireless access points, etc.
@@ -47,6 +51,7 @@ PoE has a process to determine if a connected devices needs power, and how much 
 
 
 ## 1.2 Describe characteristics of network topology architectures
+
 
 ### 1.2.a 2-tier
 The two-tier LAN design consists of two hierarchical layers:
@@ -232,9 +237,9 @@ RJ-45 (RJ = Registered Jack) - Standard connector for copper UTP cables that has
 UTP cables - Unshielded twister pair copper wire, contains 4 pairs of wires twisted together, with 8 wires in total.
 
 Straight-through cable - 
-
+![](/images/straight-through%20cable.png)
 Crossover cable - 
-
+![](/images/crossover%20cable.png)
 Using Auto MDI-X, devices are able to automatically detect which pins their neighbor is using to transmit data and automatically adjust their pins to receive and transmit on the correct pins.
 ### 1.3.a Single-mode fiber, multimode fiber, copper
 SFP Transceiver (SFP = Small Form-Factor Pluggable) - connector used for fiber-optic ports on a switch, connects to Fiber-Optic cabling.
