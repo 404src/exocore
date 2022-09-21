@@ -58,6 +58,7 @@ The two-tier LAN design consists of two hierarchical layers:
 - Access Layer
 - Distribution Layer
 
+
 Also called a 'Collapsed Core' design because it omits a layer that is found in the 3-Tier design: the Core Layer.
 Access Layer:
 - the layer that end hosts connect to (PCs, printers cameras, etc.)
@@ -69,7 +70,8 @@ Distribution Layer (sometimes called Aggregation Layer):
 - aggregates connections from the Access Layer Switches
 - typically is the border between Layer 2 and Layer 3
 - connects to services such as Internet, WAN, etc.
-
+Two-tier Campus LAN Design:
+![](/images/two-tier%20campus%20LAN%20design.png)
 
 ### 1.2.b 3-tier
 In large LAN networks with many Distribution Layer switches (for example in separate buildings), the number of connections required between Distribution Layer switches grows rapidly. 
@@ -86,6 +88,8 @@ Core Layer:
 - CPU-intensive operations such as security, QoS marking/classification, etc. should be avoided at this Layer
 - Connections are all Layer 3. No spanning-tree!
 - Should maintain connectivity throughout the LAN even if devices fail
+Three-Tier Campus LAN Design:
+![](/images/three-tier%20campus%20lan%20design.png)
 
 ### 1.2.c Spine-leaf
 Data centers are dedicated spaces/buildings used to store computer systems such as servers and network devices.
@@ -109,6 +113,7 @@ There are some rules about Spine-Leaf architecture:
 
 The path taken by traffic is randomly chosen to balance the traffic load among the Spin switches
 Each server is separated by the same number of 'hops' (except those connected to the same Leaf), providing consistent latency for East-West traffic.
+![](/images/spine-leaf.png)
 
 ### 1.2.d WAN
 WAN (Wider Area Network) is a network that extends over a large geographic area.
@@ -134,6 +139,7 @@ This one device can serve as a:
 - Firewall
 - Wireless Access Point
 - Modem
+![](/images/SOHO%20network.png)
 
 ### 1.2.f On-premise and cloud
 Traditional IT infrastructure deployments were some combination of the following:
@@ -235,11 +241,15 @@ Benefits of Cloud Compouting
 RJ-45 (RJ = Registered Jack) - Standard connector for copper UTP cables that has 8 pin connections.
 
 UTP cables - Unshielded twister pair copper wire, contains 4 pairs of wires twisted together, with 8 wires in total.
+![](/images/UTP%20cable%20pins.png)
 
 Straight-through cable - 
 ![](/images/straight-through%20cable.png)
 Crossover cable - 
 ![](/images/crossover%20cable.png)
+1000BASE-T, 10GBASE-T cabling - 
+![](/images/bidirectional%20cabling.png)
+
 Using Auto MDI-X, devices are able to automatically detect which pins their neighbor is using to transmit data and automatically adjust their pins to receive and transmit on the correct pins.
 ### 1.3.a Single-mode fiber, multimode fiber, copper
 SFP Transceiver (SFP = Small Form-Factor Pluggable) - connector used for fiber-optic ports on a switch, connects to Fiber-Optic cabling.
@@ -284,7 +294,15 @@ Comparing TCP & UDP
   - Some applications use both TCP & UDP, depending on the situation.
 
 ## 1.6 Configure and verify IPv4 addressing and subnetting
-pictures
+![](/images/IPV4%20address%20classes.png)
+![](/images/IPV4%20Addresses%20ABC.png)
+Maximum number of hosts per network:
+![](/images/Maximum%20hosts%20per%20network.png)
+First/Last Usable Address:
+![](/images/First/Last%20Usable%20Address.png)
+OSI Model - PDUs:
+![](/images/OSI%20PDUs.png)
+
 CIDR (Classless Inter-Domain Routing) removed the previous requirements of:
     Class A = /8
     Class B = /16
@@ -307,7 +325,10 @@ Private IPv5 address ranges:
 These addresses are free to be used in networks. They don't have to be globally unique. Because private IPv4 addresses can't be used over the Internet, so the PCs can't access the Internet without NAT.
 
 ## 1.8 Configure and verify IPv6 addressing and prefix
-config pic
+Configuring IPv6:
+![](/images/configuring%20ipv6.png)
+Verify IPv6:
+![](/images/verify%20ipv6.png)
 
 ## 1.9 Describe IPv6 address types
 An IPv6 address is 128 bits written in hexadecimal.
@@ -337,7 +358,7 @@ Multiple routers are configured with the same IPv6 address.
 - When hosts sends packets to that destination address, routers will forward it to the nearest router configured with that IP address (based on routing metric).
 - There is no specific address range for anycast addresses. Use a regular unicast address (global unicast, unique local) and specify it as an anycast address:
     - R1(config-if)# ipv6 address (ipv6 address)/128 anycast
-
+![](/images/anycast%20address%20config.png)
 
 ### 1.9.c Multicast
 Unicast addresses are one-to-one
@@ -348,7 +369,9 @@ Multicast addresses are one-to-many.
 - one source to multiple destinations (that have joined the specific multicast group).
 IPv6 uses range FF00::/8 for multicast. 
 IPv6 doesn't use broadcast (there is no "broadcast address" in IPv6).
-
+![](/images/multicast%20ipv6.png)
+verify multicast addresses:
+![](/images/verify%20multicast.png)
 IPv6 defines multiple multicast "scopes" which indicate how far the packet should be forwarded. The addresses in the previous slide all use the "link-local" scope (FF02), which stays in the local subnet.
 IPv6 multicast scopes:
 - Interface-local (FF01): The packet doesn't leave the local device. Can be used to send traffic to a service within the local device.
@@ -356,6 +379,7 @@ IPv6 multicast scopes:
 - Site-local (FF05): The packet can be forwarded by routers. Should be limited to a single physical location (not forwarded over a WAN)
 - Organization-local (FF08): Wider in scope than site-local (an entire company/organization).
 - Global (FF0E): No boundaries. Possible to be routed over the Internet.
+![](/images/multicast%20address%20scopes.png)
 
 ### 1.9.d Modified EUI 64
 EUI stands for Extended Unique Identifier
@@ -821,7 +845,12 @@ IPv6 routing works the same as IPv4 routing.
 However, the two processes are seperate on the router, and the two routing tables are seperate as well.
 IPv4 routing is enabled by default. IPv6 routing is disabled by default, and must be enabled with "ipv6 unicast-routing"
 If IPv6 routing is disabled, the router will be able to send and receive IPv6 traffic, but will not route IPv6 traffic (=will not forward it between networks).
-A connected network route is automatically added for each connected network. A local host route is automatically added for each address configured on the router. Routes for link-local addresses are not added to the routing table.
+A connected network route is automatically added for each connected network. 
+A local host route is automatically added for each address configured on the router.
+Routes for link-local addresses are not added to the routing table.
+![](/images/ipv6%20static%20routing.png)
+![](/images/ipv6%20static%20routing%20examples.png)
+
 
 
 
@@ -909,12 +938,14 @@ List of FHRPs:
 ## 4.1 Configure and verify inside source NAT using static and pools
 NAT (Network Address Translation) is used to modify the source and/or destination IP addresses of packets. 
 There are various reasons to use NAT, but the most common reason is to allow hosts with private IP addresses to communicate with other hosts over the Internet.
-Static NAT involves statically configuring one-to-one mappings of private IP addresses to public IP addresses. 
+Static NAT involves statically configuring one-to-one mappings of private IP addresses to public IP addresses.  When traffic from the internal host is sent to the outside network, the router will translate the source address. However, this one-to-one mapping also allows external hosts to access the internal host via the inside global address.
+
 An inside local IP address is mapped to an inside global IP address.
 - Inside Local: The IP address of the inside host, from the perspective of the local network. (The IP address actually configured on the inside host, usually a private address)
 - Inside Global: The IP address of the inside host, from the perspective of outside hosts (the IP address of the inside host after NAT, usually a public address)
+![](/images/static%20NAT%20flowchart.png)
 
--conf picture-
+![](/images/static%20NAT%20config.png)
 
 In dynamic NAT, the router dynamically maps inside local addresses to inside global addresses as needed. 
 An ACL is used to identify which traffic should be translated.
@@ -1468,7 +1499,8 @@ Data serialization is the process of converting data into standardized format/st
 - This allows the data to be communicated between applications in a way both applications understand.
 
 - Data serialization languages allow us to represent variable with text.
-===pic
+![](/images/data%20serialization.png)
+
 
 JSON (JavaScript Object Notation) is an open standard file format and data interchange format that uses human-readable text to store and transmit data objects.
 It was derived from JavaScript, but it is languaage-independent and many modern programming languages are able to generate and read JSON data.
@@ -1480,6 +1512,7 @@ JSON can represent four 'primitive' data types:
 - boolean
 - null
     - a null value represents the intentional absence of any object value. It is not surrounded by quotes.
+![](/images/JSON%20example.png)
 
 JSON also has two 'structured' data types:
 - object
@@ -1488,10 +1521,13 @@ JSON also has two 'structured' data types:
     - the value is any valid JSON data type (string, number, boolean, null, object, array)
     - The key and value are seperated by a colon.
     - If there are multiple key-value pairs, each pair is seperated by a comma.
+![](/images/JSON%20object%20format.png)
+    
 - array
     - An array is a series of values seperated by commas.
     - not key-value pairs
     - the values don't have to be the same data type.
+![](/images/JSON%20array%20format.png)
 
 XML (Extensible Markup Language) was developed as a markup languaage, but is now used as a general data serialization language.
 - markup languaages (ie. HTML) are used to format text (font, size, color headings, etc)
