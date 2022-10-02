@@ -124,8 +124,17 @@ There have been many different WAN technologies over the years. Depending on the
 Technologies which are considered 'legacy' (old) in one country might still be used in other countries.
 
 Private WAN services such as leased lines and MPLS provide security because each customer's traffic is seperated by using dedicated physical connections (leased line) or by MPLS tags.
+![](/images/leasedlines.png)
+![](/images/MPLS.png)
+
+WAN Architectures:
+![](/images/WANleasedline1.png)
+![](/images/wanleasedline2.png)
+![](/images/wanfiber.png)
 
 To provide secure communications over the Internet, VPNs (Virtual Private Networks) are used.
+![](/images/WANoverVPN.png)
+
 
 ### 1.2.e Small office/home office (SOHO)
 SOHO (Small Office/Home Office) refers to the office of a small company, or a small home office with few devices.
@@ -185,6 +194,9 @@ The three service models of cloud:
     - The consumer does not manage or control the underlying cloud infrastrcture but has control over operating systems, storage, and deployed applications; and possibly limited control of select networking components (e.g. host firewalls).
     - Examples include Amazon EC2 and Google Compute Engine.
 
+![](/images/saas.png)
+
+
 The four deployment models of cloud:
 - Most people assume that 'cloud' means public cloud providers such as AWS, Azure, and GCP.
 - Although 'Public cloud' is the most common deployment model, it's not the only one.
@@ -232,7 +244,7 @@ Benefits of Cloud Compouting
 - Reliability
     - Backups in the cloud are very easy to perform. Data can be mirrored at multiple sites in different geographic locations to support disaster recovery.
 
-
+![](/images/connectingtocloudresources.png)
 
 
 
@@ -293,6 +305,8 @@ Comparing TCP & UDP
   - There are some applications that use UDP, but provide reliability etc within the application itself.
   - Some applications use both TCP & UDP, depending on the situation.
 
+![](/images/TCPvsUDP.png)
+![](/images/TCPandUDPportnumbers.png)
 ## 1.6 Configure and verify IPv4 addressing and subnetting
 ![](/images/IPV4%20address%20classes.png)
 ![](/images/IPV4%20Addresses%20ABC.png)
@@ -309,6 +323,7 @@ CIDR (Classless Inter-Domain Routing) removed the previous requirements of:
     Class C = /24
 This allows larger networks to be split into smaller networks, allowing greater efficiency.
 These smaller networks are called "subnetworks" or "subnets".
+![](/images/CIDR%20notation.png)
 
 Using VLSM (Variable-Length Subnet Masks) will allow the creation of subnets of different sizes, to make use of network addresses even more efficient.
 ## 1.7 Describe the need for private IPv4 addressing
@@ -393,6 +408,9 @@ To convert the MAC address:
 ## 1.10 Verify IP parameters for Client OS (Windows, Mac OS, Linux)
 >ipconfig /all
 
+![](/images/ipconfigall.png)
+
+
 ## 1.11 Describe wireless principles
 Wireless network have some issues that need to be dealt with.
 
@@ -414,6 +432,7 @@ However, in larger WLANs with multiple APs, it's important that adjacent APs don
 
 In the 2.4 GHz band, it is recommended to use channels 1, 6, and 11.
 Using channels 1,6 and 11, you can place AP's in a 'honeycomb' pattern to provide complete coverage of an area without interference between channels.
+![](/images/honeycomb.png)
 
 ### 1.11.b SSID
 802.11 defines different kinds of service sets which are groups of wireless network devices. 
@@ -425,7 +444,7 @@ There are three main types:
     - Can be used for file transfer (ie. Airdrop)
     - Not scalable beyond a few devices
 - Infrastructure
-    - A BSS (Basic Service Set) is a kinda of Infrastructure Service Set in which clients connect to each other via an AP (Access Point), but not directly to each other.
+    - A BSS (Basic Service Set) is a kind of Infrastructure Service Set in which clients connect to each other via an AP (Access Point), but not directly to each other.
     - A BSSID (Basic Service Set ID) is used to uniquely identify the AP. 
         - Other APs can use the same SSID, but not the same BSSID
         - The BSSID is the MAC address of the AP's radio
@@ -433,25 +452,35 @@ There are three main types:
     - Wireless devices that have asociated with the BSS are called 'cients' or 'stations'.
     - The area around an AP where its signal is usable is called a BSA (Basic Service Area)
     - Clients must communicate via the AP, not directly with each other.
-    - To create large wireless LANs beyond the range of a single AP, we use an ESS (Extended Service Set).
-    - APs with their own BSSs are connected by a wired network.
-        - Each BSS uses the same SSID.
-        - Each BSS has a unique BSSID.
-        - Each BSS uses a different channel to avoid interference.
-    - Clients can pass between APs without having to reconnect, providing a seamless Wi-Fi experience when moving between APs.
-        - This is called roaming.
-    - The BSAS should overlap about 10-15%.
+
+![](/images/BSSnetwork.png)
+
+- To create large wireless LANs beyond the range of a single AP, we use an ESS (Extended Service Set).
+- APs with their own BSSs are connected by a wired network.
+    - Each BSS uses the same SSID.
+    - Each BSS has a unique BSSID.
+    - Each BSS uses a different channel to avoid interference.
+- Clients can pass between APs without having to reconnect, providing a seamless Wi-Fi experience when moving between APs.
+    - This is called roaming.
+- The BSAS should overlap about 10-15%.
+
+![](/images/ESS.png)
+
+
+
 - Mesh
     - An MBSS (Mesh Basic Service Set) can be used in situations where it's difficult to run an Ethernet connection to every AP.
     - Mesh APs use two radios: one to provide a BSS to wireless clients, and one to form a 'backhaul network' which is used to bridge traffic from AP to AP.
     - At least one AP is connected to the wired network, and it is called the RAP (Root Access Point)
     - A protocol is used to determine the best path through the mesh (similar to how dynamic routing protocols are used to determine the best path to a destination.
 
-
+![](/images/MBSS.png)
 
 All devices in a service set share the same SSID (service set identifier)
 The SSID is a human-readable name which identifies the service set. (spaghetti and meatballs)
 The SSID does NOT have to be unique.
+
+![](/images/SSIDreview.png)
 
 ### 1.11.c RF
 Wi-Fi uses two main bands (frequency ranges).
@@ -472,6 +501,7 @@ Each band is divided up into multiple 'channels'.
 - Devices are configured to transmit and receive traffic on one (or more) of these channels.
 The 2.4 GHz band is divided into several channels, each with a 22 MHz range.
 
+![](/images/80211standards.png)
 
 
 ### 1.11.d Encryption
@@ -497,34 +527,51 @@ Authentication methods:
     - The above keys are combined with a 24-bit 'IV' (Initialization Vector) to bring the total length to 64 bits or 128 Benefits
     - WEP encryption is not secure and can easily be cracked.
     - WEP can be used for authentication like this:
+
+![](/images/WEP.png)
+
 - EAP (Extensible Authentication Protocol)
     - EAP is an authentication framework.
     - It defines a standard set of authentication functions that are used by various EAP Methods.
     - we will look at four EAP methods: LEAP, EAP-FAST, PEAP, and EAP-TLS.
     - EAP is integrated with 802.1X, which provide port-based network access control.
+
+![](/images/EAP.png)
+
 - LEAP (Lightweight EAP)
     - LEAP was developed by Cisco as an improvement over WEP.
     - Clients must provide a username and password to authenticate.
     - In addition, mutua authentication is provided by both the client and server sending a challenge phrase to each other.
     - Dynamic WEP keys are used, meaning that the WEP keys are changed frequently.
     - Like WEP, LEAP is considered vulnerable and should not be used anymore.
+
+![](/images/LEAP.png)
+
 - EAP-FAST (EAP Flexible Authenticaiton via Secure Tunneling)
     - EAP-FAST was also developed by Cisco.
     - Consists of three phrases
         - A PAC (Protected Access Credential) is generated and passed from the server to the client.
         - A secure TLS tunnel is established between the client and authentication server.
         - Inside of the secure (encrypted) TLS tunnel, the client and server communicate further to authenticate/authorize the client.
+
+![](/images/EAPfast.png)
+
 - PEAP (Protected EAP)
     - Like EAP-FAST, PEAP involves establsihing a secure TLS tunnel between the client and server.
     - Instead of a PAC, the server has a digital certificate.
     - The client uses this digital certificate to authenticate the server
     - The certificate is also used to estalbish a TLS tunnel
     - Because only the server provides a certificate for authentication, the client must still be authenticated within the secure tunnel, for example by using MS-CHAP (Microsfot Challenge-Handshake Authentication Protocol)
+
+![](/images/PEAP.png)
+
 - EAP-TLS (EAP Transport Layer Security)
     - Whereas PEAP only requires the AS to have a certificate, EAP-TLS requires a certificate on the AS and on every single client.
     - EAP-TLS Is the most secure wireless authentication method, but it is more difficult to implement than PEAP because every client device needs a certificate.
     - Because the client and server authenticate each other with digital certificates, there is no need to authenticate the client within the TLS tunnel.
     - The TLS tunnel is still used to exchange encryption key information 
+
+![](/images/EAP-TLS.png)
 
 Encryption and Integrity methods:
 - TKIP (Temporal Key Integrity Protocol)
@@ -554,6 +601,8 @@ This is inefficient for multiple reasons:
 - Each physical server is expensive and takes up sapce, power, etc.
 - The resources on each physical server (CPU, RAM, storage, NIC) are typically under-used.
 
+![](/images/serverbeforevirtualization.png)
+
 Type 1 Hypervisor
 - Virtualization allows us to break the one-to-one relationship of hardware to OS, allowing multiple OS's to run on a single physical server.
 - Each instance is called a VM (Virtual Machine)
@@ -565,12 +614,16 @@ Type 1 Hypervisor
     - Another term is native hypervisor
 - This is the type of hypervisor used in data center environments. 
 
+![](/images/type1hypervisor.png)
+
 Type 2 Hypervisor
 - Type 2 hypervisors run as a program on an operating system like a regular computer program.
     - Examples include VMware Workstation, Oracle VirtualBox, etc.
 - The OS running directly on the hardware is called the Host OS, and the OS running in a VM is called a Guest OS.
 - Another name for a Type 2 hypervisor is hosted hypervisor.
 - Although Type 2 hypervisors are rarely used in data center environments, they are common on personal-use devices (for example, if a Mac/Linux user needs to run an app that is only support on Windows, or vice versa)
+
+![](/images/type2hypervisor.png)
 
 Benefits of Virtualization:
 - Partitioning
@@ -586,6 +639,8 @@ Benefits of Virtualization:
     - Provision or migrate any virtual machine to any physical server
 
 VMs are connected to each other and the external network via a virtual switch running on the hypervisor. Just like a regular physical switch, the vSwitch's interfaces can operate as access or trunk ports and use VLANs to separate the VMs at Layer 2. Interfaces on the vSwitch connect to the physical NIC (or NICs) of the server to communicate with the external network.
+
+![](/images/VMnetwork.png)
 
 ## 1.13 Describe switching concepts
 MAC Address is a 6-byte (48-bit) globally unique physical address assigned to the device when it is made. Written as 12 hexadecimal characters. (00:00:00:00:00:00)
@@ -611,7 +666,9 @@ To exchange frames between LAN ports efficiently, the switch maintains a MAC add
 ## 2.1 Configure and verify VLANs (normal range) spanning multiple switches
 VLANs are configured on switches on a per-interface basis, and logically seperate end hosts at Layer 2. Switches do not forward traffic directly between hosts in different VLANs, it must forward the traffic to a router to perform inter-VLAN routing.
 
-show vlan brief
+>show vlan brief
+
+![](/images/vlanconfig.png)
 
 ### 2.1.a Access ports (data and voice)
 An access port is a switchport which belongs to a single VLAN, and usually connects to end hosts like PCs.
@@ -624,6 +681,8 @@ It is recommended to seperate 'voice' traffic (from the IP phone) and 'data' tra
 - This can be accomplished using a voice VLAN
 - Traffic from the PC will be untagged, but traffic from the phone will be tagged with a VLAN ID.
   
+![](/images/ip%20phones/%20voice%20VLAN.png)
+
 
 ### 2.1.b Default VLAN
 
@@ -645,7 +704,9 @@ VTP (VLAN Trunking Protocol)
 ### 2.2.a Trunk ports
 Trunk ports can be used to carry from multiple VLANs over a single interface. Switches will "tag" all frames that they send over a trunk link. This allows the reciving switch to know which VLAN the frame belongs to.
 
-show interfaces trunk
+>show interfaces trunk
+
+![](/images/trunkconfig.png)
 
 ### 2.2.b 802.1q
 802.1q is an industry standard trunking protocol.
@@ -656,6 +717,9 @@ The TPID is 2 bytes in length and is always set to a value of 0x8100, indicating
 The TCI consists of 3 smaller fields:
 - PCP (Priority Code Point), 3 bits
     - used for CoS (Class of Service), which prioritizes important traffic in congested networks.
+
+![](/images/PCP/CoS.png)
+
 - DEI (Drop Eligiblle Indicator), 1 bit
     - used to indicated frames that can be dropped if the network is congested 
 - VID (VLAD ID), 12 bits
@@ -680,6 +744,10 @@ CDP (Cisco Discovery Protocol)
 - By default, CDP messages are sent once every 60 seconds. By default, the CDP holdtime is 180 seconds. If a message isn't received from a neighbor for 180 seconds, the neighbor is removed from the CDP neighbor table. 
 - CDPv2 messages are sent by default.
 
+![](/images/CDP%20config%20commands.png)
+![](/images/CDP%20commands.png)
+
+
 LLDP (Link Layer Discovery Protocol)
 - LLDP is an industry standard protocol (IEEE 802.1AB)
 - It is usually disabled on Cisco devices by default, so it must be manually enabled.
@@ -689,8 +757,9 @@ LLDP (Link Layer Discovery Protocol)
 - By default, LLDP messages are sent once every 30 seconds. By default, the LLDP holdtime is 120 seconds.
 - LLDP has an additional timer called the "reinitialization delay". If LLDP is enabled (globally or on an interface), this timer will delay the actual initialization of LLDP. 2 seconds by default. 
 
+![](/images/LLDPconfigcommands.png)
+![](/images/LLDPcommands.png)
 
-pictures of commands etc
 
 ## 2.4 Configure and verify (Layer 2/Layer 3) EtherChannel (LACP)
 When the bandwidth of the interfaces connected to end hosts is greater than the bandwidth of the connection to the distribution switch(es), this is called oversubscription, which can cause congestion.
@@ -706,29 +775,44 @@ The inputs used in the interface selection calculation can be configured
     5. Destination IP
     6. Source and Destination IP
 
-((----------picutre--------))
+
 
 
 There are three methods of EtherChannel configuration on Cisco switches:
 1. LACP (Link Aggregation Control Protocol), 802.3ad 
     - Dynamically negoties the creation/maintenance of the the EtherChannel (similary to DTP for trunks)
+
+![](/images/LACPconfig.png)
+
 2. PAgP (Port Aggregation Protocol)
     - Cisco propretary protocol
     - Dynamically negotiates the creation/maintenance of the EtherChannel.
+
 3. Static EtherChannel
     - A protocol isn't used to determine if an EtherChannel should be formed. 
     - Interfaces are statically configured to form an EtherChannel.
+
+![](/images/staticetherchannelconfig.png)
+
 Up to 8 interfaces can be formed into a single EtherChannel (LACP allows up to 16, but only 8 will be active, the other 8 will be in standby mode, waiting for an active interface to fail.)
 
+![](/images/showetherchannelsummary.png)
+![](/images/showetherchannelportchannel.png)
+![](/images/layer3etherchannel.png)
+![](/images/etherchannelcommands.png)
 
-show etherchannel summary
 ## 2.5 Interpret basic operations of Rapid PVST+ Spanning Tree Protocol
 STP (Spanning Tree Protocol) prevents Layer 2 loops by placing redundant ports in a blocking state, essentially disabling the interface.
 These interfaces act as backups that can enter a forwarding state if an active (=currently forwarding) interface fails.
 Interfaces in a blocking state only send or receive STP messages (called BPDUs = Bridge Protocol Data Units)
 Cisco switches use a version of STP called PVST+ (Per-VLAN Spanning Tree), which runs a seperate STP 'instance' in each VLAN, so in each VLAN different interfaces can be forwarding/blocking. This allows for load balancing by blocking different ports in each VLAN.
 Rapid PVST+ allows for much faster converging/adapting to network changes, similar to 802.1w (Rapid Spanning Tree Protocol).
-show spanning-tree
+>show spanning-tree
+
+![](/images/spanning%20tree%20protocol.png)
+![](/images/spanning%20tree%20port%20states.png)
+![](/images/spanning%20tree%20timers.png)
+![](/images/rapid%20spanning%20tree%20port%20states.png)
 
 ### 2.5.a Root port, root bridge (primary/secondary), and other port names
 Switches use one field in the STP BPDU, the Bridge ID field, to elect a root bridge for the network.
@@ -785,7 +869,8 @@ WLCs have a few different kinds of interfaces:
 - Dynamic interface: These are the interfaces used to map a WLAN to a VLAN. For example, traffic from the 'Internal' WLAN will be sent to the wired network from the WLC's 'Internal' dynamic interface.
 
 ## 2.8 Describe AP and WLC management access connections (Telnet, SSH, HTTP, HTTPS, console, and TACACS+/RADIUS)
-
+WLC config:
+![](/images/WLC%20config.png)
 ## 2.9 Interpret the wireless LAN GUI configuration for client connectivity, such as WLAN creation, security settings, QoS profiles, and advanced settings
 
 
@@ -815,7 +900,7 @@ However, in some rare cases they might use two. For example, if two companies co
 Metric is used to compare routes learned via the same routing protocol. Different routing protocls use different metrics, so they cannot be compared. Instead, the AD (Administrative Distance) is used to determine which routing protocol is preferred.
 A lower AD is preferred, and indicates that the routing protocol is considered more trustworthy (more likely to select good routes).
 
-picture --------------
+![](/images/administrativedistance.png)
 
 ### 3.1.f Metric
 A router's route table contains the best route to each destination network it knows about.
@@ -825,7 +910,7 @@ Each routing protocol uses a different metric to determine which route is best.
 If a router learns two (or more) routes via the same routing protocol to the same destination (same network address, same subnet mask) with the same metric, both will be added to the routing table. Traffic will be load-balanced over both routes.
 ECMP (Equal Cost Multi-Path)
 
-picture --------------
+![](/images/dynamicroutingmetrics.png)
 
 ### 3.1.g Gateway of last resort
 
@@ -848,6 +933,8 @@ If IPv6 routing is disabled, the router will be able to send and receive IPv6 tr
 A connected network route is automatically added for each connected network. 
 A local host route is automatically added for each address configured on the router.
 Routes for link-local addresses are not added to the routing table.
+![](/images/localconnectedstaticinternalroutes.png)
+![](/images/configstaticroute.png)
 ![](/images/ipv6%20static%20routing.png)
 ![](/images/ipv6%20static%20routing%20examples.png)
 
@@ -879,11 +966,33 @@ OSPF uses shortest path first algorithm, aka Dijkstra's algorithm
 Routers store information about the network in LSAs (Link State Advertisements), which are organized in a structure called the LSDB (Link State Database)
 Routers will flood LSAs until all routers in the OSPF area develop the same map of the network (LSDB).
 
+OSPF areas
+- An area is a set of routers and links that share the same LSDB
+- The backbone area (area 0) is an area that all other areas must connect to.
+- Routers with all interfaces in the same area area called internal routers.
+- Routers with interfaces in multiple areas are called area border routers (ABRs).
+- Routers connected to the backbone area (area 0) are called backbone routers.
+- An intra-area route is a route to a destination inside the same OSPF area.
+- An interarea route is a route to a destination in a different OSPF area. 
+- OSPF areas should be contiguous.
+- All OSPF areas must have at least one ABR connected to the backbone area.
+- OSPF interfaces in the same subnet must be in the same area.
+
+![](/images/OSPF%20config.png)
+![](/images/OSPF%20config%202.png)
+
+![](/images/OSPF%20cost.png)
+![](/images/OSPF%20cost%202.png)
+![](/images/OSPF%20cost%203.png)
+
 ### 3.4.a Neighbor adjacencies
 In OSPF, there are three main steps in the process of sharing LSAs and determining the best route to each destination in the network.
 1. Become neighbors with other routers connected to the same segment
 2. Exchange LSAs with neighbor routers
 3. Calculate the best routes to each destination, and insert them into the routing table
+
+![](/images/OSPF%20neighbors.png)
+![](/images/OSPF%20exchanges.png)
 
 OSPF Neighbor requirements
 1. Area number must match
@@ -894,6 +1003,9 @@ OSPF Neighbor requirements
 6. Authentication settings must match
 7. IP MTU settings must match (can become neighbors, but OSPF doesn't operate properly)
 8. OSPF network type must match (can become neighbors, but OSPF doesn't operate properly)
+
+
+
 
 ### 3.4.b Point-to-point
 Point-to-point network type is enable on serial interfaces using the PPP or HDLC encapsulations by default.
@@ -914,8 +1026,13 @@ The DR/BDR election order of Priority:
 The default OSPF interface priority is 1 on all interfaces.
 In the broadcast network type, routers will only form a full OSPF adjacency with the DR and BDR of the segment. Therefore, routers only exchange LSAs with the DR and BDR. DROthers will not exchange LSAs with each other. All routers will still have the same LSDB, but this reduces the amount of LSAs flooding the network.
 
+![](/images/OSPF%20broadcast%20network%20type.png)
+![](/images/config%20OSPF%20network%20type.png)
+
 ### 3.4.d Router ID
 OSPF uses the largest IP address configured on the interfaces as its router ID. If a loopback interface is configured with an IP address, the Cisco IOS software will use this IP address as its router ID.
+
+
 
 ## 3.5 Describe the purpose, functions, and concepts of first hop redundancy protocols
 A (FHRP) First Hop Redundancy Protocol is a computer networking protocol which is designed to protect the default gateway used on a subnetwork by allowing two or more routers to provide backup for the gateway address; in the event of failure of an active router, the backup router will take over the address, usually within a few seconds.
@@ -931,6 +1048,7 @@ List of FHRPs:
 2. VRRP (Virtual Router Redundancy Protocol) 
 3. GLBP (Gateway Load Balancing Protocol) 
    
+![](/images/FHRPcomparisons.png)
 
 ## 4.0 IP Services
 
@@ -958,6 +1076,11 @@ If there arent enough inside global IP address available (=all are currently bei
 - The host will be unable to access outside networks until one of the inside global IP addresses becomes available.
 - Dynamic NAT entries will time out automatically if not used, or you can clear them manually. 
 
+![](/images/dynamic%20NAT%20config.png)
+
+Nat commands:
+![](/images/show%20ip%20nat%20translations.png)
+![](/images/NAT%20commands.png)
 ## 4.2 Configure and verify NTP operating in a client and server mode
 NTP (Network Time Protocol) allows automatic syncing of time over a network. 
 - NTP clients request the time from NTP servers.
@@ -976,6 +1099,10 @@ NTP (Network Time Protocol) allows automatic syncing of time over a network.
 - NTP uses UDP port 123 to communicate.
 - NTP uses only the UTC time zone. You must configure the appropriate time zone on each device.
 
+![](/images/manual%20time%20config.png)
+![](/images/NTP%20config.png)
+![](/images/ntp%20authentication.png)
+![](/images/NTP%20commands.png)
 ## 4.3 Explain the role of DHCP and DNS within the network
 DNS (Domain Name System) is used to resolve human-readable names (google.com) to IP addresses.
 When you type 'youtube.com' into a web browser, your device will ask a DNS server for the IP address of youtube.com.
@@ -985,12 +1112,18 @@ Devices will save the DNS server's responses to a local DNS cache. This means th
 >ipconfig /displaydns
 >nslookup youtube.com
 
+![](/images/DNSios.png)
+![](/images/DNScommands.png)
+
 DHCP (Dynamic Host Configuration Protocol)
 - DHCP is used to allow hosts to automatically/dynamically learn various aspects of their network configuration, such as IP address, subnet mask, default gateway, DNS server, etc, without manual/static configuration.
 - It is an essential part of modern networks. Typically used for 'client devices' such as workstations (PCs), phones, etc.
 - Devices such as routers, servers, etc, are usually manually configured. 
 - In small networks (such as home networks) the router typically acts as the DHCP server for hosts in the LAN. 
 - In larger networks, the DHCP server is usually a Windows/Linux server.
+
+![](/images/DHCPdora.png)
+
 
 ## 4.4 Explain the function of SNMP in network operations
 SNMP (Simple Network Management Protocol) helps manage devices over a network.
@@ -1007,15 +1140,29 @@ There are three main operations used in SNMP.
 2. The NMS can ask the managed devices for information about their current status.
 3. The NMS can tell the managed devices to change aspects of their configuration.
 
+![](/images/SNMP%20messages.png)
+![](/images/SNMPv2c%20config.png)
+![](/images/SNMP%20summary.png)
+
+
 ## 4.5 Describe the use of syslog features including facilities and levels
 Syslog is an industry standard protocol for message logging.
 On network devices, Syslog can be used to log events such as changes in interface status (up<->down), changes in OSPF neighbor status, system restarsts, etc.
 The messages can be displayed in the CLI, saved in the device's RAM, or sent to an external Syslog server.
 Logs are essential when troubleshooting issues, examining the cause of incidents, etc.
 Syslog and SNMP are both used for monitoring and troubleshooting of devices. They are complementary, but their functionalities are different.
+![](/images/syslogmessageformat.png)
+![](/images/syslogmessageexamples.png)
+![](/images/syslogseveritylevels.png)
+![](/images/syslog%20config.png)
+![](/images/syslogcommandsummary.png)
+
+![](/images/syslog%20vs%20SNMP.png)
+
 
 ## 4.6 Configure and verify DHCP client and relay
--pictures-
+![](/images/DHCP%20server%20config.png)
+![](/images/DHCPcommands.png)
 
 ## 4.7 Explain the forwarding per-hop behavior (PHB) for QoS, such as classification, marking, queuing, congestion, policing, and shaping 
 QoS is used to manage the following characteristics of network traffic:
@@ -1045,7 +1192,11 @@ A solution to prevent tail drop and TCCP global synchronization is Random Early 
 SSH (Secure Shell) allows for remote access while providing security features such as  data encryption and authentication. 
 The SSH server (the device being connected to) listens for SSH traffic on TCP port 22.
 To enable and use SSH, you must generate an RSA public and private key pair. The keys are used for data encryption/decryption, authentication, etc.
--picture-
+![](/images/SSH%20config-rsa.png)
+![](/images/ssh%20config%20vty.png)
+
+![](/images/ssh%20config.png)
+![](/images/ssh%20config%20commands.png)
 
 ## 4.9 Describe the capabilities and function of TFTP/FTP in the network
 FTP (File Transfer Protocol) and TFTP (Trivial File Transfer Protocol) are industry standard protocols used to transfer files over a network.
@@ -1060,6 +1211,8 @@ FTP uses usernames and passwords for authentication, however there is no encrypt
 - FTP is more complex than TFTP and allows not only file transfers, but clients can also navigate file directories, add and remove directories, list files, etc.
 - The client sends FTP commands to the server to perform these functions.
 
+![](/images/FTP%20control%20connections.png)
+
 TFTP is named trivial because it is simple and has only basic features compared to FTP. 
 - Only allows a client to copy a file to or from a server.
 - Released after FTP, but not a replacement for FTP. It is another tool to use when lightweight simplicity is more important than functionality.
@@ -1068,6 +1221,11 @@ TFTP is named trivial because it is simple and has only basic features compared 
 - TFTP servers listen on UDP port 69.
 - UDP is connectionless and doesn't provide reliability with retransmissions, however, TFTP has similar built-in features within the protocol itself.
 - TFTP uses 'lock-step' communication. The client and server alternately send a message and then wait for a reply. (+retransmissions are sent as needed)
+
+![](/images/TFTP%20connections.png)
+
+![](/images/FTPvsTFTP.png)
+![](/images/FTPcommands.png)
 
 ## 5.0 Security Fundamentals
 The principles of the CIA Triad form the foundation of security:
@@ -1090,6 +1248,8 @@ A threat is the potential of a vulnerability to be exploited.
 - A hacker exploiting a vulnerability in your system is a threat.
 A mitigation technique is something that can protect against threats.
 - Should be implemented everywhere a vulnerability can be exploited: client devices. servers, switches, routers, firewalls, etc.
+
+![](/images/common%20security%20attacks.png)
 
 ## 5.2 Describe security program elements (user awareness, training, and physical access control)
 User awareness programs are designed to make employees aware of potential security threats and risks.
@@ -1127,6 +1287,10 @@ Site-to-Site VPNs (IPsec)
 - A site-to-site VPN is a VPN between two devices and is used to connect two sites together over the Internet.
 - A VPN 'tunnel' is created between the two devices by encapsulating the original IP packet with a VPN header and a new IP header.
     - When usuing IP sec, the original packet is encrypted before being encapsulated with the new header.
+Site-to-site VPNs:
+
+![](/images/Site-to-Site%20VPNs%20(IPsec).png)
+![](/images/ipsec.png)
 
 There are some limitations to standard IPsec:
 1. IPsec doesn't support broadcast and multicast traffic, only unicast. This means that routing protocols such as OSPF can't be used over the tunnels, because they rely on multicast traffic.
@@ -1136,10 +1300,14 @@ There are some limitations to standard IPsec:
     - To get the flexibility of GRE with the security of IPsec, 'GRE over IPsec' can be used.
     - The original packet will be encapsulated by a GRE header and a new IP header, and then the GRE packet will be encrypted and encapsulated within an IPsec VPN header and new IP header.
 
+![](/images/GREoverIPsec.png)
+
 2. Configuring a full mesh of tunnels between many sites is a labor-intesive task.
     - This can be solved with Cisco's DMVPN.
     - DMVPN (Dynamic Multipoint VPN) is a Cisco-developed solution that allows routers to dynamically create a full mesh of IPsec tunnels without having to manually configure every single tunnel.
     - DMVPN provides the configuration simplicity of hub-and-spoke (each spoke router only needs one tunnel configured) and the efficiency of direct spoke-to-spoke communication (spoke routers can communicate directly without traffic passing through the hub)
+
+![](/images/DMVPN.png)
 
 Remote-Access VPNs 
 - Whereas site-to-site VPNs are used to make a point-to-point connection between two sites over the Internet, remote-access VPNs are used to allow end devices (PC, mobile phones) to access the company's internal resources securely over the Internet.
@@ -1150,6 +1318,9 @@ Remote-Access VPNs
 - VPN client software (for example Cisco AnyConnect) is installed on en end devices (for example company-provided laptops that employees work from home).
 - These end devices then form secure tunnels to one of the company's router/firewalls acting as a TLS server.
 - This allows the end users to securely access resources on the company's internal network without being directly connected to the company network.
+Remote-Access VPNS:
+![](/images/remote-access%20VPNs.png)
+![](/images/remote-accessvpnnetwork.png)
 
 Site-to-Site vs Remote-Access VPN
 - Site-to-Site VPNs typically use IPsec.
@@ -1177,21 +1348,39 @@ Standard ACLs: Match based on the Source IP address only.
 Extended ACLs: Match based on Source/Destination IP, Source/Destination port/protocol, etc
 - Extended ACLs can use 100-199, 2000-2699.
 - Extended ACLs should be appleid as close to the source as possible.
-- R1(config)# access-list (#) (permit/deny) (protocol) (src-ip) (dest-ip)
-- R1(config)# ip access-list extended (name/number)
-- R1(config-ext-nacl)# (seq-num) (permit/deny) (protocol) (src-ip) (dest-ip)
+>R1(config)# access-list (#) (permit/deny) (protocol) (src-ip) (dest-ip)
+>R1(config)# ip access-list extended (name/number)
+>R1(config-ext-nacl)# (seq-num) (permit/deny) (protocol) (src-ip) (dest-ip)
+
+![](/images/configuringnumberedACLs.png)
+![](/images/namedACLadvantages.png)
+![](/images/namedACLadvantages2.png)
+![](/images/extendedACLprotocols.png)
+![](/images/extendedACLexample.png)
+![](/images/extendedACLtcpudp.png)
+
+
 
 ## 5.7 Configure and verify Layer 2 security features (DHCP snooping, dynamic ARP inspection, and port security)
 DHCP snooping is security feature of switches that is used to filter DHCP messages received on untrusted ports.
 DHCP snooping only filters DHCP messages. Non-DHCP messages aren't affected.
 All ports are untrusted by default.
 - Usually, uplink ports are configured as trusted ports, and downlink ports remain untrusted.
+![](/images/DHCP%20snooping%20operations.png)
+![](/images/DHCPsnooping.png)
+![](/images/DHCPsnoopingcommands.png)
+
 
 
 Dynamic ARP inspection (DAI) is a security feature of switches that is used to filter ARP messages received on untrusted ports.
 DAI only filters ARP messages. Non-ARP messages aren't affected.
 All ports are untrusted by default.
 - Typically, all ports connected to other network devices (switches, routers) should be configured as trusted, while itnerfaces connected to end hosts should remain untrusted.
+
+![](/images/DAIconfig.png)
+![](/images/showiparp.png)
+![](/images/dairatelimit.png)
+![](/images/DAIcomands.png)
 
 Port security is a security feature of Cisco switches. It allows you to control which source MAC address(es) are allowed to enter the switchport.
 If an authorized source MAC address enters the port, an action will be taken.
@@ -1202,6 +1391,11 @@ When you enable port security on an interface with the default settings, one MAC
 - You can change the maximum number of MAC addresses allowed
 - A combination of manually configured MAC addresses and dynamically learned addresses is possible.
 
+![](/images/config%20port%20security.png)
+![](/images/verify%20port%20security.png)
+![](/images/errdisable%20recovery.png)
+![](/images/violation%20modes.png)
+![](/images/portsecurity%20commands.png)
 
 ## 5.8 Compare authentication, authorization, and accounting concepts
 AAA (triple-A) stands for Authentication, Authorization, and Accounting. 
@@ -1285,6 +1479,9 @@ The controller can interact programmatically with the network devices using APIs
 The SBI is used for communications between the controller and the network devices it controls.
 The NBI is what allows us to interact with the controller with our scripts and applications.
 
+![](/images/DNA%20center.png)
+
+
 - The underlay is the underlying physical network of devices and connections (including wired and wireless) which provide IP connectivity (ie. using IS-IS).
     - Multilayer switches and their connections
 - The overlay is the virtual network built on top of the physical underlay network.
@@ -1305,6 +1502,11 @@ SD-Access Underlay
     - All links between switches are router ports. This means STP is not needed.
     - Edge nodes (access switches) act as the default gateway of end hosts (routed acces layer)
 
+![](/images/Traditional%20LAN.png)
+![](/images/SD-access%20underlay.png)
+
+
+
 SD-Access Overlay
  LISP provides the control plane of SD-Access
  - A list of mappings of EID (endpoint identifiers) to RLOCs (routing locations) is kept.
@@ -1312,6 +1514,8 @@ SD-Access Overlay
  - There is a LOT mroe detail to cover about LISP, but this is just to show how it differs form the traditional control plane.
  Cisco TrustSec (CTS) provides policy control (QoS, security policy, etc)
  VXLAN provides the data plane of SD-Access.   
+
+![](/images/SD-access%20overlay.png)
 
 ### 6.3.a Seperation of control plane and data plane
 The various functions of network devices can be logically divided up (categorized) into planes:
@@ -1364,7 +1568,7 @@ A REST (Representational State Transfer) API is used on the controller as an int
 Data is sent in a structure (serialized) format such as JSON or XML.
 - This makes it much easier for programs to use the data.
 
-
+![](/images/networkautomation.png)
 
 
 
@@ -1381,6 +1585,8 @@ Cisco DNA Center has two main roles
 - The SBI supports protocols such as NETCONF and RESTCONF (as well as traditional protocols like Telnet, SSH, SNMP)
 - DNA Center enables Intent-Based Networking (IBN).
     - The goal is to allow the engineer to communicate their intent for network behavior to DNA Center, and then DNA Center will take care of the details of the actual configurations and policies on devices.
+
+
 
 Traditional security policies using ACLs can become very cumbersome.
 - ACLs can have thousands of entries.
@@ -1406,6 +1612,8 @@ An API (Application Programming Interface) is a software interface that allows t
 APIs are essential not just for network automation, but for all kinds of applications.
 In SDN architecture, APIs are used to communicate between apps and the SDN controller (via the NBI), and between the SDN controller and the network devices (via the SBI).
 The NBI typically uses REST APIs. NETCONF and RESTCONF are popular southbound APIs.
+![](/images/SDN%20architecture.png)
+
 
 CRUD (Create, Read, Update, Delete) refers to the operations we perform using REST APIs.
 - Create operations are used to create new variables and set their intial values.
@@ -1422,6 +1630,11 @@ REST APIs typically use HTTP.
 When an HTTP client sends a request to an HTTP server, the HTTP header includes information like this.
 - An HTTP Verb (ie. GET)
 - A URI (Uniform Resource Identifier), indicating the resource it is trying to access.
+
+![](/images/CRUD%20and%20HTTP%20verbs.png)
+![](/images/HTTP%20request.png)
+![](/images/HTTP%20response.png)
+![](/images/HTTP%20response%202.png)
 
 REST stands for Representational State Transfer.
 REST APIs are also known as REST-based APIs or RESTful APIs.
@@ -1459,6 +1672,9 @@ Ansible is a configuration management tool owned by Red Hat.
 - Ansible uses SSH to connect to devices, make configuration changes, extract information, etc.
 - Ansible uses a push mdoel. The ansible server (Control node) uses SSH to connect to managed devices and push configuration changes to them
     - Puppet and Chef use a pull model
+
+![](/images/ansiblemodel.png)
+
 - After installing Ansible itself, you must create several text files:
     - Playbooks
         - These are files are 'blueprints of automation tasks'. They outline the logic and actions of the tasks that Ansible should do. Written in YAML.
@@ -1481,6 +1697,8 @@ Puppet is a configuration mangement tool written in Ruby.
 - Text files required on the Puppet master include:
     - Manifest: This file defines the desired configuration state of a network device.
 
+![](/images/puppetmodel.png)
+
 Chef is a configuration management tool written in Ruby.
 - Chef is aagent-based
     - Specific software must be installed on the managed devices.
@@ -1493,6 +1711,10 @@ Chef is a configuration management tool written in Ruby.
     - Recipes: The 'recipes' in a cookbook. Outline the logic and actions of the tasks performed on the resources.
     - Cookbooks: A set of related recipes grouped together.
 
+![](/images/chefmodel.png)
+
+Ansible, Puppet, Chef comparison:
+![](/images/ansiblepuppetchef.png)
 
 ## 67 Recognize components of JSON-encoded data
 Data serialization is the process of converting data into standardized format/structure that can be stored (in a file) or transmitted (over a network) and recontructed later (ie. by a different application). 
