@@ -14,6 +14,7 @@ This is by no means an exhaustive study guide for the topics on the CCNA, but ra
 
 ## 1.0 Network Fundamentals
 A computer network is a digital telecommunications network which allows nodes to share resources. In computer networks, computing devices exchange data with each other using connections (data links) between nodes. These data links are established over cable media such as wires or optic cables, or wireless media such as Wi-Fi.
+Network speed is measured in bits per second (Kbps, Mbps, Gbps, etc), not bytes per second.
 ## 1.1 Explain the role and function of network components
 
 ###     1.1.a Routers
@@ -60,6 +61,7 @@ The two-tier LAN design consists of two hierarchical layers:
 
 
 Also called a 'Collapsed Core' design because it omits a layer that is found in the 3-Tier design: the Core Layer.
+
 Access Layer:
 - the layer that end hosts connect to (PCs, printers cameras, etc.)
 - typically Access Layer Switches have lots of ports for end hosts to connect to
@@ -70,6 +72,7 @@ Distribution Layer (sometimes called Aggregation Layer):
 - aggregates connections from the Access Layer Switches
 - typically is the border between Layer 2 and Layer 3
 - connects to services such as Internet, WAN, etc.
+
 Two-tier Campus LAN Design:
 ![](/images/two-tier%20campus%20LAN%20design.png)
 
@@ -88,6 +91,7 @@ Core Layer:
 - CPU-intensive operations such as security, QoS marking/classification, etc. should be avoided at this Layer
 - Connections are all Layer 3. No spanning-tree!
 - Should maintain connectivity throughout the LAN even if devices fail
+
 Three-Tier Campus LAN Design:
 ![](/images/three-tier%20campus%20lan%20design.png)
 
@@ -107,18 +111,19 @@ To solves this, Spine-Lead architecture (also called Clos architecture) has beco
 There are some rules about Spine-Leaf architecture:
 - Every Leaf switch is connected to every Spine switch
 - Every Spine switch is connected to every Leaf switch
-- Lead switches do not connect to other Leaf switches
+- Leaf switches do not connect to other Leaf switches
 - Spine switches do not connect to other Spine switches 
-- End hosts (servers etc.) only connect to Lead switches
+- End hosts (servers etc.) only connect to Leaf switches
 
-The path taken by traffic is randomly chosen to balance the traffic load among the Spin switches
+The path taken by traffic is randomly chosen to balance the traffic load among the Spine switches
+
 Each server is separated by the same number of 'hops' (except those connected to the same Leaf), providing consistent latency for East-West traffic.
 ![](/images/spine-leaf.png)
 
 ### 1.2.d WAN
 WAN (Wider Area Network) is a network that extends over a large geographic area.
 WANs are used to connect geographically seperate LANs.
-Although the Iternet itself can be considered a WAN, the term WAN is typically used to refer to an enterprise's private connections that connect their offices, data centers, and other sites together.
+Although the Internet itself can be considered a WAN, the term WAN is typically used to refer to an enterprise's private connections that connect their offices, data centers, and other sites together.
 Over public/shared networks like the Internet, VPNs (Virtual Private Networks) can be used to create private WAN connections.
 There have been many different WAN technologies over the years. Depending on the location, some will be available and some will not be.
 Technologies which are considered 'legacy' (old) in one country might still be used in other countries.
@@ -203,7 +208,7 @@ The four deployment models of cloud:
 
 The four deployment models of cloud computing are:
 - Private cloud
-    - The cloud infrastructure is provisioned for exlusive use by a single organization comprising multiple consumers (e.g. business units). It may be owned, managed, and operated by the organization, a third party, or some combination of them, and it may exist on or off premises.
+    - The cloud infrastructure is provisioned for exclusive use by a single organization comprising multiple consumers (e.g. business units). It may be owned, managed, and operated by the organization, a third party, or some combination of them, and it may exist on or off premises.
     - Private clouds are generally only used by large enterprises.
     - Although the cloud is private, it may be owned by a third party.
         - For example, AWS provides private cloud services for the American DoD.
@@ -212,12 +217,12 @@ The four deployment models of cloud computing are:
     - The same kinds of services offered are the same as in public clouds (Saas, PaaS, IaaS), but the infrastructure is reserved for a single organization
 
 - Community cloud
-    - The cloud infrastructure is provisioned for exclusive use by a specific community of consumers from organizations that have shared concers (e.g. mission, security requirements, policy, and compliance considerations). It may be owned, managed, and operated by one or more of the organizations in the community, a third party, or some combination of them, and it may exist on or off premises.
+    - The cloud infrastructure is provisioned for exclusive use by a specific community of consumers from organizations that have shared concerns (e.g. mission, security requirements, policy, and compliance considerations). It may be owned, managed, and operated by one or more of the organizations in the community, a third party, or some combination of them, and it may exist on or off premises.
     - This is the least common cloud deployment.
-    - Similar to private cloud, but the infrastrcture is reserved for use by only a specific group of organizations.
+    - Similar to private cloud, but the infrastructure is reserved for use by only a specific group of organizations.
 
 - Public cloud
-    - The cloud infrastrcture is provisioned for open use by the general public. It may be owned, managed, and operated by a business, academic, or government organization, or some combination of them. It exists on the premises of the cloud provider.
+    - The cloud infrastructure is provisioned for open use by the general public. It may be owned, managed, and operated by a business, academic, or government organization, or some combination of them. It exists on the premises of the cloud provider.
     - This is the most common cloud deployment.
     - Popular public cloud service providers include:
         - AWS (Amazon Web Services)
@@ -252,7 +257,7 @@ Benefits of Cloud Compouting
 ## 1.3 Compare physical interface and cabling types
 RJ-45 (RJ = Registered Jack) - Standard connector for copper UTP cables that has 8 pin connections.
 
-UTP cables - Unshielded twister pair copper wire, contains 4 pairs of wires twisted together, with 8 wires in total.
+UTP cables - Unshielded twisted pair copper wire, contains 4 pairs of wires twisted together, with 8 wires in total.
 ![](/images/UTP%20cable%20pins.png)
 
 Straight-through cable - 
@@ -263,6 +268,9 @@ Crossover cable -
 ![](/images/bidirectional%20cabling.png)
 
 Using Auto MDI-X, devices are able to automatically detect which pins their neighbor is using to transmit data and automatically adjust their pins to receive and transmit on the correct pins.
+
+
+
 ### 1.3.a Single-mode fiber, multimode fiber, copper
 SFP Transceiver (SFP = Small Form-Factor Pluggable) - connector used for fiber-optic ports on a switch, connects to Fiber-Optic cabling.
 
@@ -274,7 +282,37 @@ Multimode fiber is wider than single-mode fiber, allows multiple angles (modes) 
 
 
 ## 1.4 Identify interface and cable issues (collisions, errors, mismatch duplex, and/or speed)
-Day 9 video
+>show ip interface brief
+- can be used to view interfaces (includes VLANs), IP addresses, OK?, method, status, and protocol status
+>show interfaces status
+- can be used to show port, name, status, VLAN, duplex, speed, type 
+
+![](/images/configinterfaces.png)
+
+CSMA/CD (Carrier Sense Multiple Access with Collision Detection)
+- Before sending frames, devices 'listen' to the collision domain until they detect that other devices are not sending.
+- If a collision does occur, the device sends a jamming signal to inform the other devices that a collision happened.
+- Each device will wait a random period of time before sending frames again.
+- The process then repeats.
+- Typically only an issue in networks that use hubs (which are mostly obsolete today)
+- Switches operate in full duplex, rather than half duplex like hubs.
+
+Speed/Duplex Autonegotiation
+- Interfaces that can run at different speed (10/100 or 10/100/1000) have default settings of speed auto and duplex auto.
+- Interfaces 'advertise' their capabilities to the neighboring device, and they negotiate the best speed and duplex settings they are both capable of.
+Ethernet - 10 Mbps
+FastEthernet - 10/100 Mbps
+GigabitEthernet - 10/100/1000 megabits/second Mbps
+
+What is autonegotiation is disabled on the device connected to the switch?
+- Speed: The switch will try to sense the speed that the otehr device is operating at.
+    - If it failts to sense the speed, it will use the slowest supports speed (ie. 10 Mbps on a 10/100/1000 interface)
+- Duplex: If the speed is 10 or 100 Mbps, the switch will use HALF duplex (BAD, will lead to misconfigurations). If the speed is 1000 Mbps or greater, use full duplex. 
+- To avoid misconfigurations, use autonegotiation on ALL devices in the network.
+
+Interface errors can be viewed by using #show interfaces f0/#
+![](/images/interfaceerrors.png)
+
 ## 1.5 Compare TCP to UDP
 TCP (Transmission Control Protocol)
 - TCP is connection-oriented
