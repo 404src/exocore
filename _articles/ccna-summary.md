@@ -15,6 +15,15 @@ This is by no means an exhaustive study guide for the topics on the CCNA, but ra
 ## 1.0 Network Fundamentals
 A computer network is a digital telecommunications network which allows nodes to share resources. In computer networks, computing devices exchange data with each other using connections (data links) between nodes. These data links are established over cable media such as wires or optic cables, or wireless media such as Wi-Fi.
 Network speed is measured in bits per second (Kbps, Mbps, Gbps, etc), not bytes per second.
+- 1 kilobit (Kb) = 1,000 bits
+- 1 megabit (Mb) = 1,000,000 bits
+- 1 gigabit (Gb) = 1,000,000,000 bits
+- 1 terabit (Tb) = 1,000,000,000,000 bits
+
+![](/images/ethernetstandardscopper.png)
+![](/images/fiberopticstandards.png)
+![](/images/UTPvsFiberoptic.png)
+
 ## 1.1 Explain the role and function of network components
 
 ###     1.1.a Routers
@@ -269,6 +278,9 @@ Crossover cable -
 
 Using Auto MDI-X, devices are able to automatically detect which pins their neighbor is using to transmit data and automatically adjust their pins to receive and transmit on the correct pins.
 
+![](/images/ethernetstandardscopper.png)
+![](/images/fiberopticstandards.png)
+![](/images/UTPvsFiberoptic.png)
 
 
 ### 1.3.a Single-mode fiber, multimode fiber, copper
