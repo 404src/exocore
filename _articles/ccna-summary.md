@@ -24,6 +24,80 @@ Network speed is measured in bits per second (Kbps, Mbps, Gbps, etc), not bytes 
 ![](/images/fiberopticstandards.png)
 ![](/images/UTPvsFiberoptic.png)
 
+OSI Model
+- "Open Systems Interconnection" model
+- A conceptual model that categorizes and standardizes the different functions in a network.
+- Created by the "Internation Organization for Standardization" (ISO)
+- Functions are divided into 7 "Layers"
+- These layers work together to mae the network work.
+
+Application Layer, Layer 7
+- This layer is closest to the end user.
+- Interacts with software applications, for example your web browser (Brave, Firefox, Chrome, etc)
+- HTTP and HTTPS are Layer 7 protocols
+- Functions of Layer 7 include:
+    - Identifying communication partners
+    - Synchronizing communication
+
+Presentation Layer, Layer 6
+- Data in the application layer is in 'application format'
+- It needs to be 'translated' to a different format to be sent over the network
+- The Presentation Layer's job is to translate between application and network formats.
+- For example, encryption of data as it is sent, and decryption of data as it is received.
+- Also translates between different Application-Layer formats.
+
+Session Layer, Layer 5
+- Controls dialogues (sessions) between communicating hosts.
+- Establishes, manages, and terminates connections between the local application (for example, your web browser) and the remote application (for example, YouTube)
+
+OSI Model - The Upper Layers (Layer 7, 6, 5)
+- Network engeineers don't usually work with the top 3 layers.
+- Application developers work with the top layers of the OSI model to connect their applications over networks.
+
+Transport Layer, Layer 4
+- Segments and reassembles data for communications between end hosts
+- Breaks large pieces of data into smaller segments which can be more easily sent over the network and are less likely to cause transmission problems if errors occur
+- Provides host-to-host communication
+- uses layer 4 header (data + L4 header = segment)
+
+Network Layer, Layer 3
+- Provides connectivity between end hosts on different networks (ie. outside of the LAN)
+- Provides logical addressing (IP addresses)
+- Provides path selection between source and destination
+- Routers operate at Layer 3.
+- Uses Layer 3 header (data + L4 header + L3 header = packet)
+
+Data Link Layer, Layer 2
+- Provides node-to-node connectivity and data transfer (for example, PC to switch, switch to router, router to router)
+- Defines how data is formatted for transmission over a physical medium (for example, copper UTP cables)
+- Detects and (possibly) corrects Physical Layer errors
+- Uses Layer 2 addressing, seperate from Layer 3 addressing.
+- Switches operate at Layer 2.
+- Uses L2 trailer and header (L2 trailer + Data + L4 header + L3 header + L2 header = frame)
+
+Physical Layer, Layer 1
+- Defines physical characteristics of the medium used to transfer data between devices.
+- For example, voltage levels, maximum transmission distances, physical connectors, cable specifications, etc.
+- Digital bits are converted into electrical (for wired connections) or radio (for wireless connections) signals.
+- All of the information in regarding cables, pin layouts, etc. is related to the Phyiscal Layer.
+
+Encapsulation - data moving from Layer 7 to Layer 1, the process of adding additional information when data is traveling in OSI or TCP/IP model. The additional information is added on the sender's side, starting from Application layer to Physical layer.
+
+De-encapsulation - data moving from Layer 1 to 7, the process in which information added through the encapsulation process is removed. The additional information is removed (de-encapsulated) on the receiver's side, starting from the Physical layer to the Application layer. 
+
+![](/images/OSI%20PDUs.png)
+![](/images/OSIacronyms.png)
+
+TCP/IP Suite
+- Conceptual model and set of communications protocols used int the the Internet and other networks
+- Known as TCP/IP because those are two of the foundational protocols in the suite.
+- Developed by the United State Department of Defense through DARPA (Defense Advanced Research Projects Agency)
+- Similar structure to the OSI Model, but with fewer layers.
+- This is the model actually in use in modern networks.
+- The OSI model still influences how network engineers think and talk about networks.
+
+![](/images/OSIvstcpip.png)
+
 ## 1.1 Explain the role and function of network components
 
 ###     1.1.a Routers
@@ -364,8 +438,6 @@ Maximum number of hosts per network:
 ![](/images/Maximum%20hosts%20per%20network.png)
 First/Last Usable Address:
 ![](/images/First/Last%20Usable%20Address.png)
-OSI Model - PDUs:
-![](/images/OSI%20PDUs.png)
 
 CIDR (Classless Inter-Domain Routing) removed the previous requirements of:
     Class A = /8
