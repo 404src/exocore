@@ -117,9 +117,19 @@ Network firewalls are hardware devices that filter traffic between networks.
 Host-based firewalls are software applications that filter traffic entering and exiting a host machine, like a PC.
 
 ###     1.1.d Access points
-
+An access point serves as the connection point between wireless and wired networks or as the center point of a stand-alone wireless network. In large installations, wireless users within the radio range of an access point can roam throughout a facility while maintaining seamless, uninterrupted access to the network.
 
 ### 1.1.e Controllers (Cisco DNA Center and WLC)
+A network controller is a software that orchestrates network functions. It serves as an intermediary between the business and the network infrastructure. The organization enters their desired business objectives into the controller which in turn sets up the network to deliver on those objectives. Network controllers do their jobs by:
+- Maintaining an inventory of devices in the network and their status
+- Automating device operations such as configurations and image updates
+- Analyzing network operations, identifying potential issues, and suggesting remediations
+- Providing a platform for integration with other applications such as reporting systems
+
+Cisco DNA Center is a central Management and Automation software, an application , that is used as a Controller for Cisco DNA. It is used as a management platform for both SD Access, Intent-Based Networks and existing traditional networks.
+
+A wireless LAN controller (WLC) is a network component that manages wireless network access points and allows wireless devices to connect to the network.
+
 
 ### 1.1.f Endpoints/End hosts
 An endpoint is a remote computing device that communicates back and forth with a network, examples include computers, laptops, mobile phones, tablets, and servers.
@@ -1287,6 +1297,63 @@ Syslog and SNMP are both used for monitoring and troubleshooting of devices. The
 ![](/images/DHCPcommands.png)
 
 ## 4.7 Explain the forwarding per-hop behavior (PHB) for QoS, such as classification, marking, queuing, congestion, policing, and shaping 
+
+- The purpose of QoS is to give certain kinds of network traffic priority over others during congestion.
+- Classification organizes network traffic (packets) into traffic classes (categories)
+- Classification is fundamental to QoS. To give priority to certain types of traffic, you have to identify which types of traffic to give priority to.
+- There are many methods of classifying traffic. Some examples:
+    - An ACL. Traffic which is permitted by the ACL will be given certain treatments, other traffic will not.
+    - NBAR (Network Based Application Recognition) performs a deep packet inspection, looking beyond the Layer 3 and Layer 4 information up to Layer 7 to identify the specfific kind of traffic.
+    - In the Layer 2 and Layer 3 headers there are specific fields used for this purpose.
+
+- The PCP (Priority Code Point) field of the 802.1Q tag (in the Ethernet header) can be used to identify high/low priority traffic.
+    - Only when there is a dot1q (VLAN) tag!
+    - PCP is also known as CoS (Class of Service). Its use is defined by IEEE (802.1p)
+    - 3 bits = 8 possible values (2^3 = 8)
+
+![](/images/PCPCoS.png)
+![](/images/PCPvalues.png)
+
+- 'Best effort' delivery means there is no guarantee that data is delivered or that it meets any QoS standard. This is regular traffic, not high-priority.
+- IP phones mark call signaling traffic (used to establish calls) as PCP3.
+- They mark the actual voice traffic as PCP5.
+- Because PCP is found in the dot1q header, it can only be used over the following connections:
+    - trunk links
+    - access links with a voice VLAN
+
+
+
+
+- The DSCP (Differentiated Services Code Point) field of the IP header can also be used to identify high/low priority traffic.
+- IPP (IP Precedence) markings are similar to PCP, 8 values.
+    - 6 and 7 are reserved for 'network control' traffic. (ie. OSPF messages between routers)
+    - 5 = voice
+    - 4 = video
+    - 3 = voice signaling
+    - 0 = best effort
+    - With 6 and 7 reserved, 6 possible values remain.
+- With IPP updated to DSCP, new standard markings had to be decided upon.
+- Default Forwarding (DF) - best effort traffic
+    - The DSCP marking for DF is 0.
+- Expedited Forwarding (EF) - low loss/latency/jitter traffic (usually voice)
+    - The DSCP marking for EF is 46.
+- Assured Forwarding (AF) - A set of 12 standard values
+    - AF defines four traffic classes. All packets in a class have the same priority.
+    - Within each class, there are three levels of drop precedence.
+        - Higher drop precedence = more likely to drop the packet during congestion
+
+![](/images/AFXY.png)
+DSCP value = decimal value of the 6 bits.
+![](/images/AFexample.png)
+![](/images/AFsummarychart.png)
+
+- Class Selector (CS) - A set of 8 standard values, provides backward compatibility with IPP
+- The three bits that were added for DSCP are set to 0, and the original IPP bits are used to make 8 values.
+![](/images/CS.png)
+
+
+
+
 QoS is used to manage the following characteristics of network traffic:
 1. Bandwidth
 2. Delay
@@ -1305,7 +1372,7 @@ Tail drop is harmful because it can lead to TCP global synchronization causing a
 A solution to prevent tail drop and TCCP global synchronization is Random Early Detected (RED).
 - When the amount of traffic in the queue reaches a certain threshold, the device will start randomly dropping packets from select TCP flows.
 - In standard RED, all kinds of traffic are treated the same.
-- An improved version, WREDD (Weighted Random Early Detection) allows you to control which packets are dropped depending on the traffic class.
+- An improved version, WRED (Weighted Random Early Detection) allows you to control which packets are dropped depending on the traffic class.
 
 
 
