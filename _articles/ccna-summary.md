@@ -268,7 +268,7 @@ Most people associate 'cloud' with public cloud providers such as AWS, Microsoft
 - Although this is the most common use of cloud services, it's not the only one.
 
 Cloud computing is defined by the American NIST in SP 800-145 as follows.
-The five essential characeteristics of cloud computing are:
+The five essential characteristics of cloud computing are:
 - On-demand self-service
     - A consumer can unilaterally provision computing capabilities, such as server time and network storage, as needed automatically without requiring human interaction with each service provider.
     - The customer is able to use the service (or stop using the service) freely (via a web portal) without direct communication to the service provider.
@@ -392,8 +392,11 @@ Point-to-point
 
 ## 1.4 Identify interface and cable issues (collisions, errors, mismatch duplex, and/or speed)
 >show ip interface brief
+
 - can be used to view interfaces (includes VLANs), IP addresses, OK?, method, status, and protocol status
+
 >show interfaces status
+
 - can be used to show port, name, status, VLAN, duplex, speed, type 
 
 ![](/images/configinterfaces.png)
