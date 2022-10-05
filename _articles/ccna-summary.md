@@ -79,7 +79,7 @@ OSI Model - The Upper Layers (**Layer 7, 6, 5**)
 - Defines physical characteristics of the medium used to transfer data between devices.
 - For example, voltage levels, maximum transmission distances, physical connectors, cable specifications, etc.
 - Digital bits are converted into electrical (for wired connections) or radio (for wireless connections) signals.
-- All of the information in regarding cables, pin layouts, etc. is related to the Phyiscal Layer.
+- All of the information in regarding cables, pin layouts, etc. is related to the Physical Layer.
 
 Encapsulation - data moving from Layer 7 to Layer 1, the process of adding additional information when data is traveling in OSI or TCP/IP model. The additional information is added on the sender's side, starting from Application layer to Physical layer.
 
@@ -89,7 +89,7 @@ De-encapsulation - data moving from Layer 1 to 7, the process in which informati
 ![](/images/OSIacronyms.png)
 
 TCP/IP Suite
-- Conceptual model and set of communications protocols used int the the Internet and other networks
+- Conceptual model and set of communications protocols used in the Internet and other networks
 - Known as TCP/IP because those are two of the foundational protocols in the suite.
 - Developed by the United State Department of Defense through DARPA (Defense Advanced Research Projects Agency)
 - Similar structure to the OSI Model, but with fewer layers.
@@ -101,11 +101,12 @@ TCP/IP Suite
 ## 1.1 Explain the role and function of network components
 
 ###     1.1.a Routers
-Routers provided connectivity between LANs (Local Area Networks), and are therefore used to send data over the Internet.  
+Routers provide connectivity between LANs (Local Area Networks), and are therefore used to send data over the Internet.  
 ###     1.1.b Layer 2 and Layer 3 switches
 Switches provide connectivity to hosts within the same LAN. Switches typically have many more network interfaces/ports for end hosts to connect to (usually 24+).
 Layer 3 switches, also known as Multilayer switches, are capable of both switching AND routing.
 Layer 3 switches can have IP addresses assigned to its interfaces, like a router. 
+
 You can also create virtual interfaces, or SVIs (switch virtual interfaces), for each VLAN, and assign IP addresses to those interfaces.
 These SVIs are used as the gateway address for each PC, instead of a router.
 To send traffic to different subnets/VLANs, the PCs will send traffic to the switch, and the switch will route the traffic. 
@@ -126,7 +127,7 @@ A network controller is a software that orchestrates network functions. It serve
 - Analyzing network operations, identifying potential issues, and suggesting remediations
 - Providing a platform for integration with other applications such as reporting systems
 
-Cisco DNA Center is a central Management and Automation software, an application , that is used as a Controller for Cisco DNA. It is used as a management platform for both SD Access, Intent-Based Networks and existing traditional networks.
+Cisco DNA Center is a central Management and Automation software, an application, that is used as a Controller for Cisco DNA. It is used as a management platform for both SD Access, Intent-Based Networks and existing traditional networks.
 
 A wireless LAN controller (WLC) is a network component that manages wireless network access points and allows wireless devices to connect to the network.
 
@@ -161,6 +162,7 @@ Access Layer:
 - QoS marking is typically done here
 - Security sevices like port security, DAI, etc are typically performed here
 - switchports might be PoE-enabled for wireless APs, IP phones, etc.
+
 Distribution Layer (sometimes called Aggregation Layer):
 - aggregates connections from the Access Layer Switches
 - typically is the border between Layer 2 and Layer 3
