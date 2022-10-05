@@ -24,14 +24,14 @@ Network speed is measured in bits per second (Kbps, Mbps, Gbps, etc), not bytes 
 ![](/images/fiberopticstandards.png)
 ![](/images/UTPvsFiberoptic.png)
 
-OSI Model
+**OSI Model**
 - "Open Systems Interconnection" model
 - A conceptual model that categorizes and standardizes the different functions in a network.
 - Created by the "Internation Organization for Standardization" (ISO)
 - Functions are divided into 7 "Layers"
 - These layers work together to mae the network work.
 
-Application Layer, Layer 7
+**Layer 7**, Application Layer
 - This layer is closest to the end user.
 - Interacts with software applications, for example your web browser (Brave, Firefox, Chrome, etc)
 - HTTP and HTTPS are Layer 7 protocols
@@ -39,35 +39,35 @@ Application Layer, Layer 7
     - Identifying communication partners
     - Synchronizing communication
 
-Presentation Layer, Layer 6
+**Layer 6**, Presentation Layer 
 - Data in the application layer is in 'application format'
 - It needs to be 'translated' to a different format to be sent over the network
 - The Presentation Layer's job is to translate between application and network formats.
 - For example, encryption of data as it is sent, and decryption of data as it is received.
 - Also translates between different Application-Layer formats.
 
-Session Layer, Layer 5
+**Layer 5**, Session Layer
 - Controls dialogues (sessions) between communicating hosts.
 - Establishes, manages, and terminates connections between the local application (for example, your web browser) and the remote application (for example, YouTube)
 
-OSI Model - The Upper Layers (Layer 7, 6, 5)
+OSI Model - The Upper Layers (**Layer 7, 6, 5**)
 - Network engeineers don't usually work with the top 3 layers.
 - Application developers work with the top layers of the OSI model to connect their applications over networks.
 
-Transport Layer, Layer 4
+**Layer 4**, Transport Layer
 - Segments and reassembles data for communications between end hosts
 - Breaks large pieces of data into smaller segments which can be more easily sent over the network and are less likely to cause transmission problems if errors occur
 - Provides host-to-host communication
 - uses layer 4 header (data + L4 header = segment)
 
-Network Layer, Layer 3
+**Layer 3**, Network Layer
 - Provides connectivity between end hosts on different networks (ie. outside of the LAN)
 - Provides logical addressing (IP addresses)
 - Provides path selection between source and destination
 - Routers operate at Layer 3.
 - Uses Layer 3 header (data + L4 header + L3 header = packet)
 
-Data Link Layer, Layer 2
+**Layer 2**, Data Link Layer 
 - Provides node-to-node connectivity and data transfer (for example, PC to switch, switch to router, router to router)
 - Defines how data is formatted for transmission over a physical medium (for example, copper UTP cables)
 - Detects and (possibly) corrects Physical Layer errors
@@ -75,7 +75,7 @@ Data Link Layer, Layer 2
 - Switches operate at Layer 2.
 - Uses L2 trailer and header (L2 trailer + Data + L4 header + L3 header + L2 header = frame)
 
-Physical Layer, Layer 1
+**Layer 1**, Physical Layer 
 - Defines physical characteristics of the medium used to transfer data between devices.
 - For example, voltage levels, maximum transmission distances, physical connectors, cable specifications, etc.
 - Digital bits are converted into electrical (for wired connections) or radio (for wireless connections) signals.
