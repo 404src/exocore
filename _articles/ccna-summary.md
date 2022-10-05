@@ -393,12 +393,13 @@ Point-to-point
 ## 1.4 Identify interface and cable issues (collisions, errors, mismatch duplex, and/or speed)
 >show ip interface brief
 
-- can be used to view interfaces (includes VLANs), IP addresses, OK?, method, status, and protocol status
+![](/images/showipinterfacebrief.png)
 
 >show interfaces status
 
-- can be used to show port, name, status, VLAN, duplex, speed, type 
+![](/images/showinterfacesstatus.png)
 
+Configuring interfaces speed/duplex:
 ![](/images/configinterfaces.png)
 
 CSMA/CD (Carrier Sense Multiple Access with Collision Detection)
