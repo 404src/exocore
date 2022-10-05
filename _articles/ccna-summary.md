@@ -375,6 +375,17 @@ Single-mode fiber is narrower than multimode fiber, light enters at a single ang
 Multimode fiber is wider than single-mode fiber, allows multiple angles (modes) of light waves to enter the fiberglass core. Allows longer cables than UTP, but shorter than single-mode fiber.
 
 ### 1.3.b Connections (Ethernet shared media and point-to-point)
+Shared or broadcast Channel:
+- All computers connected to a shared broadcast-based communication channel and share the channel bandwidth.
+- Security issues as a result of broadcasting to all computers.
+- Cost effective due to reduced number of channels and interface hardware components.
+
+Point-to-point
+- Computers connected by communication channels that each connect exactly two computers with access to full channel bandwidth.
+- Forms a mesh or point-to-point network
+- Allows flexibility in communication hardware, packet formats, etc.
+- Provides security and privacy because communication channel is not shared.
+- Number of channels grows as square of number of computers
 
 
 ## 1.4 Identify interface and cable issues (collisions, errors, mismatch duplex, and/or speed)
@@ -441,6 +452,7 @@ Comparing TCP & UDP
 
 ![](/images/TCPvsUDP.png)
 ![](/images/TCPandUDPportnumbers.png)
+
 ## 1.6 Configure and verify IPv4 addressing and subnetting
 ![](/images/IPV4%20address%20classes.png)
 ![](/images/IPV4%20Addresses%20ABC.png)
@@ -458,6 +470,8 @@ These smaller networks are called "subnetworks" or "subnets".
 ![](/images/CIDR%20notation.png)
 
 Using VLSM (Variable-Length Subnet Masks) will allow the creation of subnets of different sizes, to make use of network addresses even more efficient.
+
+
 ## 1.7 Describe the need for private IPv4 addressing
 IPv4 doesn't provide enough addresses for all devices that need an IP address in the modern world. The long term solutionn is to switch to IPv6.
 There are three main short-term solutions:
@@ -479,6 +493,7 @@ Verify IPv6:
 
 ## 1.9 Describe IPv6 address types
 An IPv6 address is 128 bits written in hexadecimal.
+
 ### 1.9.a Unicast (global, unique local, and link local)
 Global unicast ipv6 addresses are public addresses which can be used over the Internet.
 - Must register to be used. Because they are public addresses, it is expected that they are globally unique.
@@ -604,6 +619,7 @@ There are three main types:
     - An MBSS (Mesh Basic Service Set) can be used in situations where it's difficult to run an Ethernet connection to every AP.
     - Mesh APs use two radios: one to provide a BSS to wireless clients, and one to form a 'backhaul network' which is used to bridge traffic from AP to AP.
     - At least one AP is connected to the wired network, and it is called the RAP (Root Access Point)
+    - The other APs are called MAPs (Mesh Access Points)
     - A protocol is used to determine the best path through the mesh (similar to how dynamic routing protocols are used to determine the best path to a destination.
 
 ![](/images/MBSS.png)
@@ -613,6 +629,17 @@ The SSID is a human-readable name which identifies the service set. (spaghetti a
 The SSID does NOT have to be unique.
 
 ![](/images/SSIDreview.png)
+
+Most wireless networks aren't standalone networks.
+- Rather, they are a way for wireless clients to connect to the wired network infrastructure.
+- In 802.11, the upstream wired network is called the DS (Distribution System)
+- Each wireless BSS or ESS Is mapped to a VLAN in the wired network.
+- It's possible for an AP to provide multiple wireless LANs, each with a unique SSID.
+- Each WLAN is mapped to a separate VLAN and connected to the wired network via a trunk.
+- Each WLAN uses a unique BSSID, usually by incrementing the last digit of the BSSID by one.
+
+![](/images/wirelessdistributionsystem.png)
+
 
 ### 1.11.c RF
 Wi-Fi uses two main bands (frequency ranges).
@@ -983,6 +1010,86 @@ BPDU guard is another optional STP feature
 SW1(config-if)#spanning-tree portfast (default)
 
 ## 2.6 Describe Cisco Wireless Architectures and AP modes
+APs can operate in additonal modes beyond the ones we've introduced so far (section 1.11.b)
+ 
+An AP in repeater mode can be used to extend the range of a BSS.
+- The repeater will simply retransmit any signal it receives from the AP.
+    - A repeater with a single radio must operate on the same channel as the AP, but this can drastically reduce the overall throughput on the channel.
+    - A repeater with two radios can receive on one channel, and then retransmit on another channel.
+
+![](/images/APrepeatermode.png)
+
+An AP in WGB (workgroup bridge) operates as a wireless client of another AP, and can be used to connect wired devices to the wireless network.
+- In the example below, PC1 does no have wireless capabilities, and also does not have access to a wired connection to SW1.
+- PC1 has a wired connection to the WGB, which has a wireless conection to the AP.
+
+![](/images/apWGBmode.png)
+
+An AP in outdoor bridge mode can be used to connect network over long distances without a physical cable connecting them.
+- The APs will use specialized antennas that focus most of the signal power in one direction, which allows the wireless conection to be made over longer distances than normally possible.
+- The connection can be point-to-point as in the diagram below, or point-to-multipoint in which multiple sites connect to one central site.
+
+![](/images/apoutdoorbridgemode.png)
+
+review of wireless topics:
+![](/images/reviewslide.png)
+
+
+
+There are three main wireless AP deployment methods:
+- Autonomous
+- Lightweight
+- Cloud-based
+
+Autonomous APs are self-contained systems that don't rely on a WLC.
+- Autonomous APs connect to the wired network with a trunk link.
+- Data traffic from wireless clients has a very direct path to the wired network or to other wireless clients associated with the same AP.
+- Each VLAN has to stretch across the entire network. This is considered bad practice.
+    - Large broadcast domains
+    - Spanning tree will disable links
+    - Adding/deleting VLANs is very labor-intensive
+- Autonomous AP's can be used in small networks, but they are not viable in medium to large networks.
+    - Large networks can have thousand of APs.
+- Autonomous APs can also function in the modes covered previously: Repeater, Outdoor Bridge, Workgroup Bridge
+
+The functions of an AP can be split between the AP and a Wireless LAN Controller (WLC).
+
+Lightweight APs handle 'real-time' operations like transmitting/receiving RF traffic, encryption/decryption of traffic, sending out beacons/probes, etc
+- Other functions are carried out by a WLC, for example RF management, security/QoS management, client authentication, client association/roaming management, etc.
+- This is called split-MAC architecture.
+- The WLC is also use to centrally configure the lightweight APs.
+- The WLC can be located in the same subnet/VLAN as the lightweight APs it manages, or in a different subnet/VLAN.
+- The WLC and the lightweight APs authenticate each other using digital certificates installed on each device (X.509 standard certificates)
+    - This ensures that only authorized APs can join the network.
+
+The WLC and lightweight APs use a protocol called CAPWAP (Control and Provisioning Of Wireless Access Points) to communicate.
+    - Based on an older protocol called LWAPP (Lightweight Access Point Protocol)
+
+Two tunnels are created between each AP and the WLC:
+- Control tunnel (UDP port 5246). This tunnel is used to configure the APS, and control/manage the operations. All traffic in this tunnel is encrypted by default.
+- Data tunnel (UDP port 5247). All traffic from wireless clients is sent through this tunnel to the WLC. It does not go directly to the wired network.
+- Traffic in this tunnel is not encrypted by default, but you can configure it to be encrypted with DTLS (Datagram Transport Layer Security)
+- Because all traffic from wireless clients is tunneled to the WLC with CAPWAP, AP's connect to switch access ports, not trunk ports.
+
+There are some key benefits to split-MAC architecture, here are a few:
+- Scalability: With a WLC (or multiple in very large networks) it's much simpler to build and support a network with thousands of APs.
+- Dyanmic channel assignment: The WLC can automatically select which channel each AP should use.
+- Tranmit power optimization: The WLC can automatically set the appropriate transmit power for each AP.
+- Self-healing wireless coverage: When an AP stops functioning, the WLC can increase the transmit power of nearby APs to avoid coverage holes.
+- Seamless roaming: Clients can roam between APS with no noticeable delay.
+- Client load balancing: If a client is in range of two APs, the WLC can associate the client with the least-used AP, to balance the load among APs.
+- Security/QoS management: Central management of security and QoS policies ensures consistency across the network.
+
+![](/images/lightweightAPModes.png)
+
+Cloud-Based AP architecture is in between autonomous AP and split-MAC architecture.
+- Autonomous APs that are centrally managed in the cloud.
+- Cisco Meraki is a popular cloud-based Wi-Fi solution.
+- The Meraki dashboard can be used to configure APs, monitor the network, generate performance reports, etc.
+    - Meraki also tells each AP which channel to use, what transmit power, etc.
+- However, data traffic is not sent to the cloud. It is sent directly to the wired network like when using autonomous APs.
+    - Only management/control traffic is sent to the cloud.
+
 
 ## 2.7 Describe physical infrastructure connections of WLAN components (AP, WLC, access/trunk ports, and LAG)
 - WLC ports are the physical ports that cables connect to.
@@ -1003,8 +1110,22 @@ WLCs have a few different kinds of interfaces:
 ## 2.8 Describe AP and WLC management access connections (Telnet, SSH, HTTP, HTTPS, console, and TACACS+/RADIUS)
 WLC config:
 ![](/images/WLC%20config.png)
-## 2.9 Interpret the wireless LAN GUI configuration for client connectivity, such as WLAN creation, security settings, QoS profiles, and advanced settings
 
+In split-MAC architecture, there are four man WLC deployment models:
+- Unified: The WLC is a hardware appliance in a central location of the network.
+    - supports about 6000 APs
+- Cloud-based: The WLC is a VM running on a server, usually in a private cloud in a data center. This is not the same as the cloud-based AP architecture discussed previously.
+    - supports about 3000 APs
+- Embedded: The WLC is integrated within a switch.
+    - supports about 200 APs
+- Mobility Express: The WLC is integrated within an AP.
+    - supports about 100 APs
+
+CPU ACLs are used to limit access to the CPU of the WLC. This limits which devices will be able to connect to the WLC via Telnet/SSH, HTTP/HTTPS, retrieve SNMP information from the WLC, etc.
+
+
+## 2.9 Interpret the wireless LAN GUI configuration for client connectivity, such as WLAN creation, security settings, QoS profiles, and advanced settings
+Day 58 video
 
 ## 3.0 IP Connectivity
 Routers can use dynamic routing protocols to advertise information about the routes they know to other routers.
@@ -1351,7 +1472,22 @@ DSCP value = decimal value of the 6 bits.
 - The three bits that were added for DSCP are set to 0, and the original IPP bits are used to make 8 values.
 ![](/images/CS.png)
 
+RFC 4954 was developed with the help of Cisco to bring all of these values together and standardize their use.
+The RFC offers many specific recommendations, but here are a few key ones:
+- Voice traffic: EF
+- Interactive vide: AF4x
+- Streaming video: AF3x
+- High priority priority data: AF2x
+- Best effort: DF
 
+The trust boundary of a network defines where devices trust/don't trust the QoS markings of received messages.
+- If the markings are trusted, the device will forward the message without changing the markings.
+- If the marking aren't trusted, the device will change the markings according to the configured policy.
+- If an IP phone is connected to the switch port, it is recommended to move the trust boundary to the IP phones.
+- This is done via configuration on the switch port connected to the IP phones.
+- If a user marks their PC's traffic with a high priority, the marking will be changed (not trusted)
+
+![](/images/trustboundary.png)
 
 
 QoS is used to manage the following characteristics of network traffic:
@@ -1364,18 +1500,57 @@ The following standards are recommended for acceptable interactive audio quality
 - Jitter: 30 ms or less
 - Loss: 1% or less
 
+
 If a network device receives messages faster than it can forward them out of the appropriate interface, the messages are placed in a queue.
 By default, queued messages will be forwarded in a First In First Out (FIFO manner)
 - Messages will be sent in the order they are received.
 If the queue is full new packets will be dropped, this is known as tail drop.
 Tail drop is harmful because it can lead to TCP global synchronization causing all TCP hosts sending traffic to slow down the rate at which they send traffic, followed by all hosts increasing the rate at which they send traffic, rapidly leading to more congestion, dropped packets, and the process repeating again.
-A solution to prevent tail drop and TCCP global synchronization is Random Early Detected (RED).
+A solution to prevent tail drop and TCP global synchronization is Random Early Detected (RED).
 - When the amount of traffic in the queue reaches a certain threshold, the device will start randomly dropping packets from select TCP flows.
 - In standard RED, all kinds of traffic are treated the same.
 - An improved version, WRED (Weighted Random Early Detection) allows you to control which packets are dropped depending on the traffic class.
 
+An essential part of QoS is the use of multiple queues.
+- This is where classification plays a role. The device can match traffic based on various factors (for example the DSCP marking in the IP header) and then place it in the appropriate queue.
+However, the device is only able to forward one frame out of an interface at once, so a scheduler is used to device which queue traffic is forwarded from next.
+- Prioritization allows the scheduler to give certain queues more priority than others.
 
+![](/images/queuingcongestionmanagement.png)
 
+A common scheduling method is weighted round-robin.
+- round-robin = packets are taken from each queue in order, cyclically
+- weighted = more data is taken from high priority queues each time the scheduler reaches that queue.
+
+CBQFQ (Class-Based Weighted Fair Queuing) is a popular method of scheduling, using a weighted round-robin scheduler while guaranteeing each queue a certain percentage of the interface's bandwidth during congestion.
+
+Round-robin scheduling is not ideal for voice/video traffic. Even if the voice/video traffic receives a guaranteed minimum amount of bandwidth, round-robin can add delay and jitter because even the high priority queues have to wait their turn in the scheduler.
+
+![](/images/weightedroundrobin.png)
+
+LLQ (Low Latency Queuing) designates one (or more) queues as strict priority queues.
+- This means that if there is traffic in the queue, the scheduler will ALWAYS take the next packet from that queue unti it is empty.
+
+This is very effective for reducing the delay and jitter of voice/video traffic.
+
+However, it has the downside of potentially starving other queues if there is always traffic in the designated strict priority queue.
+- Policing (next slide) can control the amount of traffic allowed in the strict priority queue so that it can't take all of the link's bandwidth.
+
+![](/images/LLQ.png)
+
+Traffic shaping and policing are both used to control the rate of traffic.
+
+Shaping buffers traffic in a queue if the traffic rate goes over the configured rate.
+
+Policing drops traffic if the traffic rate goes over the configured rate. (policing can also optionally re-mark the traffic instead of dropping)
+- 'Burst' traffic over the configured rate is allowed for a short period of time.
+- This accommodates data applications which typically are 'bursty' in nature. Instead of a constant stream of data, they send data in bursts.
+- The amount of burst traffic allowed is configurable.
+
+In both cases, classification can be used to allow for different rates for different kinds of traffic.
+
+Example of why the rate traffic is being sent/received is being limited:
+![](/images/limitingtrafficrates.png)
 
 ## 4.8 Configure network devices for remote access using SSH
 SSH (Secure Shell) allows for remote access while providing security features such as  data encryption and authentication. 
