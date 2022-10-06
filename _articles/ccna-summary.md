@@ -400,6 +400,7 @@ Point-to-point
 ![](/images/showinterfacesstatus.png)
 
 Configuring interfaces speed/duplex:
+
 ![](/images/configinterfaces.png)
 
 CSMA/CD (Carrier Sense Multiple Access with Collision Detection)
@@ -413,12 +414,15 @@ CSMA/CD (Carrier Sense Multiple Access with Collision Detection)
 Speed/Duplex Autonegotiation
 - Interfaces that can run at different speed (10/100 or 10/100/1000) have default settings of speed auto and duplex auto.
 - Interfaces 'advertise' their capabilities to the neighboring device, and they negotiate the best speed and duplex settings they are both capable of.
+
 Ethernet - 10 Mbps
+
 FastEthernet - 10/100 Mbps
+
 GigabitEthernet - 10/100/1000 megabits/second Mbps
 
-What is autonegotiation is disabled on the device connected to the switch?
-- Speed: The switch will try to sense the speed that the otehr device is operating at.
+What if autonegotiation is disabled on the device connected to the switch?
+- Speed: The switch will try to sense the speed that the other device is operating at.
     - If it failts to sense the speed, it will use the slowest supports speed (ie. 10 Mbps on a 10/100/1000 interface)
 - Duplex: If the speed is 10 or 100 Mbps, the switch will use HALF duplex (BAD, will lead to misconfigurations). If the speed is 1000 Mbps or greater, use full duplex. 
 - To avoid misconfigurations, use autonegotiation on ALL devices in the network.
@@ -431,7 +435,7 @@ TCP (Transmission Control Protocol)
 - TCP is connection-oriented
       - Before actually sending data to the destination host, the two hosts commmunicate to establish a connection.
 - TCP provides reliable communication.
-    - The destination hsot must acknowledge that it received each TCP segment.
+    - The destination host must acknowledge that it received each TCP segment.
     - If a segment isn't acknowledged, it is sent again.
 - TCP provides sequencing
     - Sequence numbers in the TCP header allow destination hosts to put segments in the correct order even if they arrive out of order.
@@ -441,7 +445,7 @@ TCP (Transmission Control Protocol)
 UDP (User Datagram Protocol)
 
 - UDP is not connection-oriented
-  - The sending host does not establish a aconnection with the destination host before seinding data. The data is simply sent.
+  - The sending host does not establish a connection with the destination host before sending data. The data is simply sent.
 - UDP does not provide reliable communication
   - When UDP is used, acknowledgments are not sent for received segments. If a segment is lost, UDP has no mechanism to re-transmit it. Segments are sent "best-effort".
 - UDP does not provide sequencing.
@@ -468,8 +472,11 @@ First/Last Usable Address:
 ![](/images/First/Last%20Usable%20Address.png)
 
 CIDR (Classless Inter-Domain Routing) removed the previous requirements of:
+
     Class A = /8
+
     Class B = /16
+
     Class C = /24
 This allows larger networks to be split into smaller networks, allowing greater efficiency.
 These smaller networks are called "subnetworks" or "subnets".
@@ -484,7 +491,7 @@ There are three main short-term solutions:
 1. CIDR
 2. Private IPv4 addresses
 3. NAT
-Private IPv5 address ranges:
+Private IPv4 address ranges:
 - 10.0.0.0/8 (10.0.0.0 to 10.255.255.255) (Class A)
 - 172.16.0.0/12 (172.16.0.0 to 172.31.255.255) (Class B)
 - 192.168.0.0/16 (192.168.0.0 to 192.168.255.255) (Class C)
@@ -501,15 +508,15 @@ Verify IPv6:
 An IPv6 address is 128 bits written in hexadecimal.
 
 ### 1.9.a Unicast (global, unique local, and link local)
-Global unicast ipv6 addresses are public addresses which can be used over the Internet.
+**Global** unicast ipv6 addresses are public addresses which can be used over the Internet.
 - Must register to be used. Because they are public addresses, it is expected that they are globally unique.
 - Originally defined as 2000::/3 block, now defined as all addresses which aren't reserved for other purposes.
 
-Unique local IPv6 addresses are private addresses which cannot be used over the Internet.
+**Unique** local IPv6 addresses are private addresses which cannot be used over the Internet.
 - Does not need to be registered. They can be used freely within internal networks and don't need to be globablly unique. Can't be routed over the Internet.
 - Uses address block FD00::/7
 
-Link-local IPv6 addresses are automatically generated on IPv6-enabled interfaces. Use command R1(config-if)#ipv6 enable on an interface to enable IPv6 on that interface
+**Link-local** IPv6 addresses are automatically generated on IPv6-enabled interfaces. Use command R1(config-if)#ipv6 enable on an interface to enable IPv6 on that interface
 - Uses address block FE80:://10
 - The interface ID is generated using EUI-64 rules.
 - Link-local means that these addresses are used for communication within a single link (subnet). Routers will not route packets with a link-local destination IPv6 address.
@@ -526,28 +533,36 @@ Multiple routers are configured with the same IPv6 address.
 - When hosts sends packets to that destination address, routers will forward it to the nearest router configured with that IP address (based on routing metric).
 - There is no specific address range for anycast addresses. Use a regular unicast address (global unicast, unique local) and specify it as an anycast address:
     - R1(config-if)# ipv6 address (ipv6 address)/128 anycast
+
 ![](/images/anycast%20address%20config.png)
 
 ### 1.9.c Multicast
 Unicast addresses are one-to-one
 - one source to one destination
+
 Broadcast addresses are one-to-all
 - one source to all destinations (within the subnet).
+
 Multicast addresses are one-to-many.
 - one source to multiple destinations (that have joined the specific multicast group).
+
 IPv6 uses range FF00::/8 for multicast. 
 IPv6 doesn't use broadcast (there is no "broadcast address" in IPv6).
 ![](/images/multicast%20ipv6.png)
-verify multicast addresses:
+Verify multicast addresses:
 ![](/images/verify%20multicast.png)
-IPv6 defines multiple multicast "scopes" which indicate how far the packet should be forwarded. The addresses in the previous slide all use the "link-local" scope (FF02), which stays in the local subnet.
+IPv6 defines multiple multicast "scopes" which indicate how far the packet should be forwarded. The addresses in the previous slide all use the "link-local" scope (**FF02**), which stays in the local subnet.
 IPv6 multicast scopes:
-- Interface-local (FF01): The packet doesn't leave the local device. Can be used to send traffic to a service within the local device.
-- Link-local (FF02): The packet remains in the local subnet. Routers will not route the packet between subnets. 
-- Site-local (FF05): The packet can be forwarded by routers. Should be limited to a single physical location (not forwarded over a WAN)
-- Organization-local (FF08): Wider in scope than site-local (an entire company/organization).
-- Global (FF0E): No boundaries. Possible to be routed over the Internet.
+- **Interface-local** (**FF01**): The packet doesn't leave the local device. Can be used to send traffic to a service within the local device.
+- **Link-local** (**FF02**): The packet remains in the local subnet. Routers will not route the packet between subnets. 
+- **Site-local** (**FF05**): The packet can be forwarded by routers. Should be limited to a single physical location (not forwarded over a WAN)
+- **Organization-local** (**FF08**): Wider in scope than site-local (an entire company/organization).
+- **Global** (**FF0E**): No boundaries. Possible to be routed over the Internet.
 ![](/images/multicast%20address%20scopes.png)
+
+Routing schemes:
+![](/images/routingschemes.png)
+
 
 ### 1.9.d Modified EUI 64
 EUI stands for Extended Unique Identifier
@@ -555,7 +570,7 @@ Modfied EUI-64 is a method of converting a MAC address (48 bits) into a 64-bit i
 This interface identifier can then become the "host portion" of a /64 IPv6 address.
 To convert the MAC address:
 1. Split the MAC address into two halves
-2. Insert FFFE in the middle
+2. Insert **FFFE** in the middle
 3. Invert the 7th bit
 
 ## 1.10 Verify IP parameters for Client OS (Windows, Mac OS, Linux)
@@ -639,7 +654,7 @@ The SSID does NOT have to be unique.
 Most wireless networks aren't standalone networks.
 - Rather, they are a way for wireless clients to connect to the wired network infrastructure.
 - In 802.11, the upstream wired network is called the DS (Distribution System)
-- Each wireless BSS or ESS Is mapped to a VLAN in the wired network.
+- Each wireless BSS or ESS is mapped to a VLAN in the wired network.
 - It's possible for an AP to provide multiple wireless LANs, each with a unique SSID.
 - Each WLAN is mapped to a separate VLAN and connected to the wired network via a trunk.
 - Each WLAN uses a unique BSSID, usually by incrementing the last digit of the BSSID by one.
@@ -671,13 +686,20 @@ The 2.4 GHz band is divided into several channels, each with a 22 MHz range.
 
 ### 1.11.d Encryption
 Although security is important in all networks, it is even more essential in wireless networks.
+
 Because wireless signals are not contained within a wire, any device within range of the signal can receive the traffic.
+
 In wire networks traffic is often only encrypted when sent over an untrusted network such as the Internet.
+
 In wireless networks, it is very important to encrypt traffic sent between the wireless clients and the AP.
+
 There are many possible protocols that can be used to encrypt traffic.
+
 All devices on the WLAN will use the same protocol, however each client will use a unique encryption/decryption key so that other device can't read its traffic.
+
 A 'group key' is used by the AP to encrypt traffic that it wants to send to all of tis clients.
 - All of the clients associated with the AP keep that key so they can decrypt the traffic.
+
 A MIC (Message Integrity Check) is added to messages to help protect their integrity.
 
 Authentication methods:
