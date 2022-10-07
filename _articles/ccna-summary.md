@@ -728,7 +728,7 @@ Authentication methods:
 - LEAP (Lightweight EAP)
     - LEAP was developed by Cisco as an improvement over WEP.
     - Clients must provide a username and password to authenticate.
-    - In addition, mutua authentication is provided by both the client and server sending a challenge phrase to each other.
+    - In addition, mutual authentication is provided by both the client and server sending a challenge phrase to each other.
     - Dynamic WEP keys are used, meaning that the WEP keys are changed frequently.
     - Like WEP, LEAP is considered vulnerable and should not be used anymore.
 
@@ -744,11 +744,11 @@ Authentication methods:
 ![](/images/EAPfast.png)
 
 - PEAP (Protected EAP)
-    - Like EAP-FAST, PEAP involves establsihing a secure TLS tunnel between the client and server.
+    - Like EAP-FAST, PEAP involves establishing a secure TLS tunnel between the client and server.
     - Instead of a PAC, the server has a digital certificate.
     - The client uses this digital certificate to authenticate the server
-    - The certificate is also used to estalbish a TLS tunnel
-    - Because only the server provides a certificate for authentication, the client must still be authenticated within the secure tunnel, for example by using MS-CHAP (Microsfot Challenge-Handshake Authentication Protocol)
+    - The certificate is also used to establish a TLS tunnel
+    - Because only the server provides a certificate for authentication, the client must still be authenticated within the secure tunnel, for example by using MS-CHAP (Microsoft Challenge-Handshake Authentication Protocol)
 
 ![](/images/PEAP.png)
 
@@ -763,13 +763,13 @@ Authentication methods:
 Encryption and Integrity methods:
 - TKIP (Temporal Key Integrity Protocol)
     - Based on WEP, but more secure
-    - Should not be usde in modern networks
+    - Should not be used in modern networks
     - used in WPA
 - CCMP (Counter/CBC-MAC Protocol)
     - CCMP was developed after TKIP and is more secure.
     - AES (Advanced Encryption Standard) counter mode for encryption
         - AES is the most secure encryption protocol currently available. It is used widely used all over the world.
-        - There are multipel modes of operation for AES. CCMP uses 'counter mode'.
+        - There are multiple modes of operation for AES. CCMP uses 'counter mode'.
     - CBC-MAC for MIC to ensure integrity of messages
     - used in WPA2
 - GCMP (Galois/Counter Mode Protocol)
@@ -785,7 +785,7 @@ Before virtualization, there was a one-to-one relationship between a physical se
 In that operating system, apps providing services such as a web server, email server, etc. would run.
 One physical server would be used for the web server, one for the email server, one for the database server, etc.
 This is inefficient for multiple reasons:
-- Each physical server is expensive and takes up sapce, power, etc.
+- Each physical server is expensive and takes up space, power, etc.
 - The resources on each physical server (CPU, RAM, storage, NIC) are typically under-used.
 
 ![](/images/serverbeforevirtualization.png)
@@ -833,7 +833,8 @@ VMs are connected to each other and the external network via a virtual switch ru
 MAC Address is a 6-byte (48-bit) globally unique physical address assigned to the device when it is made. Written as 12 hexadecimal characters. (00:00:00:00:00:00)
 
 ### 1.13.a MAC learning and aging
-When a switch receives a frame, it associates the MAC address of source with the corresponding port which the frame was received. The switch dynamically constructrs an address table using the MAC source addresses of received frames.
+When a switch receives a frame, it associates the MAC address of source with the corresponding port which the frame was received. The switch dynamically constructs an address table using the MAC source addresses of received frames.
+
 These dynamically learned MAC addresses are deleted from the table after the MAC address age value has expired. This frees unused addresses from the MAC address table for other active subscribers. The default value is 300 seconds.
 
 
@@ -859,6 +860,7 @@ VLANs are configured on switches on a per-interface basis, and logically seperat
 
 ### 2.1.a Access ports (data and voice)
 An access port is a switchport which belongs to a single VLAN, and usually connects to end hosts like PCs.
+
 IP phones have an internal 3-port switch
 - 1 port is the 'uplink' to the external switch
 - 1 port is the 'downlink' to the PC
@@ -881,49 +883,83 @@ VLANs 1002-1005 exist by default and cannot be deleted.
 
 ## 2.2 Configure and verify interswitch connectivity
 Trunk ports = "tagged" ports
+
 Access ports = "untagged" ports
 
 DTP (Dynamic Trunking Protocol)
-- Cisco proprietary protocol that allows Cisco switches to dyniamically determine their interface status (access or trunk) without manual configuration. For security purposes, manual configuration is reconmmended and DTP should be disabled on all switchports.
+- Cisco proprietary protocol that allows Cisco switches to dynamically determine their interface status (access or trunk) without manual configuration. For security purposes, manual configuration is recommended and DTP should be disabled on all switchports.
+
 VTP (VLAN Trunking Protocol)
 - allows you to configure VLANs on a central VTP server switch, and other switches (VTP clients) will synchronize their VLAN database to the server. It is designed for large networks with many VLANs, but is rarely used and not recommended.
 
 ### 2.2.a Trunk ports
-Trunk ports can be used to carry from multiple VLANs over a single interface. Switches will "tag" all frames that they send over a trunk link. This allows the reciving switch to know which VLAN the frame belongs to.
+In a small network with a few VLANs, itis possible to use a seperate interfaces for each VLAN when connected switches to switches, and switches to routers.
+
+However, when the number of VLANs increases this is not viable. It will result in wasted interfaces, and often routers won't have enough interfaces for each VLAN.
+
+example:
+![](/images/nontrunkvlans.png)
+
+Trunk ports can be used to carry traffic from multiple VLANs over a single interface. Switches will "tag" all frames that they send over a trunk link. This allows the reciving switch to know which VLAN the frame belongs to.
+
+Trunk ports = 'tagged' ports
+Access ports = 'untagged' ports
+
+![](/images/networkwithtrunk.png)
+
+![](/images/trunkconfig.png)
 
 >show interfaces trunk
 
-![](/images/trunkconfig.png)
+![](/images/showinterfacestrunk.png)
+![](/images/trunkvlanconfig.png)
+![](/images/trunkvlanconfirm.png)
+
 
 ### 2.2.b 802.1q
 802.1q is an industry standard trunking protocol.
 
+![](/images/8021qtag.png)
+
 The 802.1q tag is inserted between the Source and Type/Length fields of the Ethernet frame.
+
+![](/images/8021qformat.png)
+
 The tag is 4 bytes (32 bits) in length and consists of two main fields: TPID (Tag Protocol Identifier) and TCI (Tag Control Information).
-The TPID is 2 bytes in length and is always set to a value of 0x8100, indicating the frame is 802.1q tagged
+
+The TPID is 2 bytes in length and is always set to a value of 0x8100, indicating the frame is 802.1q tagged.
+
 The TCI consists of 3 smaller fields:
 - PCP (Priority Code Point), 3 bits
-    - used for CoS (Class of Service), which prioritizes important traffic in congested networks.
+    - used for CoS (Class of Service), which prioritizes important traffic in congested networks
 
 ![](/images/PCP/CoS.png)
 
 - DEI (Drop Eligiblle Indicator), 1 bit
-    - used to indicated frames that can be dropped if the network is congested 
+    - used to indicated frames that can be dropped if the network is congested.
+
 - VID (VLAD ID), 12 bits
-    - identifies the VLAN the frame belongs to. 
+    - identifies the VLAN the frame belongs to 
+    - range of VLANs 1-4094
+    - Normal VLANs: 1-1005
+    - Extended VLANs: 1006-4094
 
 ### 2.2.c Native VLAN
+
 802.1q has a feature called the native VLAN.
 The native VLAN is VLAN 1 by default on all trunk ports, but can be manually configured on each trunk port.
 The switch does not add an 802.1q tag to frames in the native VLAN.
+
 When a switch receives an untagged frame on a trunk port, it assumed the frame belongs to the native VLAN. For this reason, it's very important that the native VLAN matches for both switches.
 
-R1(config-subif)#encapsulation dot1q (vlan-id) native
+>R1(config-subif)#encapsulation dot1q (vlan-id) native
 
 ## 2.3 Configure and verify Layer 2 discovery protocols (Cisco Discovery Protocol and LLDP)
 Layer 2 discovery protocols such as CDP and LLDP share information with and discover information about neighboring (connected) devices. 
 The shared information includes host name, IP address, device type, etc.
+
 Because they share information about the devices in the network, they can be considered a security risk and are often not used. It is up to the network engineer/admin to decide if they want to use them in the network or not.
+
 CDP (Cisco Discovery Protocol)
 - It is enabled on Cisco devices (routers, switches, firewalls, IP phones, etc) by default.
 - CDP messages are periodically sent to multicast MAC address 0100.0CCC.CCCC.
@@ -950,8 +986,10 @@ LLDP (Link Layer Discovery Protocol)
 
 ## 2.4 Configure and verify (Layer 2/Layer 3) EtherChannel (LACP)
 When the bandwidth of the interfaces connected to end hosts is greater than the bandwidth of the connection to the distribution switch(es), this is called oversubscription, which can cause congestion.
+
 EtherChannel groups multiple interfaces together to act as a single interface. STP will treat this group as a single interface.
 EtherChannel is also known as Port Channel, or LAG (Link Aggregation Group)
+
 EtherChannel load balances based on "flows". A flow is a communication between two nodes in the network. Frames in the same flow will be forwarded using the same physical interface.
 The inputs used in the interface selection calculation can be configured
 - inputs that can be used:
@@ -990,10 +1028,15 @@ Up to 8 interfaces can be formed into a single EtherChannel (LACP allows up to 1
 
 ## 2.5 Interpret basic operations of Rapid PVST+ Spanning Tree Protocol
 STP (Spanning Tree Protocol) prevents Layer 2 loops by placing redundant ports in a blocking state, essentially disabling the interface.
+
 These interfaces act as backups that can enter a forwarding state if an active (=currently forwarding) interface fails.
+
 Interfaces in a blocking state only send or receive STP messages (called BPDUs = Bridge Protocol Data Units)
+
 Cisco switches use a version of STP called PVST+ (Per-VLAN Spanning Tree), which runs a seperate STP 'instance' in each VLAN, so in each VLAN different interfaces can be forwarding/blocking. This allows for load balancing by blocking different ports in each VLAN.
+
 Rapid PVST+ allows for much faster converging/adapting to network changes, similar to 802.1w (Rapid Spanning Tree Protocol).
+
 >show spanning-tree
 
 ![](/images/spanning%20tree%20protocol.png)
@@ -1003,8 +1046,11 @@ Rapid PVST+ allows for much faster converging/adapting to network changes, simil
 
 ### 2.5.a Root port, root bridge (primary/secondary), and other port names
 Switches use one field in the STP BPDU, the Bridge ID field, to elect a root bridge for the network.
+
 The switch with the lowest Bridge ID becomes the root bridge. the default bridge priority is 32768 on all switches, so by default the MAC address is used as the tie-breaker (lowest MAC address becomes the root bridge). All ports on the root bridge are designated ports. Ports across from the root port are always designated ports. 
+
 Each remaining switch will select ONE of its interfaces to be its root port. 
+
 Root port selection:
 1. Lowest root constructrs
 2. Lowest neighbor bridge ID
@@ -1019,14 +1065,16 @@ In RSTP, the non-designated port is split into two seperate roles:
 - the backup port role (two interfaces on same collision domain, via a hub)
 
 
-spanning-tree vlan 10 root primary/secondary
+>spanning-tree vlan 10 root primary/secondary
 - root primary = STP priority 24576
 - root secondary = STP priority 28672
 
 ### 2.5.b Port states (forwarding/blocking)
-Root/Designated ports remain stable in a Forwarding state.
-Non-designated ports remain stable in a Blocking state. Interfaces in a Blocking state are effectively disabled to prevent loops.
-Listening and Learning are transitional states which are passed through when an interface is activated, or when a Blocking port must transition to a Forwarding state due to a change in the network topology.
+**Root/Designated** ports remain stable in a Forwarding state.
+
+**Non-designated** ports remain stable in a Blocking state. Interfaces in a Blocking state are effectively disabled to prevent loops.
+
+**Listening** and **Learning** are transitional states which are passed through when an interface is activated, or when a Blocking port must transition to a Forwarding state due to a change in the network topology.
 
 ### 2.5.c PortFast
 Spanning tree timer picture
@@ -1741,7 +1789,9 @@ Extended ACLs: Match based on Source/Destination IP, Source/Destination port/pro
 - Extended ACLs can use 100-199, 2000-2699.
 - Extended ACLs should be appleid as close to the source as possible.
 >R1(config)# access-list (#) (permit/deny) (protocol) (src-ip) (dest-ip)
+
 >R1(config)# ip access-list extended (name/number)
+
 >R1(config-ext-nacl)# (seq-num) (permit/deny) (protocol) (src-ip) (dest-ip)
 
 ![](/images/configuringnumberedACLs.png)
