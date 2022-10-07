@@ -1040,9 +1040,9 @@ Rapid PVST+ allows for much faster converging/adapting to network changes, simil
 >show spanning-tree
 
 ![](/images/spanning%20tree%20protocol.png)
-![](/images/spanning%20tree%20port%20states.png)
-![](/images/spanning%20tree%20timers.png)
-![](/images/rapid%20spanning%20tree%20port%20states.png)
+
+
+
 
 ### 2.5.a Root port, root bridge (primary/secondary), and other port names
 Switches use one field in the STP BPDU, the Bridge ID field, to elect a root bridge for the network.
@@ -1066,6 +1066,7 @@ In RSTP, the non-designated port is split into two seperate roles:
 
 
 >spanning-tree vlan 10 root primary/secondary
+
 - root primary = STP priority 24576
 - root secondary = STP priority 28672
 
@@ -1076,32 +1077,37 @@ In RSTP, the non-designated port is split into two seperate roles:
 
 **Listening** and **Learning** are transitional states which are passed through when an interface is activated, or when a Blocking port must transition to a Forwarding state due to a change in the network topology.
 
+![](/images/spanning%20tree%20port%20states.png)
+
 ### 2.5.c PortFast
-Spanning tree timer picture
+
+![](/images/spanning%20tree%20timers.png)
 
 Portfast allows a port to move immediately to the Forwarding state, bypassing Listening and Learning. If used, it must be enabled only on ports connected to end hosts. If enabled on a port connected to another switch it could cause a Layer 2 loop.
 
 BPDU guard is another optional STP feature
 - can be used to prevent an access port from participating in the spanning tree.
-SW1(config-if)#spanning-tree portfast (default)
+>SW1(config-if)#spanning-tree portfast (default)
+
+![](/images/rapid%20spanning%20tree%20port%20states.png)
 
 ## 2.6 Describe Cisco Wireless Architectures and AP modes
 APs can operate in additonal modes beyond the ones we've introduced so far (section 1.11.b)
  
-An AP in repeater mode can be used to extend the range of a BSS.
+An AP in **repeater** mode can be used to extend the range of a BSS.
 - The repeater will simply retransmit any signal it receives from the AP.
     - A repeater with a single radio must operate on the same channel as the AP, but this can drastically reduce the overall throughput on the channel.
     - A repeater with two radios can receive on one channel, and then retransmit on another channel.
 
 ![](/images/APrepeatermode.png)
 
-An AP in WGB (workgroup bridge) operates as a wireless client of another AP, and can be used to connect wired devices to the wireless network.
+An AP in **Workgroup Bridge** (WGB) mode operates as a wireless client of another AP, and can be used to connect wired devices to the wireless network.
 - In the example below, PC1 does no have wireless capabilities, and also does not have access to a wired connection to SW1.
 - PC1 has a wired connection to the WGB, which has a wireless conection to the AP.
 
 ![](/images/apWGBmode.png)
 
-An AP in outdoor bridge mode can be used to connect network over long distances without a physical cable connecting them.
+An AP in **outdoor bridge** mode can be used to connect network over long distances without a physical cable connecting them.
 - The APs will use specialized antennas that focus most of the signal power in one direction, which allows the wireless conection to be made over longer distances than normally possible.
 - The connection can be point-to-point as in the diagram below, or point-to-multipoint in which multiple sites connect to one central site.
 
@@ -1233,17 +1239,26 @@ A lower AD is preferred, and indicates that the routing protocol is considered m
 
 ### 3.1.f Metric
 A router's route table contains the best route to each destination network it knows about.
+
 If a router using a dynamic routing protocol learns two different routes to the same destination, how does it determine which is 'best'?
 It uses the metric value of the routes to dtermine which is best. A lower metric = better.
+
 Each routing protocol uses a different metric to determine which route is best.
+
 If a router learns two (or more) routes via the same routing protocol to the same destination (same network address, same subnet mask) with the same metric, both will be added to the routing table. Traffic will be load-balanced over both routes.
-ECMP (Equal Cost Multi-Path)
+
+ECMP (Equal Cost Multi-Path) is a routing strategy where packets towards a single destination IP address are load-balanced over multiple best paths with equal metrics.
 
 ![](/images/dynamicroutingmetrics.png)
 
 ### 3.1.g Gateway of last resort
 
 ## 3.2 Determine how a router makes a forwarding decision by default
+How does a Cisco Layer 3 device, such as a router, decides which route to use?
+
+1. **Prefix length** – the longest prefix match is always preferred. For example, a /24 route wins over a /16 route.
+2. **Administrative Distance (AD)** – if the routes have the same prefix lengths and are using different routing protocols, then the route with the lowest Administrative Distance wins. For example, OSPF routes are more preferred than RIP routes by default.
+3. **Metric** – if the routes have the same prefix length and administrative distance, then it will come down to the metrics. So the router learns about multiple different paths going to the same destination, using the same routing protocol, a measure called metric is used to decide. The path with lower metric wins.
 
 Routers drop packets with unknown destinations.
 
@@ -1252,16 +1267,25 @@ Routers drop packets with unknown destinations.
 When a router looks up a destination address in its routing table, it looks for the most specific matching route. Most specific = longest prefix length ( /32 > /24 > /16 > /8 > /0)
 
 ### 3.2.b Administrative distance
+
+![](/images/administrativedistance.png)
+
 ### 3.2.c Routing protocol metric
+![](/images/dynamicroutingmetrics.png)
 
 ## 3.3 Configure and verify IPv4 and IPv6 static routing
 IPv6 routing works the same as IPv4 routing.
 However, the two processes are seperate on the router, and the two routing tables are seperate as well.
+
 IPv4 routing is enabled by default. IPv6 routing is disabled by default, and must be enabled with "ipv6 unicast-routing"
+
 If IPv6 routing is disabled, the router will be able to send and receive IPv6 traffic, but will not route IPv6 traffic (=will not forward it between networks).
+
 A connected network route is automatically added for each connected network. 
 A local host route is automatically added for each address configured on the router.
+
 Routes for link-local addresses are not added to the routing table.
+
 ![](/images/localconnectedstaticinternalroutes.png)
 ![](/images/configstaticroute.png)
 ![](/images/ipv6%20static%20routing.png)
@@ -1271,10 +1295,11 @@ Routes for link-local addresses are not added to the routing table.
 
 
 to configure: 
-ip route (destination ip address) (mask) (next-hop ip address)
-ip route (destination-address) (mask) (exit-interface)
+>ip route (destination ip address) (mask) (next-hop ip address)
+>ip route (destination-address) (mask) (exit-interface)
+
 to verify: 
-show ip route
+>show ip route
 
 ### 3.3.a Default route
 A route that a router uses to forward an incoming packet when no other route is available for that packet in the routing table.
@@ -1288,11 +1313,15 @@ A route to a specific host (/32 mask)
 -example picture---
 ### 3.3.d Floating static
 By changing the AD of a static route, you can make it less preferred than routes learned by a dynamic routing protocl to the same destination (make sure the AD is higher than the routing protocol's AD!) This is known as a "floating static route".
+
 The route will be inactive (not in the routing table) unless the route learned by the dynamic routing protocol is removed.
 
 ## 3.4 Configure and verify single area OSPFv2
-OSPF uses shortest path first algorithm, aka Dijkstra's algorithm
+OSPF (Open Shortest Path First) is a link routing protocol.
+OSPF uses shortest path first algorithm, aka Dijkstra's algorithm.
+
 Routers store information about the network in LSAs (Link State Advertisements), which are organized in a structure called the LSDB (Link State Database)
+
 Routers will flood LSAs until all routers in the OSPF area develop the same map of the network (LSDB).
 
 OSPF areas
@@ -1337,22 +1366,27 @@ OSPF Neighbor requirements
 
 
 ### 3.4.b Point-to-point
-Point-to-point network type is enable on serial interfaces using the PPP or HDLC encapsulations by default.
+Point-to-point network type is enabled on serial interfaces using the PPP or HDLC encapsulations by default.
+
 Routers dynamically discover neighbors by sending/listening for OSPF Hello messages using multicast address 224.0.0.5.
+
 A DR and BDR are not elected. The two routers will form a Full adjacency with eachother.
 
 ### 3.4.c Broadcast (DR/BDR selection)
 Broadcast network type is enabled on Ethernet and FDDI interfaces by default.
+
 Routers dynamically discover neighbors by sending/listening for OSPF Hello messages using multicast address 224.0.0.5. To send routing information to a DR or BDR the multicast address of 224.0.0.6 is used.
 
-A DR (designated router) and BDR (backup designated router) must be elected on each subnet (only DR if there are no OSPF neighbors)
-Routers which aren't the DR or BDR become a DROther.
+A **DR** (designated router) and **BDR** (backup designated router) must be elected on each subnet (only DR if there are no OSPF neighbors).
+Routers which aren't the **DR** or **BDR** become a **DROther**.
 
-The DR/BDR election order of Priority:
+The **DR/BDR** election order of Priority:
 1. Highest OSPF interface priority
 2. Highest OSPF Router ID
+
 "First place" becomes the DR for the subnet, "second place" becomes the BDR
 The default OSPF interface priority is 1 on all interfaces.
+
 In the broadcast network type, routers will only form a full OSPF adjacency with the DR and BDR of the segment. Therefore, routers only exchange LSAs with the DR and BDR. DROthers will not exchange LSAs with each other. All routers will still have the same LSDB, but this reduces the amount of LSAs flooding the network.
 
 ![](/images/OSPF%20broadcast%20network%20type.png)
@@ -1365,13 +1399,21 @@ OSPF uses the largest IP address configured on the interfaces as its router ID. 
 
 ## 3.5 Describe the purpose, functions, and concepts of first hop redundancy protocols
 A (FHRP) First Hop Redundancy Protocol is a computer networking protocol which is designed to protect the default gateway used on a subnetwork by allowing two or more routers to provide backup for the gateway address; in the event of failure of an active router, the backup router will take over the address, usually within a few seconds.
+
 A virtual IP is configured on the two routers, and a virtual MAC is generated for the virtual IP (each FHRP uses a different format for the virtual MAC)
+
 An active router and a standby router are elected. (different FHRPs use different terms)
+
 End hosts in the network are configured to use the virtual IP as their default gateway.
+
 The active router replies to ARP requests using the virtual MAC address, so traffic destined for other networks will be sent to it.
+
 If the active router fails, the standby becomes the next active router. The new active router will send gratuitous ARP messages so that switches will update their MAC address tables. It now functions as the default gateway.
+
 If the old active router comes back online, by default it won't take back its role as the active router. It will become the standby router ("non-preemptive")
+
 Preemption can be configured, so the old router does take back its old role.
+
 List of FHRPs:
 1. HSRP (Hot Standby Router Protocol) 
 2. VRRP (Virtual Router Redundancy Protocol) 
@@ -1384,7 +1426,9 @@ List of FHRPs:
 
 ## 4.1 Configure and verify inside source NAT using static and pools
 NAT (Network Address Translation) is used to modify the source and/or destination IP addresses of packets. 
+
 There are various reasons to use NAT, but the most common reason is to allow hosts with private IP addresses to communicate with other hosts over the Internet.
+
 Static NAT involves statically configuring one-to-one mappings of private IP addresses to public IP addresses.  When traffic from the internal host is sent to the outside network, the router will translate the source address. However, this one-to-one mapping also allows external hosts to access the internal host via the inside global address.
 
 An inside local IP address is mapped to an inside global IP address.
@@ -1395,11 +1439,14 @@ An inside local IP address is mapped to an inside global IP address.
 ![](/images/static%20NAT%20config.png)
 
 In dynamic NAT, the router dynamically maps inside local addresses to inside global addresses as needed. 
+
 An ACL is used to identify which traffic should be translated.
 - If the source IP is permitted by the ACL, the soruce IP will be translated.
 - If the soruce IP is denied by the ACL, the source IP will NOT be translated. (the traffic will NOT be dropped!)
+
 A NAT pool is used to define the available inside global addresses that can be used.
 Although they are dynamically assigned, the mappings are still one-to-one (one inside local IP address per inside global address)
+
 If there arent enough inside global IP address available (=all are currently being used), it is called 'NAT pool exhaustion'
 - If a packet from another inside host arrives and needs NAT but there are no available addresses, the router will drop the packet.
 - The host will be unable to access outside networks until one of the inside global IP addresses becomes available.
@@ -1434,11 +1481,17 @@ NTP (Network Time Protocol) allows automatic syncing of time over a network.
 ![](/images/NTP%20commands.png)
 ## 4.3 Explain the role of DHCP and DNS within the network
 DNS (Domain Name System) is used to resolve human-readable names (google.com) to IP addresses.
+
 When you type 'youtube.com' into a web browser, your device will ask a DNS server for the IP address of youtube.com.
+
 The DNS server(s) your device uses can be manually configured or learned via DHCP.
+
 Standard DNS queries/responses typically use UDP. TCP is used for DNS messages greater than 512 bytes. In either case, port 53 is used.
+
 Devices will save the DNS server's responses to a local DNS cache. This means they don't have to query the server every single time they want to access a particular destination. 
+
 >ipconfig /displaydns
+
 >nslookup youtube.com
 
 ![](/images/DNSios.png)
@@ -1476,10 +1529,15 @@ There are three main operations used in SNMP.
 
 ## 4.5 Describe the use of syslog features including facilities and levels
 Syslog is an industry standard protocol for message logging.
+
 On network devices, Syslog can be used to log events such as changes in interface status (up<->down), changes in OSPF neighbor status, system restarsts, etc.
+
 The messages can be displayed in the CLI, saved in the device's RAM, or sent to an external Syslog server.
+
 Logs are essential when troubleshooting issues, examining the cause of incidents, etc.
+
 Syslog and SNMP are both used for monitoring and troubleshooting of devices. They are complementary, but their functionalities are different.
+
 ![](/images/syslogmessageformat.png)
 ![](/images/syslogmessageexamples.png)
 ![](/images/syslogseveritylevels.png)
@@ -1580,8 +1638,11 @@ The following standards are recommended for acceptable interactive audio quality
 If a network device receives messages faster than it can forward them out of the appropriate interface, the messages are placed in a queue.
 By default, queued messages will be forwarded in a First In First Out (FIFO manner)
 - Messages will be sent in the order they are received.
+
 If the queue is full new packets will be dropped, this is known as tail drop.
+
 Tail drop is harmful because it can lead to TCP global synchronization causing all TCP hosts sending traffic to slow down the rate at which they send traffic, followed by all hosts increasing the rate at which they send traffic, rapidly leading to more congestion, dropped packets, and the process repeating again.
+
 A solution to prevent tail drop and TCP global synchronization is Random Early Detected (RED).
 - When the amount of traffic in the queue reaches a certain threshold, the device will start randomly dropping packets from select TCP flows.
 - In standard RED, all kinds of traffic are treated the same.
@@ -1589,6 +1650,8 @@ A solution to prevent tail drop and TCP global synchronization is Random Early D
 
 An essential part of QoS is the use of multiple queues.
 - This is where classification plays a role. The device can match traffic based on various factors (for example the DSCP marking in the IP header) and then place it in the appropriate queue.
+
+
 However, the device is only able to forward one frame out of an interface at once, so a scheduler is used to device which queue traffic is forwarded from next.
 - Prioritization allows the scheduler to give certain queues more priority than others.
 
@@ -1610,7 +1673,7 @@ LLQ (Low Latency Queuing) designates one (or more) queues as strict priority que
 This is very effective for reducing the delay and jitter of voice/video traffic.
 
 However, it has the downside of potentially starving other queues if there is always traffic in the designated strict priority queue.
-- Policing (next slide) can control the amount of traffic allowed in the strict priority queue so that it can't take all of the link's bandwidth.
+- Policing can control the amount of traffic allowed in the strict priority queue so that it can't take all of the link's bandwidth.
 
 ![](/images/LLQ.png)
 
@@ -1630,8 +1693,11 @@ Example of why the rate traffic is being sent/received is being limited:
 
 ## 4.8 Configure network devices for remote access using SSH
 SSH (Secure Shell) allows for remote access while providing security features such as  data encryption and authentication. 
+
 The SSH server (the device being connected to) listens for SSH traffic on TCP port 22.
+
 To enable and use SSH, you must generate an RSA public and private key pair. The keys are used for data encryption/decryption, authentication, etc.
+
 ![](/images/SSH%20config-rsa.png)
 ![](/images/ssh%20config%20vty.png)
 
@@ -1643,7 +1709,9 @@ FTP (File Transfer Protocol) and TFTP (Trivial File Transfer Protocol) are indus
 They both use a client-server model.
 - Clients can use FTP or TFTP to copy files from a server.
 - Clients can use FTP or TFTP to copy files to a server.
+
 As a network engineer, the most common use for FTP/TFTP is in the process of upgrading the operating system of a network device. You can use FTP/TFTP to download the newer version of IOS from a server, and then reboot the device with the new IOS image.
+
 FTP uses usernames and passwords for authentication, however there is no encryption.
 - FTP uses TCP ports 20 and 21. 
 - For greater security, FTPS (FTP over SSL/TLS) can be used.
@@ -1670,22 +1738,28 @@ TFTP is named trivial because it is simple and has only basic features compared 
 ## 5.0 Security Fundamentals
 The principles of the CIA Triad form the foundation of security:
 
-Confidentiality
+**Confidentiality**
 - only authorized users should be able to access data.
 - some information/data is public and can be accessed by anyone, some is secret and should only be accessed by specific people.
-Integrity
+
+**Integrity**
 - Data should not be tampered with (modified) by unauthorized users.
 - Data should be correct and authentic.
-Availability
+
+**Availability**
 - The network/system should be operational and accessible to authorized users.
 
 ## 5.1 Define key security concepts (threats, vulnerabilities, exploits, and mitigation techniques)
+
 A vulnerability is any potential weakness that can compromise the CIA of a system/info.
 - a potential weakness isn't a problem on its own
+
 An exploit is something that can potentially be used to exploit the vulnerability.
 - something that can potentially be used as an exploit isn't a problem on its own
+
 A threat is the potential of a vulnerability to be exploited.
 - A hacker exploiting a vulnerability in your system is a threat.
+
 A mitigation technique is something that can protect against threats.
 - Should be implemented everywhere a vulnerability can be exploited: client devices. servers, switches, routers, firewalls, etc.
 
@@ -1695,8 +1769,10 @@ A mitigation technique is something that can protect against threats.
 User awareness programs are designed to make employees aware of potential security threats and risks.
 - For example, a company might send out false phishing emails to make employees click a link and sign in with their login credentials.
 - Although the emails are harmless, employees who fall for the false emails will be informed that it is part of a user awareness program and they should be more careful about phishing emails.
+
 User training programs are more formal than user awareness programs.
 - For example, dedicated training sessions which educate users on the corporate secuirty policies, how to create strong passwords, and how to avoid potential threats.
+
 Physical access control protects equipment and data from potential attackers by only allowing authorized users into protected areas such as network closets or data center floors.
 - Multifactor locks can protect access to restricted areas.
 - ie. a door that requires users to swipe a badge and scan their fingerprint to enter.
@@ -1704,7 +1780,7 @@ Physical access control protects equipment and data from potential attackers by 
 
 ## 5.3 Configure and verify device access control using local passwords
 
-## 5.4 Describe security password policies elements, such as management,complexity, and password alternatives (multifactor authentication, certificates, and biometrics)
+## 5.4 Describe security password policies elements, such as management, complexity, and password alternatives (multifactor authentication, certificates, and biometrics)
 Multi-factor authentication involves providing more than just a username/password to prove your identity. It usually involves providing two (or more) of the following:
 - Something you know
     - a username/password combination, a PIN, etc.
@@ -1716,6 +1792,7 @@ Multi-factor authentication involves providing more than just a username/passwor
 Requiring multiple factors of authentication greatly increases the security.
 
 Digital certificates are another form of authentication used to prove the identity of the holder of the certificate. They are used for websites to verify that the website being accessed is legitimate.
+
 Entities that want a certificate to prove their identity send a CSR (Certificate Signing Request) to a CA (Certificate Authority), which will generate and sign the certificate.
 
 ## 5.5 Describe IPsec remote access and site-to-site VPNs
@@ -1727,25 +1804,27 @@ Site-to-Site VPNs (IPsec)
 - A site-to-site VPN is a VPN between two devices and is used to connect two sites together over the Internet.
 - A VPN 'tunnel' is created between the two devices by encapsulating the original IP packet with a VPN header and a new IP header.
     - When usuing IP sec, the original packet is encrypted before being encapsulated with the new header.
+
 Site-to-site VPNs:
 
 ![](/images/Site-to-Site%20VPNs%20(IPsec).png)
 ![](/images/ipsec.png)
 
 There are some limitations to standard IPsec:
-1. IPsec doesn't support broadcast and multicast traffic, only unicast. This means that routing protocols such as OSPF can't be used over the tunnels, because they rely on multicast traffic.
-    - This can be solved with 'GRE over IPsec'
-    - GRE (Generic Routing Encapsulation) creates tunnels like IPsec, however it does not encrypt the original packet, so it is not secure.
-    - However, it has the advantage of being able to encapsulate a wide variety of Layer 3 protocols as well as broadcast and multicast messages.
-    - To get the flexibility of GRE with the security of IPsec, 'GRE over IPsec' can be used.
-    - The original packet will be encapsulated by a GRE header and a new IP header, and then the GRE packet will be encrypted and encapsulated within an IPsec VPN header and new IP header.
+
+IPsec doesn't support broadcast and multicast traffic, only unicast. This means that routing protocols such as OSPF can't be used over the tunnels, because they rely on multicast traffic.
+- This can be solved with 'GRE over IPsec'
+- GRE (Generic Routing Encapsulation) creates tunnels like IPsec, however it does not encrypt the original packet, so it is not secure.
+- However, it has the advantage of being able to encapsulate a wide variety of Layer 3 protocols as well as broadcast and multicast messages.
+- To get the flexibility of GRE with the security of IPsec, 'GRE over IPsec' can be used.
+- The original packet will be encapsulated by a GRE header and a new IP header, and then the GRE packet will be encrypted and encapsulated within an IPsec VPN header and new IP header.
 
 ![](/images/GREoverIPsec.png)
 
-2. Configuring a full mesh of tunnels between many sites is a labor-intesive task.
-    - This can be solved with Cisco's DMVPN.
-    - DMVPN (Dynamic Multipoint VPN) is a Cisco-developed solution that allows routers to dynamically create a full mesh of IPsec tunnels without having to manually configure every single tunnel.
-    - DMVPN provides the configuration simplicity of hub-and-spoke (each spoke router only needs one tunnel configured) and the efficiency of direct spoke-to-spoke communication (spoke routers can communicate directly without traffic passing through the hub)
+Configuring a full mesh of tunnels between many sites is a labor-intesive task.
+- This can be solved with Cisco's DMVPN.
+- DMVPN (Dynamic Multipoint VPN) is a Cisco-developed solution that allows routers to dynamically create a full mesh of IPsec tunnels without having to manually configure every single tunnel.
+- DMVPN provides the configuration simplicity of hub-and-spoke (each spoke router only needs one tunnel configured) and the efficiency of direct spoke-to-spoke communication (spoke routers can communicate directly without traffic passing through the hub)
 
 ![](/images/DMVPN.png)
 
@@ -1758,6 +1837,7 @@ Remote-Access VPNs
 - VPN client software (for example Cisco AnyConnect) is installed on en end devices (for example company-provided laptops that employees work from home).
 - These end devices then form secure tunnels to one of the company's router/firewalls acting as a TLS server.
 - This allows the end users to securely access resources on the company's internal network without being directly connected to the company network.
+
 Remote-Access VPNS:
 ![](/images/remote-access%20VPNs.png)
 ![](/images/remote-accessvpnnetwork.png)
@@ -1765,29 +1845,35 @@ Remote-Access VPNS:
 Site-to-Site vs Remote-Access VPN
 - Site-to-Site VPNs typically use IPsec.
 - Remote-Access VPNs typically use TLS.
-
 - Site-to-Site VPNs provide service to many devices within the sites they are connecting.
 - Remote-Access VPNs provide  service to the one end device the VPN client software is installed on.
-
 - Site-to-Site VPNs are typically used to permanently connect two sites over the Internet.
 - Remote-Access VPNs are typically used to provide on-demand access for end devices that want to securely access company resources while connected to a network which is not secure.
 
 
 ## 5.6 Configure and verify access control lists
 ACLs (Access Control Lists) function as a packet filter, instructing the router to permit or discard specific traffic. 
+
 ACLs can filter traffic based on source/destination IP addresses, source/destination IP addresses, source/destination Layer 4 ports, etc.
+
 ACLs are configured globally on the router, and consist of an ordered sequence of ACEs (Access Control Entries)
+
 Configuring an ACL will not make the ACL take effect, the ACL must be applied to an interface. ACLs are applied either inbound or outbound.
+
 If the packet matches one of the ACEs in the ACL, the router takes the action and stops processing the ACL, all entries below the matching entry will be ignored. 
+
 There is an implicit deny at the end of all ACLs. The implicit deny tells the router to deny all traffic that doesn't match any of the configured entries in the ACL.
+
 Standard ACLs: Match based on the Source IP address only.
 - Standard ACLs can use 1-99 and 1300-1999.
 - Standard ACLs should be applied as close to the destination as possible.
 - R1(config)# access-list (#) (deny/permit) (ip) (wildcard-mask)
     R1(config-if)# ip access-group (#) (in/out)
+
 Extended ACLs: Match based on Source/Destination IP, Source/Destination port/protocol, etc
 - Extended ACLs can use 100-199, 2000-2699.
 - Extended ACLs should be appleid as close to the source as possible.
+
 >R1(config)# access-list (#) (permit/deny) (protocol) (src-ip) (dest-ip)
 
 >R1(config)# ip access-list extended (name/number)
@@ -1805,7 +1891,9 @@ Extended ACLs: Match based on Source/Destination IP, Source/Destination port/pro
 
 ## 5.7 Configure and verify Layer 2 security features (DHCP snooping, dynamic ARP inspection, and port security)
 DHCP snooping is security feature of switches that is used to filter DHCP messages received on untrusted ports.
+
 DHCP snooping only filters DHCP messages. Non-DHCP messages aren't affected.
+
 All ports are untrusted by default.
 - Usually, uplink ports are configured as trusted ports, and downlink ports remain untrusted.
 ![](/images/DHCP%20snooping%20operations.png)
@@ -1815,7 +1903,9 @@ All ports are untrusted by default.
 
 
 Dynamic ARP inspection (DAI) is a security feature of switches that is used to filter ARP messages received on untrusted ports.
+
 DAI only filters ARP messages. Non-ARP messages aren't affected.
+
 All ports are untrusted by default.
 - Typically, all ports connected to other network devices (switches, routers) should be configured as trusted, while itnerfaces connected to end hosts should remain untrusted.
 
@@ -1825,8 +1915,10 @@ All ports are untrusted by default.
 ![](/images/DAIcomands.png)
 
 Port security is a security feature of Cisco switches. It allows you to control which source MAC address(es) are allowed to enter the switchport.
+
 If an authorized source MAC address enters the port, an action will be taken.
 - The default action is to place the interface in an 'err-disabled' state.
+
 When you enable port security on an interface with the default settings, one MAC Addres is allowed.
 - You can configure the allowed MAC address manually.
 - If you don't configure it manually, the switch will allow the first source MAC address that enters the interface.
@@ -1841,13 +1933,16 @@ When you enable port security on an interface with the default settings, one MAC
 
 ## 5.8 Compare authentication, authorization, and accounting concepts
 AAA (triple-A) stands for Authentication, Authorization, and Accounting. 
+
 It is a framework for controlling and monitoring users of a computer system (ie. a network)
 
-Authentication is the process of verifying a user's identity.
+**Authentication** is the process of verifying a user's identity.
 - logging in = authentication
-Authorization is the process of granting the user the appropriate access and permissions.
+
+**Authorization** is the process of granting the user the appropriate access and permissions.
 - granting the user acces to some files/services, restricting access to other files/services = authorization.
-Accounting is the process of recording the user's activities on the system.
+
+**Accounting** is the process of recording the user's activities on the system.
 - logging when a user makes a change to a file = accounting
 
 ## 5.9 Describe wireless security protocols (WPA, WPA2, and WPA3)
@@ -1857,6 +1952,7 @@ The Wi-Fi alliance has developed three WPA certifications for wireless devices:
 - WPA3
 
 To be WPA-certified, equipment must be tested in authorized testing labs.
+
 All of the above support two authentication modes:
 - Personal mode: A pre-shared key (PSK) is used for authentication. When you connect to a home Wi-Fi network, enter the password and are authenticated, that is personal mode. This is common in small networks. The PSK itself is not sent over the air. A four-way handshake is used to generate encryption keys.
 - Enterprise mode: 802.1X is used with an authentication server (RADIUS server).  *No specific EAP method is specified, so all are supported (PEAP, EAP-TLS, etc).
@@ -1896,9 +1992,11 @@ Network automation provides many key benefits:
 
 ## 6.2 Compare traditional networks with controller-based networking
 In traditional networking, the data plane and control plane are both distributed. Each device has its own data plane and its own control plane. The planes are 'distributed' throughout the network.
+
 Networking tasks can be automated in tradition network architectures too:
 - Scripts can be written (ie. using Python) to push commands to many devices at once
 - Python with good use of Regular Expression can parse through show commands to gather infromation about the network devices.
+
 However, the robust and centralized data collected by SDN controllers greatly facilitates these functions. 
 - The controller collects information about all devices in the network.
 - Northbound APIs allows apps to access information in a format that is easy for programs to understand (ie. JSON, XML)
@@ -1912,13 +2010,19 @@ Although SDN and automation aren't the same thing, the SDN architecture greatly 
 
 ## 6.3 Describe controller-based, software defined architecture (overlay, underlay, and fabric)
 SDN (Software-Defined Networking) is an approach to networking that centralizes the control plane into an application called a controller.
+
 SDN is also called the Software-Defined Architecture (SDA) or Controller-Based Networking.
+
 Traditional control planes use a distributed architecture.
 - For example, each router in the network runs OSPF and the routers share routing information and then calculate their preferred routers to each destination.
+
 An SDN controller centralizes control plane functions like calculating routes.
 - That is just an example, and how much of the control plane is centralized varies greatly.
+
 The controller can interact programmatically with the network devices using APIs (Application Programming Interface)
+
 The SBI is used for communications between the controller and the network devices it controls.
+
 The NBI is what allows us to interact with the controller with our scripts and applications.
 
 ![](/images/DNA%20center.png)
@@ -1950,54 +2054,66 @@ SD-Access Underlay
 
 
 SD-Access Overlay
- LISP provides the control plane of SD-Access
+
+LISP provides the control plane of SD-Access
  - A list of mappings of EID (endpoint identifiers) to RLOCs (routing locations) is kept.
  - EIDs identify end hosts connected to edge switches, and RLOCs identify the edge switch which can be used to reach the end host.
- - There is a LOT mroe detail to cover about LISP, but this is just to show how it differs form the traditional control plane.
- Cisco TrustSec (CTS) provides policy control (QoS, security policy, etc)
- VXLAN provides the data plane of SD-Access.   
+ - There is a LOT more detail to cover about LISP, but this is just to show how it differs form the traditional control plane.
+ 
+Cisco TrustSec (CTS) provides policy control (QoS, security policy, etc. VXLAN provides the data plane of SD-Access.   
 
 ![](/images/SD-access%20overlay.png)
 
 ### 6.3.a Seperation of control plane and data plane
 The various functions of network devices can be logically divided up (categorized) into planes:
-- Data plane
-    - All tasks involved in forwarding user data/traffic from one interface to another are part of the data plane.
-    - A router receives a message, looks for the most specific matching route in its routing table, and forwards it out of the appropriate interface to the next hop.
-        - It also de-encapsulates the original Layer 2 header, and re-encapsulates with a new header destined for the next hop's MAC address.
-    - A switch receives a message, looks at the destination MAC address, and forwards it out of the appropriate interface (or floods it).
-        - This includes functions like adding or removing 802.1q VLAN tags.
-    - NAT (changing the src/dst addresses before forewarding) is part of the data plane.
-    - Deciding to forward or discard messages due to ACLs, port security, etc. is part of the data plane.
-    - The data plane is also called the 'forwarding plane'.
-- Control plane
-    - How does a device's data plane make its forwarding decisions?
-        - routing table, MAC address table, ARP table, STP, etc.
-    - Functions that build these tables (and other functions that influence the data plane) are part of the control plane.
-    - The control plane controls what the data plane does, for example by building the router's routing table.
-    - The control plane performs overhead work.
-        - OSPF itself doesn't forward user data packets, but it informs the data plane about how packets should be forwarded.
-        - STP itself isn't directly involved in the process of forwarding frames, but it informs the data plane about which interfaces should and shouldn't be used to forward frames.
-        - ARP messages aren't user data, but they are used to build an ARP table which is used in the process of forwarding data.
-- Management plane
-    - Like the control plane, the management plane performs overhead work.  
-        - However, the management plane doesn't directly affect the forwarding of messages in the data plane.
-    - The management plane consists of protocols that are used to manage devices.
-        - SSH/Telnet, used to connect to the CLI of a device to configure/manage it.
-        - Syslog, used to keep logs of events that occur on the device.
-        - SNMP, used to monitor the operations of the device.
-        - NTP, used to maintain accurate time on the device.
+
+Data plane
+- All tasks involved in forwarding user data/traffic from one interface to another are part of the data plane.
+- A router receives a message, looks for the most specific matching route in its routing table, and forwards it out of the appropriate interface to the next hop.
+    - It also de-encapsulates the original Layer 2 header, and re-encapsulates with a new header destined for the next hop's MAC address.
+- A switch receives a message, looks at the destination MAC address, and forwards it out of the appropriate interface (or floods it).
+    - This includes functions like adding or removing 802.1q VLAN tags.
+- NAT (changing the src/dst addresses before forewarding) is part of the data plane.
+- Deciding to forward or discard messages due to ACLs, port security, etc. is part of the data plane.
+- The data plane is also called the 'forwarding plane'.
+
+
+Control plane
+- How does a device's data plane make its forwarding decisions?
+    - routing table, MAC address table, ARP table, STP, etc.
+- Functions that build these tables (and other functions that influence the data plane) are part of the control plane.
+- The control plane controls what the data plane does, for example by building the router's routing table.
+- The control plane performs overhead work.
+    - OSPF itself doesn't forward user data packets, but it informs the data plane about how packets should be forwarded.
+    - STP itself isn't directly involved in the process of forwarding frames, but it informs the data plane about which interfaces should and shouldn't be used to forward frames.
+    - ARP messages aren't user data, but they are used to build an ARP table which is used in the process of forwarding data.
+
+
+Management plane
+- Like the control plane, the management plane performs overhead work.  
+    - However, the management plane doesn't directly affect the forwarding of messages in the data plane.
+- The management plane consists of protocols that are used to manage devices.
+    - SSH/Telnet, used to connect to the CLI of a device to configure/manage it.
+    - Syslog, used to keep logs of events that occur on the device.
+    - SNMP, used to monitor the operations of the device.
+    - NTP, used to maintain accurate time on the device.
+
 
 When a device received control/management traffic (destined for itself), it will be processed in the CPI.
+
 When a device receives data traffic which should pass through the device, it is processed by the ASIC for maximum speed.
 
 ### 6.3.b Northbound and Southbound APIs
 The SBI (Southbound Interface) is used for communications between the controller and the network devices it controls.
-It typically consists of a communication protocol and API (Application Programming Interface)
+
+It typically consists of a communication protocol and API (Application Programming Interface).
+
 APIs facilitate data exchanges between programs.
 - Data is exchanged ibetween the controller and the network devices.
 - An API on the network devices allows the controller to access information on the devices, control their data plane tables, etc
+
 Some examples of SBI's are: OpenFlow, Cisco OpFlex, Cisco onePK (Open Network Environment Platform Kit), NETCONF
+
 Using the SBI, the controller communicates with the managed devices and gathers information about them:
 - The devices in the network
 - The topology (how the devices are connected together)
@@ -2005,6 +2121,7 @@ Using the SBI, the controller communicates with the managed devices and gathers 
 - their configurations
 
 The NBI (Northbound Interface) is what allows us to interact with the controller, access the data it gathers about the network, program it, and make changes in the network via the SBI.
+
 A REST (Representational State Transfer) API is used on the controller as an interface for apps to interact with it.
 
 Data is sent in a structure (serialized) format such as JSON or XML.
@@ -2019,10 +2136,12 @@ Cisco SD-Access is Cisco's SDN solution for automating campus LANs.
 - ACI (Application Centric Infrastructure) is their SDN solution for automating data center networks.
 - SD-WAN is their SDN solution for automating WANs
 - Cisco DNA (Digital Network Architecture) Center is the controller at the center of SD-Access.
+
 Cisco DNA Center has two main roles
 - The SDN controller in SD-access
 - A network manager in a traditional network (non-SD-Access)
-- DNA Center is an application installed on Cisco UCS server hardware.
+
+DNA Center is an application installed on Cisco UCS server hardware.
 - It has a REST API which can be used to interact with DNA center.
 - The SBI supports protocols such as NETCONF and RESTCONF (as well as traditional protocols like Telnet, SSH, SNMP)
 - DNA Center enables Intent-Based Networking (IBN).
@@ -2042,8 +2161,9 @@ Traditional network management:
 - Configurations and policies are managed per-device (distributed)
 - New network deployments can take a long time due to the manual labor required
 - Errors and failures are more likely due to increased manual effort.
+
 DNA Center-based network management:
-- Devvices are centrally managed and monitored from the DNA Center GUI or other applications using its REST API.
+- Devices are centrally managed and monitored from the DNA Center GUI or other applications using its REST API.
 - The administrator communicates their intended network behavior to DNA Center, which changes those intentions into configurations on the managed network deivces.
 - Configurations and policies are centrally manaaged.
 - Software versions are also centrally managed. DNA Center can monitor cloud servers for new versions and then update the manged devices.
@@ -2051,8 +2171,11 @@ DNA Center-based network management:
 
 ## 6.5 Describe characteristics of REST-based APIs (CRUD, HTTP verbs, and data encoding)
 An API (Application Programming Interface) is a software interface that allows two applications to communicate with each other.
+
 APIs are essential not just for network automation, but for all kinds of applications.
+
 In SDN architecture, APIs are used to communicate between apps and the SDN controller (via the NBI), and between the SDN controller and the network devices (via the SBI).
+
 The NBI typically uses REST APIs. NETCONF and RESTCONF are popular southbound APIs.
 ![](/images/SDN%20architecture.png)
 
@@ -2068,8 +2191,10 @@ CRUD (Create, Read, Update, Delete) refers to the operations we perform using RE
     - ie. delete variable "ip_address"
 
 HTTP uses verbs (aka. methods) that map to these CRUD operations.
+
 REST APIs typically use HTTP.
-When an HTTP client sends a request to an HTTP server, the HTTP header includes information like this.
+
+When an HTTP client sends a request to an HTTP server, the HTTP header includes information like this:
 - An HTTP Verb (ie. GET)
 - A URI (Uniform Resource Identifier), indicating the resource it is trying to access.
 
@@ -2098,8 +2223,11 @@ Not all resources have to be cacheable, but cacheable resources MUST be declared
 
 ## 6.6 Recognize the capabilities of configuration management mechanisms Puppet, Chef, and Ansible
 Configuration management tools are network automation tools that facilitate the centralized control of large numbers of network devices.
+
 These tools were originally developed after the rise of VMs, to enable server system admins to automate the process of creating, configuring, and removing VMs.
-- However, they are also widely used to manage network devices.
+
+They are also widely used to manage network devices.
+
 These tools can be used to perform tasks such as:
 - Generate configurations for new devices on a large scale.
 - Perform configuration changes on devices (all devices in your network, or a certain subset of devices)
@@ -2158,10 +2286,9 @@ Chef is a configuration management tool written in Ruby.
 Ansible, Puppet, Chef comparison:
 ![](/images/ansiblepuppetchef.png)
 
-## 67 Recognize components of JSON-encoded data
+## 6.7 Recognize components of JSON-encoded data
 Data serialization is the process of converting data into standardized format/structure that can be stored (in a file) or transmitted (over a network) and recontructed later (ie. by a different application). 
 - This allows the data to be communicated between applications in a way both applications understand.
-
 - Data serialization languages allow us to represent variable with text.
 ![](/images/data%20serialization.png)
 
@@ -2185,10 +2312,11 @@ JSON also has two 'structured' data types:
     - the value is any valid JSON data type (string, number, boolean, null, object, array)
     - The key and value are seperated by a colon.
     - If there are multiple key-value pairs, each pair is seperated by a comma.
+    - inside curly brackets
 ![](/images/JSON%20object%20format.png)
     
 - array
-    - An array is a series of values seperated by commas.
+    - An array is a series of values seperated by commas, inside of square brackets
     - not key-value pairs
     - the values don't have to be the same data type.
 ![](/images/JSON%20array%20format.png)
