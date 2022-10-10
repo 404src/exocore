@@ -154,7 +154,7 @@ The two-tier LAN design consists of two hierarchical layers:
 - Distribution Layer
 
 
-Also called a 'Collapsed Core' design because it omits a layer that is found in the 3-Tier design: the Core Layer.
+Also called a 'Collapsed Core' design because it omits a layer that is found in the 3-Tier design: the Core Layer. The core in distribution layers are combined together in a single layer. The collapsed core in a two-tier network design provides physical and logical paths as well as a Layer 2 aggregation and demarcation point. In addition, a collapse core defines routing polices and network access policies and provides intelligent network services.
 
 Access Layer:
 - the layer that end hosts connect to (PCs, printers cameras, etc.)
@@ -186,6 +186,11 @@ Core Layer:
 - CPU-intensive operations such as security, QoS marking/classification, etc. should be avoided at this Layer
 - Connections are all Layer 3. No spanning-tree!
 - Should maintain connectivity throughout the LAN even if devices fail
+
+The distribution layer provides route filtering and interVLAN routing. The distribution layer serves as an aggregation point for access layer network links. 
+Because the distribution layer is the intermediary between the access layer and the core layer, the distribution layer is the ideal place to enforce security policies, to provide QoS, and to perform tasks that involve packet manipulation, such as routing. Summarization and next-hop redundancy are also performed in the distribution layer.
+
+The access layer serves as a media termination point for endpoints such as servers and hosts. Because access layer devices provide access to the network, the access layer is the ideal place to perform user authentication.
 
 Three-Tier Campus LAN Design:
 ![](/images/three-tier%20campus%20lan%20design.png)
@@ -708,7 +713,7 @@ Authentication methods:
     - This is clearly not a secure authentication method
     - After the client is authenticated and associated with teh AP, it's possible to require the user to authenticate via other methods before access to the network is granted (ie. Starbucks Wifi)
 - WEP (Wired Equivalent Privacy)
-    - WEP is used to provide both authenticatio and encryption of wireless traffic.
+    - WEP is used to provide both authentication and encryption of wireless traffic.
     - For encryption, WEP uses the RC4 algorithm.
     - WEP keys can be 40 bits or 104 bits in length
     - The above keys are combined with a 24-bit 'IV' (Initialization Vector) to bring the total length to 64 bits or 128 Benefits
@@ -832,6 +837,10 @@ VMs are connected to each other and the external network via a virtual switch ru
 ## 1.13 Describe switching concepts
 MAC Address is a 6-byte (48-bit) globally unique physical address assigned to the device when it is made. Written as 12 hexadecimal characters. (00:00:00:00:00:00)
 
+OU:IO:UI:VE:ND:OR
+- OUI - Organisationally Unique Identifier, ID assigned to a particular manufacturer
+- VENDOR - managed and assigned by the manufacturer, unique to each device
+
 ### 1.13.a MAC learning and aging
 When a switch receives a frame, it associates the MAC address of source with the corresponding port which the frame was received. The switch dynamically constructs an address table using the MAC source addresses of received frames.
 
@@ -846,7 +855,7 @@ Static MAC addresses can be assigned to the table, which are retained during a s
 When the switch receives a frame for a destination MAC address that is not in its address table, it floods the frame out of all LAN ports of the same VLAN except for the port that the frame received.
 When the destination station responds, the switch adds its relevant MAC source address and port ID to the address table.
 ### 1.13.d MAC address table
-To exchange frames between LAN ports efficiently, the switch maintains a MAC address table. The switch learns and builds it's adress table through the processes described above, and is able to forward the subsequent frames to a single port without flooding all the LAN ports.
+To exchange frames between LAN ports efficiently, the switch maintains a MAC address table. The switch learns and builds it's address table through the processes described above, and is able to forward the subsequent frames to a single port without flooding all the LAN ports.
 
 
 ## 2.0 Network Access
@@ -865,7 +874,9 @@ IP phones have an internal 3-port switch
 - 1 port is the 'uplink' to the external switch
 - 1 port is the 'downlink' to the PC
 - 1 port connects internally to the phone itself
+
 This allows the PC and the IP phone to share a single switch port. Traffic from the PC passes through the IP phone to the switch.
+
 It is recommended to seperate 'voice' traffic (from the IP phone) and 'data' traffic (from the PC) by placing them in seperate VLANs.
 - This can be accomplished using a voice VLAN
 - Traffic from the PC will be untagged, but traffic from the phone will be tagged with a VLAN ID.
@@ -903,6 +914,7 @@ example:
 Trunk ports can be used to carry traffic from multiple VLANs over a single interface. Switches will "tag" all frames that they send over a trunk link. This allows the reciving switch to know which VLAN the frame belongs to.
 
 Trunk ports = 'tagged' ports
+
 Access ports = 'untagged' ports
 
 ![](/images/networkwithtrunk.png)
@@ -910,6 +922,8 @@ Access ports = 'untagged' ports
 ![](/images/trunkconfig.png)
 
 >show interfaces trunk
+
+>show vlan brief
 
 ![](/images/showinterfacestrunk.png)
 ![](/images/trunkvlanconfig.png)
@@ -1052,14 +1066,15 @@ The switch with the lowest Bridge ID becomes the root bridge. the default bridge
 Each remaining switch will select ONE of its interfaces to be its root port. 
 
 Root port selection:
-1. Lowest root constructrs
+1. Lowest root constructors
 2. Lowest neighbor bridge ID
-3. Lowest neighbor port ID.
+3. Lowest neighbor port ID
 
-Each remaining collisions Domain will select ONE interface to be a designated port (forwarding state). The other port in the collision domain will be non-desingated (blocking).
+Each remaining Collisions Domain will select ONE interface to be a designated port (forwarding state). The other port in the collision domain will be non-desingated (blocking).
 - Designated port selection:
 1. Interface on switch with the lowest root cost
 2. Interface on switch with the lowest bridge ID
+
 In RSTP, the non-designated port is split into two seperate roles:
 - the alternate port role (blocking)
 - the backup port role (two interfaces on same collision domain, via a hub)
@@ -1102,13 +1117,13 @@ An AP in **repeater** mode can be used to extend the range of a BSS.
 ![](/images/APrepeatermode.png)
 
 An AP in **Workgroup Bridge** (WGB) mode operates as a wireless client of another AP, and can be used to connect wired devices to the wireless network.
-- In the example below, PC1 does no have wireless capabilities, and also does not have access to a wired connection to SW1.
+- In the example below, PC1 does not have wireless capabilities, and also does not have access to a wired connection to SW1.
 - PC1 has a wired connection to the WGB, which has a wireless conection to the AP.
 
 ![](/images/apWGBmode.png)
 
 An AP in **outdoor bridge** mode can be used to connect network over long distances without a physical cable connecting them.
-- The APs will use specialized antennas that focus most of the signal power in one direction, which allows the wireless conection to be made over longer distances than normally possible.
+- The APs will use specialized antennas that focus most of the signal power in one direction, which allows the wireless connection to be made over longer distances than normally possible.
 - The connection can be point-to-point as in the diagram below, or point-to-multipoint in which multiple sites connect to one central site.
 
 ![](/images/apoutdoorbridgemode.png)
@@ -1139,13 +1154,13 @@ The functions of an AP can be split between the AP and a Wireless LAN Controller
 Lightweight APs handle 'real-time' operations like transmitting/receiving RF traffic, encryption/decryption of traffic, sending out beacons/probes, etc
 - Other functions are carried out by a WLC, for example RF management, security/QoS management, client authentication, client association/roaming management, etc.
 - This is called split-MAC architecture.
-- The WLC is also use to centrally configure the lightweight APs.
+- The WLC is also used to centrally configure the lightweight APs.
 - The WLC can be located in the same subnet/VLAN as the lightweight APs it manages, or in a different subnet/VLAN.
 - The WLC and the lightweight APs authenticate each other using digital certificates installed on each device (X.509 standard certificates)
     - This ensures that only authorized APs can join the network.
 
 The WLC and lightweight APs use a protocol called CAPWAP (Control and Provisioning Of Wireless Access Points) to communicate.
-    - Based on an older protocol called LWAPP (Lightweight Access Point Protocol)
+- Based on an older protocol called LWAPP (Lightweight Access Point Protocol)
 
 Two tunnels are created between each AP and the WLC:
 - Control tunnel (UDP port 5246). This tunnel is used to configure the APS, and control/manage the operations. All traffic in this tunnel is encrypted by default.
@@ -1155,8 +1170,8 @@ Two tunnels are created between each AP and the WLC:
 
 There are some key benefits to split-MAC architecture, here are a few:
 - Scalability: With a WLC (or multiple in very large networks) it's much simpler to build and support a network with thousands of APs.
-- Dyanmic channel assignment: The WLC can automatically select which channel each AP should use.
-- Tranmit power optimization: The WLC can automatically set the appropriate transmit power for each AP.
+- Dynamic channel assignment: The WLC can automatically select which channel each AP should use.
+- Transmit power optimization: The WLC can automatically set the appropriate transmit power for each AP.
 - Self-healing wireless coverage: When an AP stops functioning, the WLC can increase the transmit power of nearby APs to avoid coverage holes.
 - Seamless roaming: Clients can roam between APS with no noticeable delay.
 - Client load balancing: If a client is in range of two APs, the WLC can associate the client with the least-used AP, to balance the load among APs.
@@ -1188,6 +1203,15 @@ WLCs have a few different kinds of interfaces:
 - Virtual interface: This interface is used when communicating with wireless clients to relay DHCP requests, perform client web authentication, etc.
 - Sevice port interface: If the service port is used, this interface is bound to it and used for out-of-band management.
 - Dynamic interface: These are the interfaces used to map a WLAN to a VLAN. For example, traffic from the 'Internal' WLAN will be sent to the wired network from the WLC's 'Internal' dynamic interface.
+
+LAG (Link Aggregation) 
+- Similar to EtherChannel on switches, LAG enables multiple physical ports on a WLC to operate as one logical group. Thus, LAG enables load balancing across links between devices and redundancy. If one link fails, the other links in the LAG bundle will continue to function.
+- By default all eight ports will be included in the LAG bundle if you have enabled LAG on a Cisco WLC that contains eight distribution system ports.
+    - A distribution system port is a data port that typically conenects to a switch in 802.1Q trunk mode.
+- LAG requires only one functional physical port in order to pass client traffic
+- If all but one port in a LAG bundle fails, that port will pass client traffic for all failed ports.
+- Distribution system ports can be configured to work in pairs or independently of each other if LAG is disabled. By default, a Cisco WLC's distribution system port operate in 802.1Q trunk mode, forming a trunk link between each WLC distribution system port and the switch to which it is connected.
+- When enabled, LAG modifies this config so that the ports are bundled and no longer operate as independent trunk links.
 
 ## 2.8 Describe AP and WLC management access connections (Telnet, SSH, HTTP, HTTPS, console, and TACACS+/RADIUS)
 WLC config:
@@ -1312,7 +1336,7 @@ A route to a specific host (/32 mask)
 
 -example picture---
 ### 3.3.d Floating static
-By changing the AD of a static route, you can make it less preferred than routes learned by a dynamic routing protocl to the same destination (make sure the AD is higher than the routing protocol's AD!) This is known as a "floating static route".
+By changing the AD of a static route, you can make it less preferred than routes learned by a dynamic routing protocol to the same destination (make sure the AD is higher than the routing protocol's AD!) This is known as a "floating static route".
 
 The route will be inactive (not in the routing table) unless the route learned by the dynamic routing protocol is removed.
 
@@ -1327,7 +1351,7 @@ Routers will flood LSAs until all routers in the OSPF area develop the same map 
 OSPF areas
 - An area is a set of routers and links that share the same LSDB
 - The backbone area (area 0) is an area that all other areas must connect to.
-- Routers with all interfaces in the same area area called internal routers.
+- Routers with all interfaces in the same area called internal routers.
 - Routers with interfaces in multiple areas are called area border routers (ABRs).
 - Routers connected to the backbone area (area 0) are called backbone routers.
 - An intra-area route is a route to a destination inside the same OSPF area.
@@ -2234,13 +2258,14 @@ These tools can be used to perform tasks such as:
 - Check device configurations for compliance with defined standards.
 - Compare configurations between devices, and between different version of configurations on the same device.
 
-Ansible is a configuration management tool owned by Red Hat.
+**Ansible** is a configuration management tool owned by Red Hat.
 - Ansible itself is written in Python
+- Configurations are stored on the Ansible server in playbooks that are written in YAML.
 - Ansible is agentless
     - it doesn't require any special software to run on the managed devices
+- Ansible uses SSH to connect to devices, make configuration changes, extract information, etc (**TCP port 22**)
 - Ansible uses SSH to connect to devices, make configuration changes, extract information, etc.
-- Ansible uses SSH to connect to devices, make configuration changes, extract information, etc.
-- Ansible uses a push mdoel. The ansible server (Control node) uses SSH to connect to managed devices and push configuration changes to them
+- Ansible uses a push model. The ansible server (Control node) uses SSH to connect to managed devices and push configuration changes to them
     - Puppet and Chef use a pull model
 
 ![](/images/ansiblemodel.png)
@@ -2255,14 +2280,15 @@ Ansible is a configuration management tool owned by Red Hat.
     - Variables
         - These files list variables and their values. These values are substituted into the templates to create complete configuration files. Written in YAML.
 
-Puppet is a configuration mangement tool written in Ruby.
+**Puppet** is a configuration mangement tool written in Ruby.
+- uses a **client/server architecture**
 - Puppet is typically agent-based 
     - Specific software must be installed on the managed devices.
     - Not all Cisco devices support a Puppet agent.
 - It can be run agentless, in which a proxy agent runs on an external host, and the proxy agent uses SSH to connect to the managed devices and communicate with them.
 - The puppet server is called the 'Puppet master'.
 - Puppet uses a pull model (clients 'pull' configurations from the Puppet master).
-    - CLients use TCP 8140 to communicate with the Puppet master.
+    - Clients use **TCP 8140** to communicate with the Puppet master.
 - Instead of YAML, it uses a proprietary language for files.
 - Text files required on the Puppet master include:
     - Manifest: This file defines the desired configuration state of a network device.
@@ -2270,21 +2296,73 @@ Puppet is a configuration mangement tool written in Ruby.
 ![](/images/puppetmodel.png)
 
 Chef is a configuration management tool written in Ruby.
-- Chef is aagent-based
+- uses a client/cerver architecture, or a standalone client configuration
+- Chef is agent-based
     - Specific software must be installed on the managed devices.
     - Not all Cisco devices support a Chef agent.
 - Chef uses a pull model
-- The server uses TCP 10002 to send configurations to clients
+- The server uses **TCP 10002** to send configurations to clients
+- Commincates by using HTTPS on the traditional **TCP port 443**.
 - Files use a DSL (Domain-Sepcific Language) based on Ruby.
 - Text files used by Chef include:
     - Resources: The 'ingredients' in a recipe. Configuration objects managed by Chef.
     - Recipes: The 'recipes' in a cookbook. Outline the logic and actions of the tasks performed on the resources.
     - Cookbooks: A set of related recipes grouped together.
+- Managed nodes that are running the Chef Client can pull cookbooks form the server. Standalone clients that do not have access to a server can run chef-solo and pull cookbooks from a local directory or from a tar.gz archive on the internet.
 
 ![](/images/chefmodel.png)
 
 Ansible, Puppet, Chef comparison:
 ![](/images/ansiblepuppetchef.png)
+
+Puppet resource declaration example:
+
+sudo::conf { 'CoAdmins' :
+
+ensure => present,
+
+content => '%admin ALL=(ALL) ALL',
+
+}
+
+
+Chef recipe example:
+
+sudo "CoAdmins"
+
+group "CoAdmins"
+
+nopasswd true
+
+Python script that defines a python dictionary:
+
+sudo = {
+
+"group" : "CoAdmins"
+
+"content" : "%admin ALL=(ALL) ALL"
+
+}
+
+JSON object example"
+{
+
+    sudo : {
+
+        "group" : "CoAdmins",
+
+        "content" : "%admin ALL=(ALL) ALL"
+
+    }
+    
+}
+
+
+
+
+
+
+
 
 ## 6.7 Recognize components of JSON-encoded data
 Data serialization is the process of converting data into standardized format/structure that can be stored (in a file) or transmitted (over a network) and recontructed later (ie. by a different application). 
@@ -2331,3 +2409,23 @@ YAML is very human-readable.
 Whitespace is significant (unlike JSON and XML)
 - Indentation is very important
 
+## Commands to know
+
+STP
+- spanning-tree portfast
+    - used in interface config mode for enabling PortFast on specific ports
+- spanning tree portfast default
+    - enables PortFast for all access ports on a switch, global config mode
+
+Port Security
+- switchport port-security
+    - enables port security for a maximum of one MAC address
+- switchport port-security maximum (**#**)
+    - used in interface config mode, configures the switch port to allow no more than two device, each with a unique MAC address, to send traffic into the port
+- switchport port-security mac-address *MAC Address*
+    - used in interface config mode to statically configure a switch port to allow traffic from a specific MAC address 
+    - Any MAC addressed that are not configured statically will be learned dynamically from incoming traffic, up to the maximum number of MAC addresses.
+- switchport port-security mac-address sticky
+    - converts dynamically learned MAC addresses to sticky MAC addresses
+    - stick MAC addresses are stored in the running configuration
+    - to ensure that sticky MAC addresses are not lost during reboot, you should use **write memory** or **copy running-config startup-config**
