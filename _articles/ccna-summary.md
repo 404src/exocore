@@ -1275,6 +1275,15 @@ ECMP (Equal Cost Multi-Path) is a routing strategy where packets towards a singl
 
 ![](/images/dynamicroutingmetrics.png)
 
+
+EIGRP uses bandwidth and delay to calculate metric by default. Bandwidth refers to the data throughput of a link. Delay refers to the length of time required to send a packet to a destination. 
+
+EIGRP can also use load and reliability as components, but these components are not used by default. Load refers to the amount of data activity over a link. Reliability refers to the bit-error rate of a link.
+
+OSPF and IS-IS use cost to calculate the best path to a destination network. By default, OSPF and IS-IS calculate the cost based on bandwidth. However, cost can be configured by using any value that an adminstrator desires, such as the monetary cost of using a link.
+
+RIPv1 and RIPv2 use hop count to calculate the best path to a destination network. Hop count refers to the number of routers a packet will traverse from source to destination. However, RIP has a hop-count limitation of 15 hops; any route more than 15 hops away is considered to be unreachable. With a defined maximum metric, a routing protocol can mitigate routing loops caused by invalid routing updates.
+
 ### 3.1.g Gateway of last resort
 
 ## 3.2 Determine how a router makes a forwarding decision by default
@@ -1373,8 +1382,37 @@ In OSPF, there are three main steps in the process of sharing LSAs and determini
 2. Exchange LSAs with neighbor routers
 3. Calculate the best routes to each destination, and insert them into the routing table
 
+When an OSPF neighbor router is powered on, it transitions through the following neighbor states:
+- Down
+- Init
+- 2-Way
+- Exstart
+- Exchange
+- Loading
+- Full
+
+An OSPF neighbor router begins in the Down state. A neighbor in the Down state has not yet sent a Hello packet.
+
+When a hello packet is received from the neighbor router but the Hello packet does not contain the receiving router's ID, the neighbor router is in the Init state. The receiving router replies to the neighbor router with a Hello packet that contains the neighbor router's ID as an acknowledgment that the receiving router received the neighbor's Hello packet. If a arouter is stuck in the Init state, it has sent Hello packets but has no received any from the neighbor router.
+
+The neighbor router replies with a Hello packet that contains the receiving router's ID. When this occurs, the neighbor router is in the 2-Way state. At the end of the 2-Way state, the DR and BDR are elected for broadcast and nonbroadcast multiaccess (NBMA) networks. 
+
+On broadcast and NBMA networks, neighbor routers will proceed to the Full state with only the DR and BDR; other neighbor adjancies will remain in the 2-Way state. If all routers on a segment remain in the 2-Way state, you should verify whether all routers on the segment are set to a priority of 0, which prevents any of them from becoming the DR or BDR.
+
+After the DR and BDR are elected, neighbor routers form master-slave relationships in order to establish the method for exchanging link-state information. Routers in this state are in the Exstart state. If a router is stuck in the Exstart state, you should verify whether there is a problem with mismatched maximum transmission unit (MTU) settings between two routers or duplicate router IDs.
+
+Neighbor routers then exchange database descriptor (DBD) packets. These DBD packets contain link-state advertisement (LSA) headers that describe the contents of the link-state database (LSDB). Routers in this state are in the Exchange state. If a router is stuck in the Exchange state, you should verify whether there is a problem with mismatched MTU settings or duplicate router IDs.
+
+Routers then send link-state request (LSR) packets to request the contents of the neighbor router's OSPF database. The neighbor router replies with link-state update (LSU) packets that contain the routing database information. Routers in this state are in the Loading state. If a router is stuck in the Loading state, you should verify whether there is a problem with mismatched MTU settings or corrupted LSR packets.
+
+After the OSPF databases of neighbor routers are fully synchronized, the routers transition to the Full state, which is the normal OSPF router state for DRs and BDRs. A router will periodically send Hello packets to its neighbors to indicate that it is still functional. If a router does not receive a Hello packet from a neighbor within the dead timer interal, the neighbor router will transition back to the Down state.
+
+
+
 ![](/images/OSPF%20neighbors.png)
 ![](/images/OSPF%20exchanges.png)
+
+
 
 OSPF Neighbor requirements
 1. Area number must match
@@ -1392,21 +1430,23 @@ OSPF Neighbor requirements
 ### 3.4.b Point-to-point
 Point-to-point network type is enabled on serial interfaces using the PPP or HDLC encapsulations by default.
 
-Routers dynamically discover neighbors by sending/listening for OSPF Hello messages using multicast address 224.0.0.5.
+Routers dynamically discover neighbors by sending/listening for OSPF Hello messages using multicast address **224.0.0.5**.
 
 A DR and BDR are not elected. The two routers will form a Full adjacency with eachother.
 
 ### 3.4.c Broadcast (DR/BDR selection)
 Broadcast network type is enabled on Ethernet and FDDI interfaces by default.
 
-Routers dynamically discover neighbors by sending/listening for OSPF Hello messages using multicast address 224.0.0.5. To send routing information to a DR or BDR the multicast address of 224.0.0.6 is used.
+Routers dynamically discover neighbors by sending/listening for OSPF Hello messages using multicast address **224.0.0.5**. To send routing information to a DR or BDR the multicast address of **224.0.0.6** is used.
 
 A **DR** (designated router) and **BDR** (backup designated router) must be elected on each subnet (only DR if there are no OSPF neighbors).
 Routers which aren't the **DR** or **BDR** become a **DROther**.
 
 The **DR/BDR** election order of Priority:
-1. Highest OSPF interface priority
+1. Highest OSPF interface priority (same by default)
 2. Highest OSPF Router ID
+    - highest IP address on a loopback interface
+    - highest IP address on a non-loopback interface
 
 "First place" becomes the DR for the subnet, "second place" becomes the BDR
 The default OSPF interface priority is 1 on all interfaces.
@@ -1440,9 +1480,32 @@ Preemption can be configured, so the old router does take back its old role.
 
 List of FHRPs:
 1. HSRP (Hot Standby Router Protocol) 
+- HSRP is a Cisco-properitary protocol that enables multiple routers to function as a single gateway for the network.
+- HSRP configures two or more routers to share a virtual Internet Protocol (IP) address and a virtual MAC address so that the group of routers appears as a single device to other hosts on the network.
+- Based on priority value, HSRP elects a single active router and a standby router. 
+- The active router is the router with the highest priority; it forwards packets, responds to Address Resolution Protocol (ARP) requests with a virtual MAC address, and can be the only router that is explicitly configured with the virtual IP address. 
+- The standby router is the router with the second-highest priority. 
+- If multiple HSRP routers have the same priority, the router with the highest IP address is elected as the active router. The router with the second-highest IP address is elected as the standby router, which will assume the role of the active router if the active router fails.
+- To participate in the active and standby router election process, each HSRP router must be a member of the same group.
+
+There are two version of HSRP for IPv4 networks: HSRP version 1 and 2. An HSRP version 1 group is identified by a group number from 0 through 255. An HSRP version 2 group is identified by a group number from 0 through 4095. The default HSRP group value for both versions is 0.
+
+To differentiate the virtual MAC addresses of the various groups, **HSRP version 1** uses a special format based on the well-known virtual MAC address **0000.0C07.ACxx**, where xx is the group number in hexadecimal format. 
+- **HSRP version 2**, on the other hand, uses a virtual MAC address of **0000.0C9F.Fxxx**, where xxx is the group number in hexadecimal format.
+    - For example, if the virtual MAC address for the HSRP group is 0000.0C9F.F00A; the group number is identified by the final 3 digits, 00A, in the virtual MAC address. 
+    - Thus, because 00A is hexadecimal equivalent of 10 in decimal notation, the virtual MAC address 0000.0C9F.F00A indicates that the HSRP group number for this scenario is 10.
+
+
+
 2. VRRP (Virtual Router Redundancy Protocol) 
+- VRRP is an IETF-standard FHRP protocol. A VRRP virtual MAC address typically uses the 0000.5E00.01xx format, where xx is the VRRP group number. 
+
 3. GLBP (Gateway Load Balancing Protocol) 
-   
+- The GLBP active virtual gateway (AVG) assigns a virtual MAC address to a maximum of four primary active virtual forwarders (AVFs); all other routers in the group are considered secondary AVFs and are placed in the listen state. GLBP virtual MAC addresses typically use the 0007.B400.xxyy format, where xx represents the GLBP group numbers and yy represents the AVF number.
+
+There is also a version of HSRP for IPv6 that uses a range of virtual MAC addresses from 0005.73A0.0000 through 0005.73A0.0FFF. However, configuring HSRP for IPv6 is beyond the scope of the CCNA.
+
+
 ![](/images/FHRPcomparisons.png)
 
 ## 4.0 IP Services
@@ -2411,11 +2474,38 @@ Whitespace is significant (unlike JSON and XML)
 
 ## Commands to know
 
+PoE
+- power inline police
+    - used in interface config mode, interface will enter an error-disabled state, effectively shutting down the port, when an attached PD attemps to draw more than the cutoff power from the configured interface. A log message describing the event will also be sent to the console.
+- errdisable recovery cause inline-power
+    - used in global config mode to enable error-disable auto recovery for inline power, automatically resets port after auto recovery mechanism timer expires
+- power inline police action log
+    - used in interface config mode, when an attached PD attempts to draw more than its allocated power from the interface, it will cause the port to restart, and a log message will appear on the console.
+    - with log action configured, restarts instead of becomng errdisabled
+
+
+CDP
+- show cdp neighbors detail
+    - used in priveledge exec mode to show detailed information about neihboring CDP devices
+    - includes: device, entry (IP) addresses, platform, interfaces, holdtime, version, advertisement, duplex, power drawn, power request id, power request levels, etc
+
 STP
 - spanning-tree portfast
     - used in interface config mode for enabling PortFast on specific ports
 - spanning tree portfast default
     - enables PortFast for all access ports on a switch, global config mode
+
+OSPF
+- show ip ospf interface brief
+    - shows interfaces, PID, Area, IP address/mask, cost, state. Full adjacencies/total count of neighbors
+- show ip ospf neighbor
+- show ip ospf int g0/0
+    - shows state, priority, DR+BDR router IDs and interface IP addresses, neighbor count, (full) adjacent neighbor count
+- ip ospf priority (**#1-255**)
+    - used in interface config mode, configures interface priority in order to manually configure DR/BDR (default is 1)
+    - if set to 0, the router can not become the DR/BDR for the subnet
+    - once DR/BDR is set they will keep their role until OSPF is reset using **clear ip ospf process**
+    - When the DR goes down, the BDR becomes the new DR. Then an election is held for next BDR.
 
 Port Security
 - switchport port-security
