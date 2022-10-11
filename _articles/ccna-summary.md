@@ -435,6 +435,14 @@ What if autonegotiation is disabled on the device connected to the switch?
 Interface errors can be viewed by using #show interfaces f0/#
 ![](/images/interfaceerrors.png)
 
+Whhen using an SFP transceiver and receiving a SYS-TRANSCEIVER_NOTAPPROVED error when booting a switch, it is likely that you have used a third-party SFP module that is not supported.
+
+If you connected a cable to the wrong SFP module port, you would most likely notice that the ports on the switches are up, but the line protocol is down.
+
+If the fiber cables are broken, you would notice that the port status LEDs on the SFP module are not lit.
+
+If the SFP module is installed upside down, teh switch would not recognize the SFP module, and the output from the show commands would contain no information about the module.
+
 ## 1.5 Compare TCP to UDP
 TCP (Transmission Control Protocol)
 - TCP is connection-oriented
@@ -496,10 +504,10 @@ There are three main short-term solutions:
 1. CIDR
 2. Private IPv4 addresses
 3. NAT
-Private IPv4 address ranges:
-- 10.0.0.0/8 (10.0.0.0 to 10.255.255.255) (Class A)
-- 172.16.0.0/12 (172.16.0.0 to 172.31.255.255) (Class B)
-- 192.168.0.0/16 (192.168.0.0 to 192.168.255.255) (Class C)
+Private IPv4 address ranges as defined in **RFC 1918**
+- 10.0.0.0/8 (**10.0.0.0 to 10.255.255.255**) (Class A)
+- 172.16.0.0/12 (**172.16.0.0 to 172.31.255.255**) (Class B)
+- 192.168.0.0/16 (**192.168.0.0 to 192.168.255.255**) (Class C)
 
 These addresses are free to be used in networks. They don't have to be globally unique. Because private IPv4 addresses can't be used over the Internet, so the PCs can't access the Internet without NAT.
 
@@ -515,18 +523,18 @@ An IPv6 address is 128 bits written in hexadecimal.
 ### 1.9.a Unicast (global, unique local, and link local)
 **Global** unicast ipv6 addresses are public addresses which can be used over the Internet.
 - Must register to be used. Because they are public addresses, it is expected that they are globally unique.
-- Originally defined as 2000::/3 block, now defined as all addresses which aren't reserved for other purposes.
+- Originally defined as **2000::/3** block, now defined as all addresses which aren't reserved for other purposes.
 
 **Unique** local IPv6 addresses are private addresses which cannot be used over the Internet.
 - Does not need to be registered. They can be used freely within internal networks and don't need to be globablly unique. Can't be routed over the Internet.
-- Uses address block FD00::/7
+- Uses address block **FD00::/7**
 
 **Link-local** IPv6 addresses are automatically generated on IPv6-enabled interfaces. Use command R1(config-if)#ipv6 enable on an interface to enable IPv6 on that interface
-- Uses address block FE80:://10
+- Uses address block **FE80:://10**, specified in RFC 4291
 - The interface ID is generated using EUI-64 rules.
 - Link-local means that these addresses are used for communication within a single link (subnet). Routers will not route packets with a link-local destination IPv6 address.
 - Common uses of link-local addresses:
-    - routing protocl peerings (OSPFv3 uses link-local addresses for neighbor adjacencies)
+    - routing protocol peerings (OSPFv3 uses link-local addresses for neighbor adjacencies)
     - next-hop addresses for static routes
     - Neighbor Discovery Protocol (NDP, IPv6's replacement for ARP) uses link-local addresses to function
 
@@ -1151,8 +1159,8 @@ Autonomous APs are self-contained systems that don't rely on a WLC.
 
 The functions of an AP can be split between the AP and a Wireless LAN Controller (WLC).
 
-Lightweight APs handle 'real-time' operations like transmitting/receiving RF traffic, encryption/decryption of traffic, sending out beacons/probes, etc
-- Other functions are carried out by a WLC, for example RF management, security/QoS management, client authentication, client association/roaming management, etc.
+**Lightweight APs** handle 'real-time' operations like **transmitting/receiving RF traffic, prioritizing packets, encryption/decryption of traffic, sending out beacons/probes**, etc
+- Other functions are carried out by a **WLC**, for example **RF management, security/QoS management, client load balancing, client authentication, client association/roaming management**, etc.
 - This is called split-MAC architecture.
 - The WLC is also used to centrally configure the lightweight APs.
 - The WLC can be located in the same subnet/VLAN as the lightweight APs it manages, or in a different subnet/VLAN.
@@ -1498,10 +1506,10 @@ To differentiate the virtual MAC addresses of the various groups, **HSRP version
 
 
 2. VRRP (Virtual Router Redundancy Protocol) 
-- VRRP is an IETF-standard FHRP protocol. A VRRP virtual MAC address typically uses the 0000.5E00.01xx format, where xx is the VRRP group number. 
+- VRRP is an IETF-standard FHRP protocol. A **VRRP** virtual MAC address typically uses the **0000.5E00.01xx** format, where xx is the VRRP group number. 
 
 3. GLBP (Gateway Load Balancing Protocol) 
-- The GLBP active virtual gateway (AVG) assigns a virtual MAC address to a maximum of four primary active virtual forwarders (AVFs); all other routers in the group are considered secondary AVFs and are placed in the listen state. GLBP virtual MAC addresses typically use the 0007.B400.xxyy format, where xx represents the GLBP group numbers and yy represents the AVF number.
+- The GLBP active virtual gateway (AVG) assigns a virtual MAC address to a maximum of four primary active virtual forwarders (AVFs); all other routers in the group are considered secondary AVFs and are placed in the listen state. **GLBP** virtual MAC addresses typically use the **0007.B400.xxyy** format, where xx represents the GLBP group numbers and yy represents the AVF number.
 
 There is also a version of HSRP for IPv6 that uses a range of virtual MAC addresses from 0005.73A0.0000 through 0005.73A0.0FFF. However, configuring HSRP for IPv6 is beyond the scope of the CCNA.
 
@@ -1733,7 +1741,8 @@ Tail drop is harmful because it can lead to TCP global synchronization causing a
 A solution to prevent tail drop and TCP global synchronization is Random Early Detected (RED).
 - When the amount of traffic in the queue reaches a certain threshold, the device will start randomly dropping packets from select TCP flows.
 - In standard RED, all kinds of traffic are treated the same.
-- An improved version, WRED (Weighted Random Early Detection) allows you to control which packets are dropped depending on the traffic class.
+- An improved version, WRED (Weighted Random Early Detection) allows you to control which packets are dropped depending on the traffic class (DSCP value) or IP precedence.
+
 
 An essential part of QoS is the use of multiple queues.
 - This is where classification plays a role. The device can match traffic based on various factors (for example the DSCP marking in the IP header) and then place it in the appropriate queue.
@@ -2191,12 +2200,12 @@ When a device received control/management traffic (destined for itself), it will
 When a device receives data traffic which should pass through the device, it is processed by the ASIC for maximum speed.
 
 ### 6.3.b Northbound and Southbound APIs
-The SBI (Southbound Interface) is used for communications between the controller and the network devices it controls.
+The SBI (Southbound Interface) is used for communications between the controller and the network devices it controls. Southbound APIs enable an SDN controller to communicate with devices in the data plane.
 
 It typically consists of a communication protocol and API (Application Programming Interface).
 
 APIs facilitate data exchanges between programs.
-- Data is exchanged ibetween the controller and the network devices.
+- Data is exchanged inbetween the controller and the network devices.
 - An API on the network devices allows the controller to access information on the devices, control their data plane tables, etc
 
 Some examples of SBI's are: OpenFlow, Cisco OpFlex, Cisco onePK (Open Network Environment Platform Kit), NETCONF
@@ -2207,7 +2216,9 @@ Using the SBI, the controller communicates with the managed devices and gathers 
 - the available interfaces on each device
 - their configurations
 
-The NBI (Northbound Interface) is what allows us to interact with the controller, access the data it gathers about the network, program it, and make changes in the network via the SBI.
+The NBI (Northbound Interface) is what allows us to interact with the controller, access the data it gathers about the network, program it, and make changes in the network via the SBI. 
+
+Northbound APIs enable an SDN controller to communicate with applications in the application plane. Applications use northbound APIs to send requests or instructions to the SDN controller, which uses that information to modify and manage network flow.
 
 A REST (Representational State Transfer) API is used on the controller as an interface for apps to interact with it.
 
@@ -2473,6 +2484,15 @@ Whitespace is significant (unlike JSON and XML)
 - Indentation is very important
 
 ## Commands to know
+Passwords
+- username (**user-name**) password (**password**)
+    - configure a user name with a plain-text password.
+- username (**user-name**) secret (**password**)
+    - configure a username with a password stored as an MD5 hash.
+- username (**user-name**) secret 5 (**hash-value**)
+    - assigned MD5 hash value manually, instead of converting password
+    - 5 parameter indicates that the assigned value is already in MD5 hash form
+
 
 PoE
 - power inline police
@@ -2494,6 +2514,34 @@ STP
     - used in interface config mode for enabling PortFast on specific ports
 - spanning tree portfast default
     - enables PortFast for all access ports on a switch, global config mode
+
+IPv6
+- ipv6 enable
+    - used on interface config mode to enable IPv6 enable
+    - after issuing this command on an interface, it can use its automatically derived, link-local IPv6 address to communicate with other IPv6 enabled devices on directly connected networks.
+- ipv6 address (**ip address**) (**/prefix**) [eui-64]
+    - used on interface config to manually assign an IPv6 address. eui-64 keyword configures a static IPv6 prefix but allows the router to automatically generate a 64-bit interface ID known as EUI-64 interface ID based on the interface's MAC address.
+- ipv6 address autoconfig
+    - configures an interface to automatically assign itself a global unicast IPv6 address using SLAAC. 
+    - SLAAC configurations occur based on information that is sent in router advertisements from an IPv6 gateway operating on the same network segment.
+    - also enables the interface to obtain additional information from a DHCPv6 server if a DHCPv6 server exists on the network as is configured to send nonaddress information,
+- ipv6 address dhcp
+    - configures a DHCPv6 client interface to use stateful DHCPv6 addressing, which configures addressing information and extra information from the DHCPv6 server.
+
+
+DHCP
+- ip dhcp pool (**name/number**)
+    - used in global config mode to create dhcp pool
+- network (**ip-address**) (**subnet mask or /prefix**)
+    - used in DHCP pool config mode, the router will provide IP addresses to hosts connected to the router interface that belongs to that subnet.
+- host (**ip address**) (**subnet mask or /prefix**)
+    - used in DHCP pool config mode, used to configure an IP address for manual binding. Manual binding enables a device to always receive the same IP address from DHCP by associating a static IP address with the device's MAC address.
+    - after using the host command, you should issue the following command:
+- client-identifier (**MAC address**)
+    - Statically maps this device to the IP address defined in host
+    - you cannot use the same DHCP pool for manual bindings and for dynamic IP address allocation.
+- ip address dhcp
+    - configures an interface to become a DHCP client so that it can receive IP configuration information from a DHCP server. A DHCP client can receive an IP address,  a subnet mask, a domain name, a DNS server, and more from a DHCP server.
 
 OSPF
 - show ip ospf interface brief
