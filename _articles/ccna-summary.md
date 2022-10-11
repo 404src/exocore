@@ -523,11 +523,11 @@ An IPv6 address is 128 bits written in hexadecimal.
 ### 1.9.a Unicast (global, unique local, and link local)
 **Global** unicast ipv6 addresses are public addresses which can be used over the Internet.
 - Must register to be used. Because they are public addresses, it is expected that they are globally unique.
-- Originally defined as **2000::/3** block, now defined as all addresses which aren't reserved for other purposes.
+- Originally defined as **2000::/3** block, always beginning with 2 or 3 because the first 3 bits are always 001, now defined as all addresses which aren't reserved for other purposes.
 
-**Unique** local IPv6 addresses are private addresses which cannot be used over the Internet.
+**Unique local** IPv6 addresses are private addresses which cannot be used over the Internet.
 - Does not need to be registered. They can be used freely within internal networks and don't need to be globablly unique. Can't be routed over the Internet.
-- Uses address block **FD00::/7**
+- Uses address block **FC00::/8** and **FD00::/8**
 
 **Link-local** IPv6 addresses are automatically generated on IPv6-enabled interfaces. Use command R1(config-if)#ipv6 enable on an interface to enable IPv6 on that interface
 - Uses address block **FE80:://10**, specified in RFC 4291
@@ -559,7 +559,7 @@ Broadcast addresses are one-to-all
 Multicast addresses are one-to-many.
 - one source to multiple destinations (that have joined the specific multicast group).
 
-IPv6 uses range FF00::/8 for multicast. 
+IPv6 uses range **FF00::/8** for multicast. 
 IPv6 doesn't use broadcast (there is no "broadcast address" in IPv6).
 ![](/images/multicast%20ipv6.png)
 Verify multicast addresses:
@@ -572,6 +572,10 @@ IPv6 multicast scopes:
 - **Organization-local** (**FF08**): Wider in scope than site-local (an entire company/organization).
 - **Global** (**FF0E**): No boundaries. Possible to be routed over the Internet.
 ![](/images/multicast%20address%20scopes.png)
+
+IPv6 hosts use the multicasting capabilities of the ND (Neighbor Discovery) protocol to discover the link layer addresses of neighbor hosts. The Hop Limit field is typicaly set to 255 in ND packets that are sent to neighbors. Routers decrement the Hop Limit value as a packet is forwarded from hop to hop.
+
+Therefore, a router that receives an ND packet with a Hop Limit value of 255 considers the source of the ND packet to be a neigbhbor. If a router receives an ND packet with a Hop Limit value that is less than 255, the packet is ignored, therby protecting the router from threats that could result from the ND protocol's lack of neighbor authentication.
 
 Routing schemes:
 ![](/images/routingschemes.png)
@@ -2112,7 +2116,7 @@ SDN is also called the Software-Defined Architecture (SDA) or Controller-Based N
 Traditional control planes use a distributed architecture.
 - For example, each router in the network runs OSPF and the routers share routing information and then calculate their preferred routers to each destination.
 
-An SDN controller centralizes control plane functions like calculating routes.
+An SDN controller centralizes control plane functions like calculating routes (EIGRP, OSPF).
 - That is just an example, and how much of the control plane is centralized varies greatly.
 
 The controller can interact programmatically with the network devices using APIs (Application Programming Interface)
@@ -2172,6 +2176,8 @@ Data plane
 - NAT (changing the src/dst addresses before forewarding) is part of the data plane.
 - Deciding to forward or discard messages due to ACLs, port security, etc. is part of the data plane.
 - The data plane is also called the 'forwarding plane'.
+- Layer 2 switches, layer 3 switches, and end devices typically operate in the data plane.
+- Network tasks that are typically performed in the data plane include the ecapsulation and depsulation of packets, the adding or removing of trunk headers, the matching of MAC addresses to a MAC address table, the matching of IP addresses to paths in a routing table, the encryption of data, NAT, and filtering by using either ACLs or port security.
 
 
 Control plane
@@ -2505,6 +2511,8 @@ PoE
 
 
 CDP
+- show cdp neighbors
+    - shows device ID, local interface, holdtime, capability, platform and port ID.
 - show cdp neighbors detail
     - used in priveledge exec mode to show detailed information about neihboring CDP devices
     - includes: device, entry (IP) addresses, platform, interfaces, holdtime, version, advertisement, duplex, power drawn, power request id, power request levels, etc
