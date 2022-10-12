@@ -2639,7 +2639,7 @@ ACL
     - If you do not issue a sequence number, the statements will be processed in the order which they are issued.
 - ip access-list extended (**name**)
     - configured an extended ACL by name instead of number
-    - places the device in extended ACL configuration mode, where you can issue [**sequence-number**] (**deny** or **permit**) *protocol* (**source IP** ***source wildcard***) [*operator port*](**destination IP** ***destination-wildcard***) [*operator port*]
+    - places the device in extended ACL configuration mode, where you can issue [**sequence-number**] (**deny** or **permit**) *protocol* (**source IP** ***source wildcard***) *operator port* (**destination IP** ***destination-wildcard***) *operator port*
     - where sequence number is a optional number that indicates the order which the ACL statements will be evaluated. 
 
 - show access-lists
