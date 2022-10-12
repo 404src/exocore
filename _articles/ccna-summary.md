@@ -2671,7 +2671,7 @@ OSPF
     - if set to 0, the router can not become the DR/BDR for the subnet
     - once DR/BDR is set they will keep their role until OSPF is reset using **clear ip ospf process**
     - When the DR goes down, the BDR becomes the new DR. Then an election is held for next BDR.
-- ip ospf network (**broadcast | non-broadcast | point-to-multipoint [*nonbroadcast*]| point-to-point**)
+- ip ospf network (**broadcast** OR **non-broadcast** OR **point-to-multipoint** [*nonbroadcast*] OR **point-to-point**)
 
 
 
