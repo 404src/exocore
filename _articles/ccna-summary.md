@@ -373,6 +373,30 @@ Using Auto MDI-X, devices are able to automatically detect which pins their neig
 ![](/images/fiberopticstandards.png)
 ![](/images/UTPvsFiberoptic.png)
 
+Infrastructure: 
+
+**T1** connections use the copper wire infrastructure of the public switched network (PSTN) to provide a maximum throughput of 1.544 Mbps.
+
+To achieve the 1.544-Mbps rate, T1 connections encapsulate data in DS1 siggnaling frames. DS1 signaling frames use 24 DS0 channels and one framing bit. Each of the 24 DS0 channels transfers eight bits of data at a time. The inclusion of the framing bit raises the total amount of data in a single DS1 frame to 193 bits. T1 connections transmit 8000 DS1 frames per second, which brings the total throughput to 1.544 Mbps.
+
+**T1** connections typically transfer data across two pairs of shielded copper wires, which extend from he service provider to the customer. One pair of wires within the T1 line is used to send data, and the other pair is used to receive data.
+
+**Cable** connections use a coaxial line from the service provider to the customer to provide Internet access. Originally, cable providers offered only television service. Providers realizedd tha coaxial lines offered enough bandwidth to support simultaneous television and Internet service.
+
+However, before cable providers could start offering Internet service, they had to redesign their infrastructure to allow for two-way communications. One of the infrastructure changes was the introduction of the cable modem. 
+
+Cable modems are used to convert an analog signal from the provider into a digital signal that can be used by a computer and vice versa. Cable modems provide speeds of up to 27 Mbps, making cable one of the fastest options for home Internet service.
+
+**Digital Subscriber Line (DSL)** uses the copper wire infrastructure of the PSTN (Public Switched Telephone Network). However, DSL solutions can provide a maximum throughput hat is higher than 1.544 Mbps. Filters must be installed on each telephone outlet in order to segregate a DSL Internet signal and a telephone voice signal.
+
+In order to receive DSL service, the subscribers must have a DSL modem installed at their home or office. The DSL modem is used to convert signals originating from a computer into a frequency that can be transmitted over the DSL line without interfering with other types of transmissions.
+
+DSL upload speeds are typically slower than DSL download speeds. DSL service is available in a variety of forms including Asynchronous DSL (ADSL), Synchronous DSL (SDSL), and Very-high-data-rate DSL (VDSL).
+
+**Satellite-based** Internet service downloads are received wirelessly through the use of a dish antenna. Satellite Internet service is typically slower than cable, DSL, or T1 connections. In addition, because satellite transmissions do not transmit over a physical medium, they are highly susceptible to latency and interference. However, satellite is a long-distance option for areas where the necessary infrastructure for other types of Internet service is absent, such as rural areas. 
+
+**Cellular** Internet service has become a less expensive alternative for some in rural areas who are capable of receiving 3G, 4G, or 4G LTE signals. In addition, celllar Internet is a common means of Internet access for people who travel frequently.
+
 
 ### 1.3.a Single-mode fiber, multimode fiber, copper
 SFP Transceiver (SFP = Small Form-Factor Pluggable) - connector used for fiber-optic ports on a switch, connects to Fiber-Optic cabling.
@@ -380,6 +404,7 @@ SFP Transceiver (SFP = Small Form-Factor Pluggable) - connector used for fiber-o
 Single-mode fiber is narrower than multimode fiber, light enters at a single angle (mode) from a laser-based transmitter. Allows for longer cables than both UTP and multimode fiber, but also more expensive.
 
 Multimode fiber is wider than single-mode fiber, allows multiple angles (modes) of light waves to enter the fiberglass core. Allows longer cables than UTP, but shorter than single-mode fiber.
+
 
 ### 1.3.b Connections (Ethernet shared media and point-to-point)
 Shared or broadcast Channel:
@@ -915,6 +940,18 @@ DTP (Dynamic Trunking Protocol)
 VTP (VLAN Trunking Protocol)
 - allows you to configure VLANs on a central VTP server switch, and other switches (VTP clients) will synchronize their VLAN database to the server. It is designed for large networks with many VLANs, but is rarely used and not recommended.
 
+A switch can be configured for one of three VTP modes: server, client, or transparent. By default, Cisco switches are configured for VTP server mode. 
+
+VTP server mode allows you to create, modify, and delete VLANs in the VTP domain.However, a switch in VTP server mode will not originate VTP advertisements until a VTP domain name is set. VTP servers store VLAN configuration information in NVRAM, so if the switch is powered off, the VLAN configuration will be retained.
+
+You cannot create, modify or delete VLANs on a switch that is operating in VTP client mode. However, a switch in VTP client mode can send its VLAN configuration information to other switches. In VTP v1 and VTP v2, VTP clients do not store the VLAN configuration information in NVRAM. In VTP v3, VTP clients do store VLAN configuration information in NVRAM.
+
+A switch that is operating in VTP transparent mode does not participate in VTP. Any VLAN additions, changes, or deletions made to a switch in VTP transparent mode remain on the local switch and are not propagated to other switches. 
+
+However, a switch in VTP transparent mode can forward VTP advertisements received from other switches. Switches in VTP v2 transparent mode forward all VTP advertisements; switches in VTP v1 transparent mode will forward a VTP advertisement only if the VTP domain and VTP version number on the switch match that of the VTP advertisement. Like VTP servers, VTP transparent mode switches store VLAN configuration information in NVRAM.
+
+
+
 ### 2.2.a Trunk ports
 In a small network with a few VLANs, itis possible to use a seperate interfaces for each VLAN when connected switches to switches, and switches to routers.
 
@@ -1245,6 +1282,12 @@ CPU ACLs are used to limit access to the CPU of the WLC. This limits which devic
 ## 2.9 Interpret the wireless LAN GUI configuration for client connectivity, such as WLAN creation, security settings, QoS profiles, and advanced settings
 Day 58 video
 
+QoS:
+- Platinum (voice)
+- Gold (video)
+- Silver (best effort)
+- Bronze (background)
+
 ## 3.0 IP Connectivity
 Routers can use dynamic routing protocols to advertise information about the routes they know to other routers.
 They form 'adjacencies' / 'neighbor relationships' / 'neighborships' with adjacent routers to exchange this information.
@@ -1359,7 +1402,9 @@ A route to a specific host (/32 mask)
 ### 3.3.d Floating static
 By changing the AD of a static route, you can make it less preferred than routes learned by a dynamic routing protocol to the same destination (make sure the AD is higher than the routing protocol's AD!) This is known as a "floating static route".
 
-The route will be inactive (not in the routing table) unless the route learned by the dynamic routing protocol is removed.
+Floating static routes are used to provide link redundancy. 
+The route will be inactive (not in the routing table) unless the route learned by the dynamic routing protocol is removed or no longer available.
+
 
 ## 3.4 Configure and verify single area OSPFv2
 OSPF (Open Shortest Path First) is a link routing protocol.
@@ -2173,16 +2218,16 @@ Data plane
     - It also de-encapsulates the original Layer 2 header, and re-encapsulates with a new header destined for the next hop's MAC address.
 - A switch receives a message, looks at the destination MAC address, and forwards it out of the appropriate interface (or floods it).
     - This includes functions like adding or removing 802.1q VLAN tags.
-- NAT (changing the src/dst addresses before forewarding) is part of the data plane.
+- NAT (changing the src/dst addresses before forwarding) is part of the data plane.
 - Deciding to forward or discard messages due to ACLs, port security, etc. is part of the data plane.
 - The data plane is also called the 'forwarding plane'.
 - Layer 2 switches, layer 3 switches, and end devices typically operate in the data plane.
-- Network tasks that are typically performed in the data plane include the ecapsulation and depsulation of packets, the adding or removing of trunk headers, the matching of MAC addresses to a MAC address table, the matching of IP addresses to paths in a routing table, the encryption of data, NAT, and filtering by using either ACLs or port security.
+- Network tasks that are typically performed in the data plane include the encapsulation and decapsulation of packets, the adding or removing of trunk headers, the matching of MAC addresses to a MAC address table, the matching of IP addresses to paths in a routing table, the encryption of data, NAT, and filtering by using either ACLs or port security.
 
 
 Control plane
 - How does a device's data plane make its forwarding decisions?
-    - routing table, MAC address table, ARP table, STP, etc.
+    - routing table, MAC address table, ARP table, STP, OSPF, EIGRP etc.
 - Functions that build these tables (and other functions that influence the data plane) are part of the control plane.
 - The control plane controls what the data plane does, for example by building the router's routing table.
 - The control plane performs overhead work.
@@ -2514,7 +2559,7 @@ CDP
 - show cdp neighbors
     - shows device ID, local interface, holdtime, capability, platform and port ID.
 - show cdp neighbors detail
-    - used in priveledge exec mode to show detailed information about neihboring CDP devices
+    - used in priviledge exec mode (enable) to show detailed information about neihboring CDP devices
     - includes: device, entry (IP) addresses, platform, interfaces, holdtime, version, advertisement, duplex, power drawn, power request id, power request levels, etc
 
 STP
@@ -2522,6 +2567,43 @@ STP
     - used in interface config mode for enabling PortFast on specific ports
 - spanning tree portfast default
     - enables PortFast for all access ports on a switch, global config mode
+
+DAI (Dynamic ARP Inspection)
+- ip arp inspection vlan (**number or range**)
+    - used in global config mode (conf t)
+    - a range of VLANs can be entered by using a comma-seperated list or a dash range.
+    - configuring DAI on each VLAN ensures that traffic sent from each host is inspected (prevent ARP poisoning/spoofing)
+    - DAI is configured globablly on a switch on all access, trunk, EtherChannel, and PVLAN ports for specified VLANs and cannot be configured on specific interfaces.
+
+
+EtherChannel
+- interface port-channel (**number**)
+    - used in global config mode
+    - specifies the port-channel interface to configure and enters the interface configuration mode, creates the channel group if it does not exist
+- interface range (**interface range**)
+    - specifies the interface that you want to add to a channel group, and enters the interface configuration mode.
+- channel-protocol (**lacp or pagp**)
+    - specifies the aggregation protocol used to negotiate the creation of the etherchannel (optional).
+    - EtherChannel must match one ach switch, or they will be unable to dynamically establish an EtherChannel link between them.
+    - In addition, if a protocol is explicity configured, each local switch port in the EtherChannel bundle must be configured to operate in a mode that is compatible with the channel protocol or the switch will display an error message and refuse to bundle the offending interface.
+- channel-group (**number**) mode (**on/active/passive {auto/desirable [non-silent]}**)
+    - used in interface range config
+    - number to specify particular channel group, should correspond to the PortChannel interface being configured
+    - the **on** keyword configures the channel group to unconditionally create the channel with no LACP or PAgP negotiation. In the **on** mode , a functional EtherChannel exists only if a channel group that is in the **on** mode is connected to another channel group that is also in the **on** mode.
+    - You can issue the command **show etherchannel summary** to verify the status of an EtherChannel link and to determine which aggregation protocol, if any, was used to establish the link. 
+    - The **auto**, **desirable**, and **non-silent** keywords can only be used with *PAgP*.
+    - The **desirable** keyword configures the channel group to actively negotiate PAgP, and the **auto** keyword configures the channel group to listen for PAgP negotiation to be offered.
+    - Either or both sides of the link must be set to desirable to establish an EtherChannel over PAgP; setting both sides to auto will not establish an EtherChannel over PAgP.
+    - The optional non-silent keyword requires that a port receive PAgP packets before the port is added to the channel.
+    - The **active** and **passive** keywords can be used only with *LACP*. The **active** keyword configures the channel group to actively negotiate LACP, and the **passive** keyword configures the channel group to listen for LACP negotation to be offered. Either or both sides of the link must be set to **active** to establish an EtherChannel over LACP; settings both sides to **passive** will not establish an EtherChannel over LACP.
+
+![](/images/etherchannelpagplacp.png)
+
+VTP
+- vtp mode (**server, client, or transparent**)
+    - used from global config mode or vlan config mode.
+    - by default, switches are configured for VTP server mode.
+ 
 
 IPv6
 - ipv6 enable
@@ -2536,6 +2618,33 @@ IPv6
 - ipv6 address dhcp
     - configures a DHCPv6 client interface to use stateful DHCPv6 addressing, which configures addressing information and extra information from the DHCPv6 server.
 
+ACL
+- access-class (**number**) (**in/out**)
+    - used in line config mode (enabled by **line vt # #**)
+    - in/out configured inbound or outbound
+    - configures VTY lines #-# to apply ACL # in the in/out direction
+- access-list (**number**) (**deny/permit**) (**source IP address [source-wildcard]** OR host **ip address** OR any)
+    - examples: access-list 55 permit 172.18.0.12 0.0.0.0
+    - access-list 55 deny any
+    - creates a standard ACL, place as close to the destination as possible.
+    - standard when ACL number is **1-99** or **1300-1999**
+- extended access-list command
+    - can permit or deny packets based on source IP address, destination IP address, protocol, and port.
+    - place close as possible to the source of traffic
+    - extended when ACL number is **100-199** or **2000-2699**
+- ip access-list standard (**name**)
+    - configure a standard ACL by name instead of number
+    - places the device in standard ACL config mode, where you can issue multiple commands to configure the named ACL.
+    - to create these ACL statements, use the command: [**sequence-number**] (**deny** or **permit**) (host **ip address** OR **source IP address** ***source wildcard*** OR any) where sequence number is an optional number that indicates the ACL statemens will be evaluated.
+    - If you do not issue a sequence number, the statements will be processed in the order which they are issued.
+- ip access-list extended (**name**)
+    - configured an extended ACL by name instead of number
+    - places the device in extended ACL configuration mode, where you can issue [**sequence-number**] (**deny** or **permit**) *protocol* (**source IP** ***source wildcard***) [*operator port*](**destination IP** ***destination-wildcard***) [*operator port*]
+    - where sequence number is a optional number that indicates the order which the ACL statements will be evaluated. 
+
+- show access-lists
+    - shows configured standard and extended ACLs 
+    
 
 DHCP
 - ip dhcp pool (**name/number**)
@@ -2562,6 +2671,9 @@ OSPF
     - if set to 0, the router can not become the DR/BDR for the subnet
     - once DR/BDR is set they will keep their role until OSPF is reset using **clear ip ospf process**
     - When the DR goes down, the BDR becomes the new DR. Then an election is held for next BDR.
+- ip ospf network (**broadcast | non-broadcast | point-to-multipoint [*nonbroadcast*]| point-to-point**)
+
+
 
 Port Security
 - switchport port-security
