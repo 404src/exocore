@@ -876,7 +876,31 @@ MAC Address is a 6-byte (48-bit) globally unique physical address assigned to th
 
 OU:IO:UI:VE:ND:OR
 - OUI - Organisationally Unique Identifier, ID assigned to a particular manufacturer
-- VENDOR - managed and assigned by the manufacturer, unique to each device
+- VENDOR (NIC-specific identifier) - managed and assigned by the manufacturer, unique to each device
+
+Unicast MAC addresses: actual MAC address showed above
+Multicast MAC addresses: **01:00:5E-0F-0F-0F - 01-00-5E-7F-FF-FF**
+    - 25th bit always 0, last 23 bits are created from last 23 bits of multicast IP address
+Broadcast MAC addresses: **FF:FF:FF:FF:FF:FF**
+Ethernet loopback testing MAC addresss: **CF-00-00-00-00-00**
+
+![](/images/macaddressMSBbyte.png)
+
+**MAC frame** is generally comprised of nine fields, as shown in the following diagram:
+
+![](/images/macframe.png)
+
+The **Frame Control (FC)** field is used to identify the type of 802.11 frame, and its 2 byes of data are subdivided into 11 related fields of information, such as wireless protocol, frame type, and frame subtype.
+
+The duraction (DUR) field is a 2-byte field that is used mainly by control frames to indicate transmission timers. However, this field is also used by the Power Save (PS) Poll control frame to indicate the association identity (AID) of a client.
+
+The address fields, ADD1, ADD2, ADD3 and ADD4, are 6-byte fields used to convey MAC address and BSSID information. What information resides in which address field is entirely dependent on the tpye of frame. However, ADD1, ADD2, ADD3 typically contain a source MAC address, destination MAC address, and BSSID with the order being dependent on whther the frame is entering the distribution system (DS), leaving the DS, Or passing directly between ad-hoc wireless devices. The ADD4 field is only present for frames passing between devices in the DS, such as from one access point (AP) to another AP, and is placed after the SEQ field.
+
+The Sequence (SEQ) field is a 2-byte field that is subdivided to store two related pieces of information: the fragment number and sequence number of each frame.
+
+The DATA portion of a frame varies in size and contains the frame's payload. For data frames, the payload is user data. However, for other frames, such as management frames, this portion of the frame might contain information such as supported data rates and cipher suites.
+
+Finally, the the Frame Check Sequence (FCS) field contains a 4-byte cyclic redundancy check (CRC) value calculated from all the 802.11 header fields, including the data portion of the frame. This value is used by the receiving station to determine whether the frame was corrupted during transit.
 
 ### 1.13.a MAC learning and aging
 When a switch receives a frame, it associates the MAC address of source with the corresponding port which the frame was received. The switch dynamically constructs an address table using the MAC source addresses of received frames.
@@ -1282,6 +1306,23 @@ CPU ACLs are used to limit access to the CPU of the WLC. This limits which devic
 ## 2.9 Interpret the wireless LAN GUI configuration for client connectivity, such as WLAN creation, security settings, QoS profiles, and advanced settings
 Day 58 video
 
+To create a new normal WLAN, you should complete four steps on the WLANS > New page of the WLC GUI:
+1. Select the type of WLAN you are creating from the **Type** drop-down list box; by default, this value is configured to (normal) **WLAN**.
+    - There are 3 types of WLANs you can create by using the WLC GUI:
+    - A **normal** WLAN, which is the WLAN to which wireless clients inside your company's walls will connect
+    - A **Guest** LAN, which is the WLAN to which guest wireless clients inside your company's walls will connect
+    - A **Remote** LAN, which is the WLAN configuration for wired ports on the WLC 
+
+2. Enter a 32-character or less profile name in the **Profile Name** field.
+    - the profile name should uniqely identify the WLAN that you are configuring. The value you enter in the profile name field will be used by the WLC to identify the WLAN on other configuration pages.
+    - for simplicity, many adminstrators choose to use the same value for the profile name field as they plan to configure in the SSID field.
+3. Enter a 32-character or less SSID in the **SSID** field.
+    - SSID is the WLAN network name that will be broadcast to wireless clients. 
+4. Choose a WLAN ID from the **ID** drop-down list box.
+    - By default the ID will be configured to a value of 1. can be configured in the range from 1-512. Although Cisco controllers support a maximum of 512 WLANs, only 16 can be actively configured.
+
+
+
 QoS:
 - Platinum (voice)
 - Gold (video)
@@ -1315,6 +1356,10 @@ Metric is used to compare routes learned via the same routing protocol. Differen
 A lower AD is preferred, and indicates that the routing protocol is considered more trustworthy (more likely to select good routes).
 
 ![](/images/administrativedistance.png)
+
+![](/images/ADpreference.png)
+
+![](/images/ad.png)
 
 ### 3.1.f Metric
 A router's route table contains the best route to each destination network it knows about.
@@ -1383,8 +1428,8 @@ Routes for link-local addresses are not added to the routing table.
 
 
 to configure: 
->ip route (destination ip address) (mask) (next-hop ip address)
->ip route (destination-address) (mask) (exit-interface)
+>ip route (destination network ip address) (mask) (next-hop ip address)
+>ip route (destination network ip address) (mask) (exit-interface)
 
 to verify: 
 >show ip route
@@ -1396,7 +1441,11 @@ A route that a router uses to forward an incoming packet when no other route is 
 A route to a network/subnet (mask length < /32)
 
 ### 3.3.c Host route
-A route to a specific host (/32 mask)
+Local host routes are marked with an ****L** in the output of the **show ip route** command or the **show ipv6 route commmand**.
+IPv4 host routes have a /32 mask, and IP version 6 (IPv6) host routes have a /128 mask.
+
+Not all IPv4 routes with a /32 mask are considered host routes. IPv4 addresses that are manually configured with a /32 mask are considered to be connected addresses and are marked wtih a **C** in the output of the **show ip route** command.
+
 
 -example picture---
 ### 3.3.d Floating static
@@ -1578,6 +1627,12 @@ Static NAT involves statically configuring one-to-one mappings of private IP add
 An inside local IP address is mapped to an inside global IP address.
 - Inside Local: The IP address of the inside host, from the perspective of the local network. (The IP address actually configured on the inside host, usually a private address)
 - Inside Global: The IP address of the inside host, from the perspective of outside hosts (the IP address of the inside host after NAT, usually a public address)
+- Outside Local: The IP address of the host on the outside network as seen from a host on the inside network
+- Outside Global: The IP address configured on a host on the outside network
+    - Typically, NAT is configuredo nly for addresses on the inside network; therefore the outside local and global address are often identical.
+
+![](/images/insideoutsidelocalglobal.png)
+
 ![](/images/static%20NAT%20flowchart.png)
 
 ![](/images/static%20NAT%20config.png)
@@ -1586,7 +1641,7 @@ In dynamic NAT, the router dynamically maps inside local addresses to inside glo
 
 An ACL is used to identify which traffic should be translated.
 - If the source IP is permitted by the ACL, the soruce IP will be translated.
-- If the soruce IP is denied by the ACL, the source IP will NOT be translated. (the traffic will NOT be dropped!)
+- If the source IP is denied by the ACL, the source IP will NOT be translated. (the traffic will NOT be dropped!)
 
 A NAT pool is used to define the available inside global addresses that can be used.
 Although they are dynamically assigned, the mappings are still one-to-one (one inside local IP address per inside global address)
@@ -1949,6 +2004,10 @@ Site-to-Site VPNs (IPsec)
 - A site-to-site VPN is a VPN between two devices and is used to connect two sites together over the Internet.
 - A VPN 'tunnel' is created between the two devices by encapsulating the original IP packet with a VPN header and a new IP header.
     - When usuing IP sec, the original packet is encrypted before being encapsulated with the new header.
+- provides data confidentiality, data integrity, and origin authentication.
+- IPsec uses Encapsulating Security Protocol (ESP) to provide data confidentiality. ESP encrypts an entire IP packet and encapsulates it as the payload of a new IP packet. Because the entire IP packet is encrypted, the data payload and header information remain confidential. 
+- In additon, IPsec uses Authentication Header (AH) to ensure the integrity of a packet and to authenticate the origin of a packet. AH does not authenticate the identity of an IPsec peer; instead, AH verifies only that the source address in the packet has not been modified during transit.
+
 
 Site-to-site VPNs:
 
@@ -1957,12 +2016,15 @@ Site-to-site VPNs:
 
 There are some limitations to standard IPsec:
 
-IPsec doesn't support broadcast and multicast traffic, only unicast. This means that routing protocols such as OSPF can't be used over the tunnels, because they rely on multicast traffic.
-- This can be solved with 'GRE over IPsec'
+IPsec doesn't support **broadcast and multicast traffic**, only **unicast**. This means that routing protocols such as OSPF can't be used over the tunnels, because they rely on multicast traffic.
+- This can be solved with (('GRE over IPsec'(())
 - GRE (Generic Routing Encapsulation) creates tunnels like IPsec, however it does not encrypt the original packet, so it is not secure.
-- However, it has the advantage of being able to encapsulate a wide variety of Layer 3 protocols as well as broadcast and multicast messages.
+- However, it has the advantage of being able to encapsulate a wide variety of Layer 3 protocols, including **broadcast** and **multicast** messages.
 - To get the flexibility of GRE with the security of IPsec, 'GRE over IPsec' can be used.
 - The original packet will be encapsulated by a GRE header and a new IP header, and then the GRE packet will be encrypted and encapsulated within an IPsec VPN header and new IP header.
+- GRE can tunnel traffic from one network to another without requiring the transport network to support the network protocols in use at the tunnel source or tunnel destination.
+- Because the focus of GRE is to transport many different protocols, it has very limited security features.
+- By contrast IPsec has strong data confidentiality and data integrity features but it can transport only IP traffic. GRE over IPsec combines the best features of both protocols to securely transport any protocol over an IP network.
 
 ![](/images/GREoverIPsec.png)
 
@@ -2234,6 +2296,8 @@ Control plane
     - OSPF itself doesn't forward user data packets, but it informs the data plane about how packets should be forwarded.
     - STP itself isn't directly involved in the process of forwarding frames, but it informs the data plane about which interfaces should and shouldn't be used to forward frames.
     - ARP messages aren't user data, but they are used to build an ARP table which is used in the process of forwarding data.
+    - In a traditional network, the control plane is typically dsitributed among many devices (ex. OSPF)
+    - In a controller-based network, the decision-making logic is either moved to a central controller or monitored by a central controller.
 
 
 Management plane
@@ -2269,7 +2333,9 @@ Using the SBI, the controller communicates with the managed devices and gathers 
 
 The NBI (Northbound Interface) is what allows us to interact with the controller, access the data it gathers about the network, program it, and make changes in the network via the SBI. 
 
-Northbound APIs enable an SDN controller to communicate with applications in the application plane. Applications use northbound APIs to send requests or instructions to the SDN controller, which uses that information to modify and manage network flow.
+Northbound APIs enable an SDN controller to communicate with applications in the **application plane**. The application plane is a component of a controller-based network in which applications that are written to allow interaction with the centralized controller reside.  
+
+Applications use northbound APIs (REST, OSGi) to send requests or instructions to the SDN controller, which uses that information to modify and manage network flow/manage network efficiency. 
 
 A REST (Representational State Transfer) API is used on the controller as an interface for apps to interact with it.
 
@@ -2564,9 +2630,26 @@ CDP
 
 STP
 - spanning-tree portfast
-    - used in interface config mode for enabling PortFast on specific ports
+    - used in interface config mode for enabling PortFast on specific ports, used for edge ports such as access ports
+    - transitions the port into the STP forwarding state without going through the STP listening and learning states.
+    - if enabled on a port connected to a switch, the potential for creating STP loops increases greatly.
 - spanning tree portfast default
     - enables PortFast for all access ports on a switch, global config mode
+- spanning-tree guard root
+    - root guard is used to prevent newly introduced swithces from being elected as the new root switches.
+    - allows adminstrator to maintain control over which switch is the root.
+    - When STP is used, the device with the lowest switch priority is elected the root. If a new device is added to the network with a lower priority than the current root, it will become the new root. 
+    - This could cause the network to reconfigure in unintented ways.
+    - typically used on edge ports that have PortFast enabled
+    - portfast can cause switching loops if a new switch is connected to a portfast-enabled port, BPDU prevents this by placing the port in an error-disabled state and shuts down the port upon receiving the receipt of the BPDUs. 
+    - the port must be manually re-enabled, or it can be recovered automatically by configuring the **errdisable recovery cause bpduguard** command and the **errdisable recovery interval** *interval* command.
+    - BPDU on portfast interfaces prevent a rogue switch from modifying STP topology.
+
+- spanning-tree loopguard (**default** OR **loop**)
+    - loop guard feature prevents nondesignated ports from inadvertently forming bridging loops if the steady flow of BPDUs is interrupted. 
+    - **default** will enable loop guard for the entire switch in global config, **loop** will enable for specific ports in interface config mode.
+    - when port stops receiving BPDUs, loop guard puts the port into the loop0incosistent state, which keeps the port in a blockign state.
+    - After the port starts receiving BPDUs again, loop guard automatically re-enables the port so that it transitions through the normal STP states.
 
 DAI (Dynamic ARP Inspection)
 - ip arp inspection vlan (**number or range**)
@@ -2575,6 +2658,22 @@ DAI (Dynamic ARP Inspection)
     - configuring DAI on each VLAN ensures that traffic sent from each host is inspected (prevent ARP poisoning/spoofing)
     - DAI is configured globablly on a switch on all access, trunk, EtherChannel, and PVLAN ports for specified VLANs and cannot be configured on specific interfaces.
 
+DTP
+- switchport mode dynamic (**auto** or **desirable**)
+    - because a switch port in auto mode does not actively negotiate to operate in trunk mode, it will only form a trunk link if negotations are initiated by the neighboring interface
+    - a neighboring interface will initiate negotiations only if it is configured to operate in **trunk** mode or **desirable** mode.
+    - by contrast, a switch port in **desirable** mode will actively negotiate to operate in trunk mode and will form a trunk link with a neighboring port that is configured to operate in trunk, desirable, or auto mode. 
+
+- switchport mode trunk
+    - used to configure the port in trunk mode, and doesn't engage in negotation over DTP, should be followed by **switchport nonegotiate** to accomplish this
+- switchport mode **access**
+    - to configure the port in **access** mode and doesn't use DTP.
+- show interfaces fa0/0 trunk 
+    - indicates the switchport mode configured for a particular interface
+    - **off** - indicates that the port has been statically configured to operate in **access** mode
+    - **on** - indicates that the port has been statically configured to operate in **trunk** mode
+    - **auto** - indicates that the port will dynamically determine it's operating mode; the port operates in access mode unless the neighboring interface actively negotiates to operate as a trunk
+    - **desirable** - indicates that the port will dynamically determine its operating mode; the port operates in access mode unless it can actively negotiate a trunk connection with a neighboring interface
 
 EtherChannel
 - interface port-channel (**number**)
@@ -2604,6 +2703,24 @@ VTP
     - used from global config mode or vlan config mode.
     - by default, switches are configured for VTP server mode.
  
+NAT
+- show ip nat translations
+    - shows protocol, inside global IP, inside local IP, outside local IP, outside global IP
+
+IPV4 static routes
+- ip route (**destination network ip address**) (**subnet mask**) (**next-hop ip address**)
+- ip route (**destination network ip address**) (**subnet mask**) (**exit-interface**)
+- show ip route / show ipv6 route
+    - Local host routes are marked with an **L**
+    - IPv4 addresses that are manually configured with a /32 mask are considered to be connected addresses and are marked wtih a **C**
+    - Routes that are marked with an O are OSPF routes
+    - Routes that are marked with D are EIGRP routes
+    - OSPF an EIGRP are considered network routes
+    - Routes that are marked with an S are static routes. Normal static routes have an AD of 1
+    - AD is the first number in the brackets, the second number is metric [AD/metric]
+    - A static route with a modified AD is called a floating static route and is often used as a backup route in case the primary route goes down.
+    - Routers marked with a (\*) in the output are default routes. A static default route can be configured by issuing the *ip route 0.0.0.0 0.0.0.0* (**next-hop-IP** OR **interface**) command. **S\*** indicates a static default route.
+
 
 IPv6
 - ipv6 enable
@@ -2616,7 +2733,23 @@ IPv6
     - SLAAC configurations occur based on information that is sent in router advertisements from an IPv6 gateway operating on the same network segment.
     - also enables the interface to obtain additional information from a DHCPv6 server if a DHCPv6 server exists on the network as is configured to send nonaddress information,
 - ipv6 address dhcp
-    - configures a DHCPv6 client interface to use stateful DHCPv6 addressing, which configures addressing information and extra information from the DHCPv6 server.
+    - configures a DHCPv6 client interface to use stateful DHCPv6 addressing, which configures addressing information and extra information from the DHCPv6 server8.
+- ipv6 route (**destination network IP address /#subnet**) (**outboundinterface 0/0**) (**next-hop IPv6 address**)
+    - configures **fully specified static route** in which the destination network, outbound interface, and next-hop IPv6 address are all configured directly. 
+    - ex: ipv6 route 2001:db8:a::/32 fastethernet 0/1 2001:db8:b::1
+    - fully specified static routes are most often used when the outbound interface is multiaccess and could therefore be confgured with multiple next-hop addresses. The next-hop address that is specified in the command must be directly connected to the outbound interface.
+- ipv6 route (**destination network IP address /#subnet**) (**outboundinterface 0/0**)
+    - configures a **directly attached static route**
+    - ex: ipv6 route 2001:db8:a::/32 fastethernet 0/1
+    - when a directly connected static route is configured, the router assumes that any packet that matches the destination network is reachable throuh the specified outbound interface. Therefore, the packet's fll destination address is used as the IPv6 next-hop address.
+
+- ipv6 route (**destination network ip address /#subnet**) (**next-hop IP address**)
+    - configures a recursive static route
+    - ex. ipv6 route 2001:db8:a::/32 2001:db8:a::1
+    - in this example, the command configures the routter to resolve all IPv6 addresses in the 2001:db8:a::/32 prefix through the next hop that has been assigned the IPv6 address of 2001:db8:a::1. 
+    - the router assumes the outbound interface to be the interface to which the next hop is either directly or indirectly connected. In other words, the next-hop IPv6 address must be resolvable through the outbound interface. 
+- ipv6 route (**destination network ip address /#subnet**) (**next-hop IP address**) (**administrative distance #**)
+    - will configure a floating static route with an AD of 5.
 
 ACL
 - access-class (**number**) (**in/out**)
@@ -2664,6 +2797,7 @@ OSPF
 - show ip ospf interface brief
     - shows interfaces, PID, Area, IP address/mask, cost, state. Full adjacencies/total count of neighbors
 - show ip ospf neighbor
+
 - show ip ospf int g0/0
     - shows state, priority, DR+BDR router IDs and interface IP addresses, neighbor count, (full) adjacent neighbor count
 - ip ospf priority (**#1-255**)
@@ -2672,8 +2806,54 @@ OSPF
     - once DR/BDR is set they will keep their role until OSPF is reset using **clear ip ospf process**
     - When the DR goes down, the BDR becomes the new DR. Then an election is held for next BDR.
 - ip ospf network (**broadcast** OR **non-broadcast** OR **point-to-multipoint** [*nonbroadcast*] OR **point-to-point**)
+    - configures network type on an OSPF interface
+    - if not issued, the default OSPF network type depends on the type of network which the interface is connected
+    - OSPF **broadcast** network type is enabled by default on Fiber (FDDI) and Ethernet interfaces. 
+        - Multicast updates are sent, manual config of neighbor routers is not required. Hello timer 10s, dead timer 40s
+        - DR and BDR elections are performed
+    - OSPF **nonbroadcast** network type is enabled by default on Frame Relay and X.25 interfaces.
+        - nonbroadcast do not allow multicast, so manual configuration of neighbor routers with **neighbor** command is required so that OSPF sends unicast updates. Hello timer 30s, dead timer 120s
+        - DR and BDR elections are performed
+    - OSPF **point-to-point** network type is enabled by default on HDLC and PPP (Point-to-point protocol) serial interfaces.
+        - multicast updates are sent, so manual configuration of neighbor routers is not required. Hello timer 10s, dead timer 40s
+        - DR and BDR elections are not performed
+    - OSPF **point-to-multipoint** network type
+        - Multicast updates are sent, so manual configuration of neighbor routers is not required.  Hello timer 30s, dead timer 120s
+        - DR and BDR elections are not performed
+    - OSPF **point-to-multipoint nonbroadcast** network type
+        - Nonbroadcast networks do not allow multicasts; so manual configuration of neighbor routers with **neighbor** command is required so that OSPF sends unicast updates. Hello timer 30s, deadtimer 120s.
+        - DR and BDR elections are not performed
+- router id (**value**)
+    - manually configure an OSPF router ID in OSPF router configuration mode.
+    - an OSPF router will always select a manually configured router ID over any interface IP addresses.
+- distance (**new AD value**)
+    - configures the AD of routing protocols in router configuration mode
+    - for ex. to change the AD of OSPF from 110 to 80, you should issue the following commands:
+        - #router ospf 1
+        - #distance 80
 
 
+- neighbor (**IP address of neighbor**) (priority **number**) (poll-interval **seconds**) (cost **number**) *[database-filter all]*
+    - allows for manual configuration of neighbor routes
+    - not needed on broadcast networks
+    - priority number indicates route priority value of nonbroadcast neighbo associated with the IP address specified. default is 0. doesn't apply to point-to-multipoint interfaces
+    - poll interval represen poll interval time in seconds, should be much longer than hello interval. default is 120 seconds. doesn't apply to p-t-mp interfaces
+    - cost aassigned cost to neighbor, neighbors will no specific cost configured will assumed cost of interface, based on ip ospf cost command. does not apply to nonbroadcast multiaccess (NBMA) networks
+    - database-filter all filters outgoing LSAs to an OSPF neighbor 
+
+SSH (Secure Shell)
+- device must be running a K9 IOS image
+- to enable SSH for VTY lines on a Cisco router, complete the following:
+    - configure the router with a host name otehr than Router by issuing the **hostname** command
+    - configure the router with a domain name by issuing the **ip domain-name** command
+    - generate an RSA key pair for the router by issuing the **crypto key generate rsa** command.
+    - configure the VTY lines to use SSH by issuing the **transport input ssh** command from line configuration mode.
+- the **crypto key generate rsa** command will automatically enable SSH on a router. 
+    - creates a set of RSA keys that can be used for SSH sessions.
+- the **transport input ssh** command does not enable SSH on the router. This command only configures the VTY lines to use SSH if SSH has already been configured.
+- the **crypto key zeroize rsa** command removes RS keys from a router. You may want to remove RSA keys in order to generate new keys.
+- the **enable secret** command can be used to help prevent unauthorized access to priveged EXEC mode. Using this command is more secure than **enable password** because the password is stored in MD5 hash instead of plain text.
+- the **no transport input telnet** command can be used to prevent Telnet access to a router. Telnet is sent unencrypted as plain text, so it is not as secure as SSH. Using this will ensure that remote management connections to the router are encrypted.
 
 Port Security
 - switchport port-security
