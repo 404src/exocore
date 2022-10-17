@@ -1211,7 +1211,7 @@ There are three main wireless AP deployment methods:
 - Lightweight
 - Cloud-based
 
-Autonomous APs are self-contained systems that don't rely on a WLC.
+**Autonomous APs** are self-contained systems that don't rely on a WLC.
 - Autonomous APs connect to the wired network with a trunk link.
 - Data traffic from wireless clients has a very direct path to the wired network or to other wireless clients associated with the same AP.
 - Each VLAN has to stretch across the entire network. This is considered bad practice.
@@ -1236,8 +1236,8 @@ The WLC and lightweight APs use a protocol called CAPWAP (Control and Provisioni
 - Based on an older protocol called LWAPP (Lightweight Access Point Protocol)
 
 Two tunnels are created between each AP and the WLC:
-- Control tunnel (UDP port 5246). This tunnel is used to configure the APS, and control/manage the operations. All traffic in this tunnel is encrypted by default.
-- Data tunnel (UDP port 5247). All traffic from wireless clients is sent through this tunnel to the WLC. It does not go directly to the wired network.
+- Control tunnel (**UDP port 5246**). This tunnel is used to configure the APS, and control/manage the operations. All traffic in this tunnel is encrypted by default.
+- Data tunnel (**UDP port 5247**). All traffic from wireless clients is sent through this tunnel to the WLC. It does not go directly to the wired network.
 - Traffic in this tunnel is not encrypted by default, but you can configure it to be encrypted with DTLS (Datagram Transport Layer Security)
 - Because all traffic from wireless clients is tunneled to the WLC with CAPWAP, AP's connect to switch access ports, not trunk ports.
 
@@ -1252,7 +1252,7 @@ There are some key benefits to split-MAC architecture, here are a few:
 
 ![](/images/lightweightAPModes.png)
 
-Cloud-Based AP architecture is in between autonomous AP and split-MAC architecture.
+**Cloud-Based AP** architecture is in between autonomous AP and split-MAC architecture.
 - Autonomous APs that are centrally managed in the cloud.
 - Cisco Meraki is a popular cloud-based Wi-Fi solution.
 - The Meraki dashboard can be used to configure APs, monitor the network, generate performance reports, etc.
@@ -1291,13 +1291,13 @@ WLC config:
 ![](/images/WLC%20config.png)
 
 In split-MAC architecture, there are four man WLC deployment models:
-- Unified: The WLC is a hardware appliance in a central location of the network.
+- **Unified** AP deployment: The WLC is a hardware appliance in a central location of the network.
     - supports about 6000 APs
-- Cloud-based: The WLC is a VM running on a server, usually in a private cloud in a data center. This is not the same as the cloud-based AP architecture discussed previously.
+- **Cloud-based** AP deployment: The WLC is a VM running on a server, usually in a private cloud in a data center. This is not the same as the cloud-based AP architecture discussed previously.
     - supports about 3000 APs
-- Embedded: The WLC is integrated within a switch.
+- **Embedded** AP deployment: The WLC is integrated within a switch.
     - supports about 200 APs
-- Mobility Express: The WLC is integrated within an AP.
+- **Mobility Express** AP deployment: The WLC is integrated within an AP.
     - supports about 100 APs
 
 CPU ACLs are used to limit access to the CPU of the WLC. This limits which devices will be able to connect to the WLC via Telnet/SSH, HTTP/HTTPS, retrieve SNMP information from the WLC, etc.
@@ -2711,15 +2711,16 @@ IPV4 static routes
 - ip route (**destination network ip address**) (**subnet mask**) (**next-hop ip address**)
 - ip route (**destination network ip address**) (**subnet mask**) (**exit-interface**)
 - show ip route / show ipv6 route
-    - Local host routes are marked with an **L**
-    - IPv4 addresses that are manually configured with a /32 mask are considered to be connected addresses and are marked wtih a **C**
+    - **Local host routes** are marked with an **L**
+    - IPv4 addresses that are manually configured with a /32 mask are considered to be **connected addresses** and are marked wtih a **C**
     - Routes that are marked with an O are OSPF routes
     - Routes that are marked with D are EIGRP routes
     - OSPF an EIGRP are considered network routes
     - Routes that are marked with an S are static routes. Normal static routes have an AD of 1
     - AD is the first number in the brackets, the second number is metric [AD/metric]
     - A static route with a modified AD is called a floating static route and is often used as a backup route in case the primary route goes down.
-    - Routers marked with a (\*) in the output are default routes. A static default route can be configured by issuing the *ip route 0.0.0.0 0.0.0.0* (**next-hop-IP** OR **interface**) command. **S\*** indicates a static default route.
+    - Routers marked with a (\*) in the output are default routes. A static default route can be configured by issuing the *ip route 0.0.0.0 0.0.0.0* (**next-hop-IP** OR **interface**) command. 
+    - **S\*** 0.0.0.0 [1/0] indicates a static default route.
 
 
 IPv6
