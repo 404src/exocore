@@ -911,6 +911,16 @@ These dynamically learned MAC addresses are deleted from the table after the MAC
 Static MAC addresses can be assigned to the table, which are retained during a switch resest.
 
 ### 1.13.b Frame switching
+The Content addressable Memory (CAM) table is used by a switch to discover the relationship between the OSI Layer 2 address of a device and the physical port used to reach the device. Switches make forwaarding decisions based on the destination MAC address contained in a frame's header. The switch first searches the CAM table for an entry that matches the frame's destination MAC address. If the frame's destination MAC address is not found in the table, the switch forward the frame to all its ports, except the port from which it received the frame. If the destination MAC address is found in the table, the switch forrwards the frame to the appropriate port. The source MAC address is also recorded if it did not previous exist in the CAM table.
+
+The Forwarding Information Base (FIB) is a table that contains all the prefixes from the IP routing table and is structured in a way that is optimized for forwarding. The FIB and the adjacency taable are the two main components of CEF, which is a hardware-based switching method that is implementeed in all OSI Layer 3-capable Catalyst switches. The FIB is synchronized with the IP routing table and therefore contains an entry for every IP prefix in the routing table. The IP prefixes are ordered so that when a Layer 3 address is compared against the FIB, the longest,most specific match will be found first; therefore, prefix lookup times are minimized.
+
+The **adjacency table** maintains the Layer 2 addressing information for the FIB. Each network prefi in the FIB is associated with a next-hop address and an outbound interface. The adjacency table contains the Layer 2 addressing infromation for each next-hop address listed in the FIB amd is used to rewrite the Layer 2 header of each forwarded IP packet. You can issue the show adjacency command to display the contents of the adjacency table.
+
+The **Address Resolution Protocol (ARP)** table conntains Layer 3 to Layer 2 address translations. Whenever the switch encounters a packet destined for a Layer 3 address that does not have an entry in the ARP table, the switch brodcast casts an ARP request to query the network for the Layer 2 address. When the ARP reply is received, the switch enters the address pair into the ARP table for future reference. You can issue the **show ip arp** comand to display the contents of the ARP table.
+
+The VLAN table contains a record of the VLAN definitions on the switch and a list of the interfaces associates with each VLAN. The VLAN table does not contain any Layer 3 information. You can issue the **show vlan** command to display the contents of the VLAN table.
+
 
 ### 1.13.c Frame flooding
 When the switch receives a frame for a destination MAC address that is not in its address table, it floods the frame out of all LAN ports of the same VLAN except for the port that the frame received.
@@ -1252,6 +1262,14 @@ There are some key benefits to split-MAC architecture, here are a few:
 
 ![](/images/lightweightAPModes.png)
 
+FlexConnect ACLs are supported on the native VLAN. FlexConnect ACLs are simiilar to traditional Cisco ACLs in that they are rules that permit or deny traffic from a given source to a given destination. However, FlexConnect ACLs are configured on Cisco wireless lightweight AP VLAN interfaces if the lightweight AP is operating in FlexConnect mode. 
+
+FlexConnect ACLs are applied per AP and per VLAN. One possible application of FlexConnect ACLs is to prevent administration of the WLAN from a particular VLAN. Even though FlexConnect ACLs are applied differently than traditional ACLs, it is important to name FlexConnect ACLs differently from any traditional ACLs that might be configured on the WLAN.
+
+FlexConnect ACLs cannot be configured with a per-rule direcion. This is in contrast to a traditional ACL, which can be configured with inbound rules or outbound rules. A FlexConnect ACL is applied in the ingress direction or the egress direction as an entire set of rules, not on a per-rule basis.
+
+FlexConnect ACLs support the implicit deny rule. In this way, FlexConnect ACLs work similarly to traditional ACLs.
+
 **Cloud-Based AP** architecture is in between autonomous AP and split-MAC architecture.
 - Autonomous APs that are centrally managed in the cloud.
 - Cisco Meraki is a popular cloud-based Wi-Fi solution.
@@ -1520,7 +1538,7 @@ After the OSPF databases of neighbor routers are fully synchronized, the routers
 
 
 
-OSPF Neighbor requirements
+**OSPF Neighbor requirements**
 1. Area number must match
 2. Interfaces must be in the same subnet
 3. OSPF process must not be shutdown
@@ -1962,6 +1980,27 @@ A threat is the potential of a vulnerability to be exploited.
 
 A mitigation technique is something that can protect against threats.
 - Should be implemented everywhere a vulnerability can be exploited: client devices. servers, switches, routers, firewalls, etc.
+
+Common attacks:
+- MAC spoofing
+    - An attacker uses the MAC address of another known host on the network in order to bypass port security measures. MAC spoofing can also be used to impersonate another host on the network. Implementing port security with sticky secure MAC addresses can help mitigate MAC spoofing attacks.
+
+- MAC flooding
+    - An attacker generates thousands of forged frames every minute with the intention of overwhelming the switch's MAC address table. Once this table is flooded, the switch can no longer make intelligent forwarding decisions and all traffic is flooded. 
+    - This allows the attacker to view all data sent through the switch because all traffic will be sent out each port.  Implementing port security can help mitigate MAC flooding attacks by limiting the number of MAC addresses that can be learned on each interface to a maximum of 128. A MAC flooding attack is also known as a Content Addressable Memory (CAM) table overflow attack.
+
+- ARP poisoning
+    - Also known as an ARP (Address Resolution Protocol) spoofing attack, the attacker sends a gratuitous ARP (GARP) message to a host. The GARP message associates the attacker's MAC address with the Internet Protocol (IP) addresses of a valid host on the network. 
+    - Subsequently, traffic sent to the valid host address will go through the attacker's computer rather than directly to the intended recipient. Implementing Dynamic ARP Inspection (DAI) can help mitigate ARP poisoning attacks. This is a man-in-the-middle style of attack.
+
+- DHCP spoofing
+    - An attacker installs a rogue DHCP server on a network in an attempt to intercept DHCP requests. The rogue DHCP server can then respond to the DHCP requests with its own IP address as the default gateway address; hence all traffic is routing through the rogue DHCP server. You should enable DHCP snooping to help prevent DHCP spoofing attacks.
+
+- VLAN hopping
+    - An attacker attempts to inject packets into other VLANs by accessing the VLAN trunk and double-tagging 802.1Q frames. A successful VLAN hopping attack enables an attacker to send traffic to other VLANs without the use of a router.
+    - You can prevent VLAN hopping by disabling Dynamic Trunking Protocol (DTP) on trunk ports, by changing the native VLAN, and by configuring user-facing ports as access ports.
+
+
 
 ![](/images/common%20security%20attacks.png)
 
@@ -2795,12 +2834,20 @@ DHCP
     - configures an interface to become a DHCP client so that it can receive IP configuration information from a DHCP server. A DHCP client can receive an IP address,  a subnet mask, a domain name, a DNS server, and more from a DHCP server.
 
 OSPF
+- router ospf *process-id*
+    - enables OSPF router configuration mode, used in configured terminal mode
+- router-id *ip-address*
+    - manually configures router-id, used in router config mode
+    - if router ID is not manually configured, the router ID will be the highest Loopback IP address configured on a router. if a loopback IP address is not configured, then the router ID will be the highest IP address among the configured interfaces.
 - show ip ospf interface brief
     - shows interfaces, PID, Area, IP address/mask, cost, state. Full adjacencies/total count of neighbors
 - show ip ospf neighbor
 
 - show ip ospf int g0/0
     - shows state, priority, DR+BDR router IDs and interface IP addresses, neighbor count, (full) adjacent neighbor count
+- network (**address mask**) area (**area-id**)
+    - configure an OSPF area in OSPF router configuration mode
+
 - ip ospf priority (**#1-255**)
     - used in interface config mode, configures interface priority in order to manually configure DR/BDR (default is 1)
     - if set to 0, the router can not become the DR/BDR for the subnet
@@ -2842,19 +2889,50 @@ OSPF
     - cost aassigned cost to neighbor, neighbors will no specific cost configured will assumed cost of interface, based on ip ospf cost command. does not apply to nonbroadcast multiaccess (NBMA) networks
     - database-filter all filters outgoing LSAs to an OSPF neighbor 
 
+- maximum-paths *maximum number*
+    - Many OSPF routers can insert a maximum of **four** equal-cost paths into the routing table by default. You can override the default maximum by issuing the **maximum-paths** *maximum* command in OSPF router configuration mode, where maximum indicates the maximum number of equal-cost paths to insert into the routing table.
+
+- ip ospf hello-interval *seconds*
+    - used in interface config mode, manually configures hello timer interval (default 10 seconds on point-to-point and broadcast links, 30 seconds on NBMA links)
+- ip ospf dead-interval *seconds*
+    - used in interface config mode, manually configures dead timer interval (default 4x hello timer)
+
 SSH (Secure Shell)
 - device must be running a K9 IOS image
 - to enable SSH for VTY lines on a Cisco router, complete the following:
-    - configure the router with a host name otehr than Router by issuing the **hostname** command
-    - configure the router with a domain name by issuing the **ip domain-name** command
-    - generate an RSA key pair for the router by issuing the **crypto key generate rsa** command.
-    - configure the VTY lines to use SSH by issuing the **transport input ssh** command from line configuration mode.
+    1. configure the router with a host name other than Router by issuing the **hostname** command
+    2. configure the router with a domain name by issuing the **ip domain-name** command
+    3. generate an RSA key pair for the router by issuing the **crypto key generate rsa** command.
+    4. configure the VTY lines to use SSH by issuing the **transport input ssh** command from line configuration mode.
 - the **crypto key generate rsa** command will automatically enable SSH on a router. 
     - creates a set of RSA keys that can be used for SSH sessions.
 - the **transport input ssh** command does not enable SSH on the router. This command only configures the VTY lines to use SSH if SSH has already been configured.
 - the **crypto key zeroize rsa** command removes RS keys from a router. You may want to remove RSA keys in order to generate new keys.
 - the **enable secret** command can be used to help prevent unauthorized access to priveged EXEC mode. Using this command is more secure than **enable password** because the password is stored in MD5 hash instead of plain text.
 - the **no transport input telnet** command can be used to prevent Telnet access to a router. Telnet is sent unencrypted as plain text, so it is not as secure as SSH. Using this will ensure that remote management connections to the router are encrypted.
+
+VLAN
+
+
+
+WLC
+- show ap config global
+    - displays global Sylog server settings for every AP that is joined to the Cisco WLC. The following is sample output from the show ap global command:
+
+![](/images/showapconfigglobal.png)
+
+- show ap config general MyLAP
+    - displays IP addressing and other information about a Cisco access point named MyLAP. Similar to a Cisco wired router or switch, you can administer a Cisco AP or WLC by using a CLI. However, the CLI interface does not support the same Cisco IOS command set as a Cisco router or switch. You can configure a Cisco WLC or a Cisco AP either by using the built-in GUI in a browser or by using the CLI.
+- show ap config general *cisco-ap*
+    - where *cisco-ap* is the host name of the Cisco AP that is configured with the information you want to display, produces general AP configuration output.  
+    - This output includes information such as the AP's IP address, the default gateway IP address, and the DNS server address. In addition, the output includes the subnet mask that is configured on the AP. Sample output from a Cisco AP:
+
+![](/images/showapconfiggeneralciscoap.png)
+
+- The **show ap core-dump MyLAP** command displays the memory dump for the AP named MyLAP. The **show ap core-dump** *cisco-ap* command displays the memory core dump for the lightweight AP that is specified as the *cisco-ap* parameter. Core memory dumps can be large and are typically used for troubleshooting purposes when hardware failures occur.
+- The **show ap crash-file** command displays a list of crash dump files and radio core dump files that have been generated by lightweight APs. This command is useful if you need to review the output of a crash file or core dump file for a specific AP.
+
+![](/images/WLCcommands.png)
 
 Port Security
 - switchport port-security
