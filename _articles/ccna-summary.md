@@ -958,7 +958,16 @@ It is recommended to seperate 'voice' traffic (from the IP phone) and 'data' tra
 ### 2.1.b Default VLAN
 
 VLAN 1 is the default VLAN.
-VLANs 1002-1005 exist by default and cannot be deleted.
+
+VLANs 1002-1005 exist by default and cannot be deleted. They are reserved for Token Ring and Fiber Distributed Data Interface (FDDI) VLANs. VLANs in this reserved range, as well as the switch's native VLAN, can be modified but not deleted.
+
+VLAN 0 is a special VLAN used by IP phones to indicate to an upstream switch that it is sending frames that have a configured 802.1p priority but that should reside in the native VLAN. This VLAN is used if voice traffic and data traffic should be seperated but do not require that a unique voice virtual VLAN be created.
+
+VLAN 4094 is an extended VLAN and is not used for DTP frames unless it has been configured as the native VLAN. 
+
+VLAN IDs in the number range from 1006 through 4094 are available only on extended IOS images. 
+
+A VLAN ID can be a value from 1-1005 or 1-4094, depending on IOS images and switch model.
 
 ### 2.1.c Connectivity
 
@@ -970,6 +979,17 @@ Access ports = "untagged" ports
 
 DTP (Dynamic Trunking Protocol)
 - Cisco proprietary protocol that allows Cisco switches to dynamically determine their interface status (access or trunk) without manual configuration. For security purposes, manual configuration is recommended and DTP should be disabled on all switchports.
+- DTP uses the native VLAN to negotiate a trunk link when 802.1Q encapsulation is configured on the interface. 
+- Because DTP frames are always transmitted on the native VLAN, changing the native VLAN can have unexpected consequences. For example, if the native VLAN is not configured identically on both ends of a link, a trunk will not dynamically form.
+
+By default, all interfaces on a Cisco switch will use DTP to automatically negotiate whether an interface should be a trunk port or an access port. 
+
+There are two dynamic modes of operation for a switch port:
+- **auto** - operates in access mode unless the neighboring interface actively negotiates to operate as a trunk
+- **desirable** - operates in access mode unless it can actively negotiate a trunk connection with a neighboring interface.
+
+![](/images/DTPmodes.png)
+
 
 VTP (VLAN Trunking Protocol)
 - allows you to configure VLANs on a central VTP server switch, and other switches (VTP clients) will synchronize their VLAN database to the server. It is designed for large networks with many VLANs, but is rarely used and not recommended.
@@ -2657,14 +2677,14 @@ PoE
     - used in global config mode to enable error-disable auto recovery for inline power, automatically resets port after auto recovery mechanism timer expires
 - power inline police action log
     - used in interface config mode, when an attached PD attempts to draw more than its allocated power from the interface, it will cause the port to restart, and a log message will appear on the console.
-    - with log action configured, restarts instead of becomng errdisabled
+    - with log action configured, restarts instead of becoming errdisabled
 
 
 CDP
 - show cdp neighbors
     - shows device ID, local interface, holdtime, capability, platform and port ID.
 - show cdp neighbors detail
-    - used in priviledge exec mode (enable) to show detailed information about neihboring CDP devices
+    - used in privilege exec mode (enable) to show detailed information about neighboring CDP devices
     - includes: device, entry (IP) addresses, platform, interfaces, holdtime, version, advertisement, duplex, power drawn, power request id, power request levels, etc
 
 STP
@@ -2672,10 +2692,10 @@ STP
     - used in interface config mode for enabling PortFast on specific ports, used for edge ports such as access ports
     - transitions the port into the STP forwarding state without going through the STP listening and learning states.
     - if enabled on a port connected to a switch, the potential for creating STP loops increases greatly.
-- spanning tree portfast default
+- spanning-tree portfast default
     - enables PortFast for all access ports on a switch, global config mode
 - spanning-tree guard root
-    - root guard is used to prevent newly introduced swithces from being elected as the new root switches.
+    - root guard is used to prevent newly introduced switches from being elected as the new root switches.
     - allows adminstrator to maintain control over which switch is the root.
     - When STP is used, the device with the lowest switch priority is elected the root. If a new device is added to the network with a lower priority than the current root, it will become the new root. 
     - This could cause the network to reconfigure in unintented ways.
@@ -2687,7 +2707,7 @@ STP
 - spanning-tree loopguard (**default** OR **loop**)
     - loop guard feature prevents nondesignated ports from inadvertently forming bridging loops if the steady flow of BPDUs is interrupted. 
     - **default** will enable loop guard for the entire switch in global config, **loop** will enable for specific ports in interface config mode.
-    - when port stops receiving BPDUs, loop guard puts the port into the loop0incosistent state, which keeps the port in a blockign state.
+    - when port stops receiving BPDUs, loop guard puts the port into the loop-inconsistent state, which keeps the port in a blocking state.
     - After the port starts receiving BPDUs again, loop guard automatically re-enables the port so that it transitions through the normal STP states.
 
 DAI (Dynamic ARP Inspection)
@@ -2695,14 +2715,13 @@ DAI (Dynamic ARP Inspection)
     - used in global config mode (conf t)
     - a range of VLANs can be entered by using a comma-seperated list or a dash range.
     - configuring DAI on each VLAN ensures that traffic sent from each host is inspected (prevent ARP poisoning/spoofing)
-    - DAI is configured globablly on a switch on all access, trunk, EtherChannel, and PVLAN ports for specified VLANs and cannot be configured on specific interfaces.
+    - DAI is configured globally on a switch on all access, trunk, EtherChannel, and PVLAN ports for specified VLANs and cannot be configured on specific interfaces.
 
 DTP
 - switchport mode dynamic (**auto** or **desirable**)
     - because a switch port in auto mode does not actively negotiate to operate in trunk mode, it will only form a trunk link if negotations are initiated by the neighboring interface
     - a neighboring interface will initiate negotiations only if it is configured to operate in **trunk** mode or **desirable** mode.
     - by contrast, a switch port in **desirable** mode will actively negotiate to operate in trunk mode and will form a trunk link with a neighboring port that is configured to operate in trunk, desirable, or auto mode. 
-
 - switchport mode trunk
     - used to configure the port in trunk mode, and doesn't engage in negotation over DTP, should be followed by **switchport nonegotiate** to accomplish this
 - switchport mode **access**
@@ -2713,6 +2732,9 @@ DTP
     - **on** - indicates that the port has been statically configured to operate in **trunk** mode
     - **auto** - indicates that the port will dynamically determine it's operating mode; the port operates in access mode unless the neighboring interface actively negotiates to operate as a trunk
     - **desirable** - indicates that the port will dynamically determine its operating mode; the port operates in access mode unless it can actively negotiate a trunk connection with a neighboring interface
+
+![](/images/DTPmodes.png)
+
 
 EtherChannel
 - interface port-channel (**number**)
@@ -2736,6 +2758,30 @@ EtherChannel
     - The **active** and **passive** keywords can be used only with *LACP*. The **active** keyword configures the channel group to actively negotiate LACP, and the **passive** keyword configures the channel group to listen for LACP negotation to be offered. Either or both sides of the link must be set to **active** to establish an EtherChannel over LACP; settings both sides to **passive** will not establish an EtherChannel over LACP.
 
 ![](/images/etherchannelpagplacp.png)
+
+
+VLAN
+- show vlan brief
+    - shows vlans, name, status ports
+- vlan *vlan-id*
+    - enter VLAN config mode, and/or create a VLAN
+- name *name*
+    - configure a name for the VLAN
+- switchport access vlan *vlan-id*
+    - used in interface configuration mode, configures the interface into a specific VLAN, if the VLAN doesn't exist, it will be created
+    - configures these ports to reside on VLAN 1 if the ports are operating access mode
+- switchport mode access
+    - configures the ports to operate in access mode
+- switchport trunk native vlan *vlan-id*
+    - configures the native VLAN of the switch, used in interface config mode
+    - default is VLAN 1
+- ip arp inspection vlan (**vlan-id** OR **vlan-range**)
+    - ensures that traffic sent from each host on the VLAN is inspected
+    - in addition, a port is configured as an untrusted port when DAI is enabled on that port.
+- ip arp inspection trust
+    - when DAI is configured for an entire VLAN, you can override default untrusted configuration for a given port using this command in interface configuration mode.
+-
+
 
 VTP
 - vtp mode (**server, client, or transparent**)
@@ -2897,6 +2943,9 @@ OSPF
 - ip ospf dead-interval *seconds*
     - used in interface config mode, manually configures dead timer interval (default 4x hello timer)
 
+- default-information originate 
+    - configures an OSPF router to inject its default route into OSPF as an external route, thereby advertising its default route to neighboring routers.
+
 SSH (Secure Shell)
 - device must be running a K9 IOS image
 - to enable SSH for VTY lines on a Cisco router, complete the following:
@@ -2911,11 +2960,40 @@ SSH (Secure Shell)
 - the **enable secret** command can be used to help prevent unauthorized access to priveged EXEC mode. Using this command is more secure than **enable password** because the password is stored in MD5 hash instead of plain text.
 - the **no transport input telnet** command can be used to prevent Telnet access to a router. Telnet is sent unencrypted as plain text, so it is not as secure as SSH. Using this will ensure that remote management connections to the router are encrypted.
 
-VLAN
+NTP (Network Time Protocol)
+- ntp server *ip-address*
+    - enables NTP **static client** mode on router, used in global config mode
+    - Static client receives its time from an NTP server where *ip-address* is the IP address of the NTP server that the client will use to receive it's time 
+- ntp broadcast client
+    - enables NTP **broadcast client** mode on router, used in interface configuration mode. 
+    - An NTP broadcast client listens on the configured interface for NTP broadcasts from an NTP server, which the NTP client uses to adjust its time. 
+    - The different between a **broadcast client** and a **static client** is that a broadcast client can receive its time from any NTP server. By contrast, a static client receives its time from the NTP server specified in the **ntp server** command
+- ntp authenticate
+    - enables NTP authentication on router, used in global config mode.
+    - Authentication can be used with NTP to provide source verification for NTP synchronization.
+    - NTP authentication supports only Message Digest 5 (MD5) keys. 
+    - To enable authentication on an NTP client, you must issue the following command set:
+        - ntp authenticate
+        - ntp authentication-key *key-number* md5 *key*
+        - ntp trusted-key *key-number*
+        - ntp server *ip-address* key *key-number*
+    - To enable authentication on an NTP server, you should issue the following command set:
+        - ntp authenticate
+        - ntp authentication-key *key-number* md5 *key*
+- ntp master *stratum*
+    - enables NTP **server mode** on router, used in global configuration mode, where *stratum* is an NTP stratum value from 1-15.
+    - If the *stratum* value is not specified, the NTP server uses the default stratum value of 8. 
+    - NTP servers not only synchronize time with NTP clients but also with eachother. 
+    - Devices with higher stratum numbers receive time from devices with lower stratum numbers.
+- ntp peer *ip-address*
+    - enables NTP **symmetric active** mode on router, used in global config mode, where *ip-address* is the IP address of the NTP host.
+    - A device in **symmetric active** mode attemps to mutually synchronize with another NTP host; the host might synchronize the peer, or it might be synchronized by the peer. 
 
 
 
-WLC
+
+
+WLC (Wireless LAN Controller)
 - show ap config global
     - displays global Sylog server settings for every AP that is joined to the Cisco WLC. The following is sample output from the show ap global command:
 
@@ -2933,6 +3011,7 @@ WLC
 - The **show ap crash-file** command displays a list of crash dump files and radio core dump files that have been generated by lightweight APs. This command is useful if you need to review the output of a crash file or core dump file for a specific AP.
 
 ![](/images/WLCcommands.png)
+
 
 Port Security
 - switchport port-security
